@@ -1,0 +1,42 @@
+﻿@page "/404"
+@layout NonAuthorizeLayout
+
+<PageTitle>Страница не найдена</PageTitle>
+
+<div class="page-404" style="background: url(/img/404.webp);">
+    <div class="page-404__wrapper" style="display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    width: 100%;
+    min-height: 78vh">
+        <div class="page-404__title" style="font-size:100px; line-height: 120px; margin-bottom: 0; margin-top: -200px;">
+            404
+        </div>
+        <div class="page-404__subtitle" style="font-size: 24px; line-height: 28px; margin-bottom: 20px">
+            ошибка
+        </div>
+        <div class="page-404__text" style="font-size: 18px; font-family: Lato, sans-serif;  line-height: 22px">
+            Страница не найдена
+        </div>
+        <a class="page-404__btn btn btn--green" style="background: #83b143; border-radius: 21px; color: #fff; font-weight: 400; font-size: 16px; line-height: 19px; display: block; width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+    padding: 14px 50px;" href="/personal">
+            Перейти на главную страницу
+        </a>
+    </div>
+</div>
+
+@code {
+
+}

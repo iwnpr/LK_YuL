@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:simpleType name="emptyValueType">
+		<xs:annotation>
+		  <xs:documentation>Пустое значение (прочерк)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+		  <xs:enumeration value="-" />
+		</xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="versionType">
+		<xs:annotation>
+		  <xs:documentation>Версия</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+		  <xs:enumeration value="1.0" />
+		</xs:restriction>
+  </xs:simpleType>
+   <xs:simpleType name="string2000Type">
+    <xs:annotation>
+      <xs:documentation>не ограничивается; до 2000 символов; не ограничивается</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="2000" />
+      <xs:pattern value="[ —№!-~а-яА-ЯёЁ«»]*" />
+    </xs:restriction>
+  </xs:simpleType>
+	<xs:simpleType name="ogrnType">
+		<xs:annotation>
+			<xs:documentation>13-значный цифровой код для ОГРН или 15-значный цифровой код для ОГРНИП; 13 символов для ОГРН; 15 символов для ОГРНИП; цифры от 0 до 9</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="2000"/>
+			<xs:pattern value="[ №!-~а-яА-ЯёЁ«»]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="innType">
+		<xs:annotation>
+			<xs:documentation>12-значный цифровой код в соответствии со структурой ИНН физического лица или 10-значный цифровой код в соответствии со структурой ИНН юридического лица; 12 символов для ИНН физического лица или 10 символов для ИНН юридического лица; цифры от 0 до 9</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="2000"/>
+			<xs:pattern value="[ №!-~а-яА-ЯёЁ«»]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="snilsType">
+    <xs:annotation>
+      <xs:documentation>11 цифр; 11 символов; цифры от 0 до 9</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{11}" />
+    </xs:restriction>
+  </xs:simpleType>
+	 <xs:simpleType name="leiType">
+    <xs:annotation>
+      <xs:documentation>в соответствии с международным стандартом ISO 17442:2012 «Финансовые услуги. Идентификатор юридического лица»; 20 символов; цифры от 0 до 9, прописные буквы латинского алфавита от A до Z</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]{4}[0]{2}[A-Z0-9]{12}[0-9]{2}" />
+    </xs:restriction>
+  </xs:simpleType>
+	<xs:simpleType name="wordsType">
+    <xs:annotation>
+      <xs:documentation>отдельное слово или слова, разделенные пробелами и запятыми; до 2000 символов; только прописные буквы русского алфавита или только прописные буквы латинского алфавита; пробел, запятая</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="2000" />
+      <xs:pattern value="([А-ЯЁ]([А-ЯЁ]|\s[А-ЯЁ]|,\s[А-ЯЁ]){1,1998}[А-ЯЁ]*)|([A-Z]([A-Z]|\s[A-Z]|,\s[A-Z]){1,1998}[A-Z]*)" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="nameType">
+    <xs:annotation>
+      <xs:documentation>последовательность букв, возможно с разделителями «пробел» и «-» (дефис), символами скобок «(» и «)», между которыми содержатся буквы, символом апострофа «’», после которого содержатся буквы; до 2000 символов; прописные буквы русского алфавита, прописные буквы латинского алфавита, разделители «пробел» и «-» (дефис), символы скобок «(» и «)», апострофа «’»</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="2000" />
+      <xs:pattern value="([А-ЯЁA-Z](([А-ЯЁA-Z\s\-\*,])|(\([А-ЯЁA-Z,]+\))|(\.[А-ЯЁA-Z\s\-\*,]*)|(['`][А-ЯЁA-Z\s\-\*,]))*)" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="docSeriesType">
+    <xs:annotation>
+      <xs:documentation>в соответствии со значением показателя «Код документа»; до 2000 символов; цифры от 0 до 9; прописные буквы русского или латинского алфавита (в том числе для указания римских цифр); разделитель «-» (дефис)</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-ZА-ЯЁ0-9\-]{1,2000}" />
+    </xs:restriction>
+  </xs:simpleType>
+   <xs:simpleType name="departmentCodeType">
+    <xs:annotation>
+      <xs:documentation>«NNN-NNN» - 2 части по 3 цифры в каждой, разделенные символом «-» (дефис); лидирующий 0 указывается; 7 символов; цифры от 0 до 9, символ дефис</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{3}\-\d{3}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="refForeignerCodeType">
+    <xs:annotation>
+      <xs:documentation>Сведения о гражданстве</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:unsignedShort">
+      <xs:enumeration value="1">
+        <xs:annotation>
+          <xs:documentation>Только иностранное гражданство или лицо без гражданства</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="2">
+        <xs:annotation>
+          <xs:documentation>Гражданство Российской Федерации и иностранное гражданство</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="3">
+        <xs:annotation>
+          <xs:documentation>Только гражданство Российской Федерации</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+	<xs:simpleType name="refTaxpayerType">
+    <xs:annotation>
+      <xs:documentation>Виды номеров налогоплательщика</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:unsignedShort">
+      <xs:enumeration value="1">
+        <xs:annotation>
+          <xs:documentation>Идентификационный номер налогоплательщика, присвоенный налоговым органом Российской Федерации</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="2">
+        <xs:annotation>
+          <xs:documentation>Номер налогоплательщика, присвоенный уполномоченным органом иностранного государства, или его аналог</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+   <xs:simpleType name="refIdentifyDocType">
+    <xs:annotation>
+      <xs:documentation>Виды документов, удостоверяющих личность</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="21">
+        <xs:annotation>
+          <xs:documentation>Паспорт гражданина Российской Федерации</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="22.1">
+        <xs:annotation>
+          <xs:documentation>Паспорт гражданина Российской Федерации, удостоверяющий его личность за пределами территории Российской Федерации</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="22.2">
+        <xs:annotation>
+          <xs:documentation>Дипломатический паспорт, удостоверяющий личность гражданина Российской Федерации за пределами территории Российской Федерации</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="22.3">
+        <xs:annotation>
+          <xs:documentation>Служебный паспорт, удостоверяющий личность гражданина Российской Федерации за пределами территории Российской Федерации</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="23">
+        <xs:annotation>
+          <xs:documentation>Удостоверение личности моряка</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="24">
+        <xs:annotation>
+          <xs:documentation>Удостоверение личности военнослужащего</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="25">
+        <xs:annotation>
+          <xs:documentation>Военный билет военнослужащего</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="26">
+        <xs:annotation>
+          <xs:documentation>Временное удостоверение личности гражданина Российской Федерации, выдаваемое на период оформления паспорта гражданина Российской Федерации</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="27">
+        <xs:annotation>
+          <xs:documentation>Свидетельство о рождении гражданина Российской Федерации</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="28">
+        <xs:annotation>
+          <xs:documentation>Иной документ, удостоверяющий личность гражданина Российской Федерации в соответствии с законодательством Российской Федерации</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="31">
+        <xs:annotation>
+          <xs:documentation>Паспорт иностранного гражданина либо иной документ, установленный федеральным законом или признаваемый в соответствии с международным договором Российской Федерации в качестве документа, удостоверяющего личность иностранного гражданина</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="32">
+        <xs:annotation>
+          <xs:documentation>Документ, выданный иностранным государством и признаваемый в соответствии с международным договором Российской Федерации в качестве документа, удостоверяющего личность лица без гражданства</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="35">
+        <xs:annotation>
+          <xs:documentation>Иной документ, признаваемый документом, удостоверяющим личность лица без гражданства в соответствии с законодательством Российской Федерации и международным договором Российской Федерации</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="37">
+        <xs:annotation>
+          <xs:documentation>Удостоверение беженца</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="38">
+        <xs:annotation>
+          <xs:documentation>Удостоверение вынужденного переселенца</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="39">
+        <xs:annotation>
+          <xs:documentation>Свидетельство о предоставлении временного убежища на территории Российской Федерации</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="999">
+        <xs:annotation>
+          <xs:documentation>Иной документ</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="refPurposeRequestType">
+    <xs:annotation>
+      <xs:documentation>Цели запроса</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="1">
+        <xs:annotation>
+          <xs:documentation>Потребительский заем (кредит) на приобретение автомобиля</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="1.1">
+        <xs:annotation>
+          <xs:documentation>Потребительский заем (кредит) на приобретение жилья, обязательства заемщика по которому обеспечены ипотекой</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="2">
+        <xs:annotation>
+          <xs:documentation>Потребительский микрозаем</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="3">
+        <xs:annotation>
+          <xs:documentation>Потребительский заем (кредит) нецелевой</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="4">
+        <xs:annotation>
+          <xs:documentation>Потребительский заем (кредит) с расходным лимитом (кредитная линия, овердрафт)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="5">
+        <xs:annotation>
+          <xs:documentation>Иной потребительский заем (кредит)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="6">
+        <xs:annotation>
+          <xs:documentation>Поручительство гражданина-потребителя</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="7">
+        <xs:annotation>
+          <xs:documentation>Ипотека, предоставленная гражданином-потребителем</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="8">
+        <xs:annotation>
+          <xs:documentation>Иной залог, предоставленный гражданином-потребителем</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="9">
+        <xs:annotation>
+          <xs:documentation>Иной потребительский договор</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="10">
+        <xs:annotation>
+          <xs:documentation>Заем (кредит) на развитие бизнеса</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="11">
+        <xs:annotation>
+          <xs:documentation>Заем (кредит) на пополнение оборотных средств</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="12">
+        <xs:annotation>
+          <xs:documentation>Заем (кредит) на покупку оборудования</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="13">
+        <xs:annotation>
+          <xs:documentation>Заем (кредит) на строительство</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="13.1">
+        <xs:annotation>
+          <xs:documentation>Заем (кредит) на приобретение недвижимости</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="14">
+        <xs:annotation>
+          <xs:documentation>Заем (кредит) на приобретение ценных бумаг</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="14.1">
+        <xs:annotation>
+          <xs:documentation>Заем (кредит) на приобретение иного движимого имущества</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="15">
+        <xs:annotation>
+          <xs:documentation>Иной заем (кредит)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="16">
+        <xs:annotation>
+          <xs:documentation>Лизинг</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="17">
+        <xs:annotation>
+          <xs:documentation>Независимая гарантия</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="18">
+        <xs:annotation>
+          <xs:documentation>Поручительство</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="19">
+        <xs:annotation>
+          <xs:documentation>Страхование</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="20">
+        <xs:annotation>
+          <xs:documentation>Ипотека</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="21">
+        <xs:annotation>
+          <xs:documentation>Иной залог</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="22">
+        <xs:annotation>
+          <xs:documentation>Иной договор</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="23">
+        <xs:annotation>
+          <xs:documentation>Кредитный мониторинг в рамках действующего договора</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="24">
+        <xs:annotation>
+          <xs:documentation>Прием на работу</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="25">
+        <xs:annotation>
+          <xs:documentation>Маркетинговые исследования</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="26">
+        <xs:annotation>
+          <xs:documentation>Научные исследования</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="27">
+        <xs:annotation>
+          <xs:documentation>Контроль данных</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="28">
+        <xs:annotation>
+          <xs:documentation>Расчет лимита кредитования</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+	  <xs:enumeration value="29">
+        <xs:annotation>
+          <xs:documentation>Финансовая грамотность</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="99">
+        <xs:annotation>
+          <xs:documentation>Иное</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+	<xs:simpleType name="refReasonForConsentTransferType"> 
+		<xs:annotation>
+      <xs:documentation>Код основания передачи согласия</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:integer">
+      <xs:enumeration value="1">
+        <xs:annotation>
+          <xs:documentation>Согласие субъекта кредитной истории передано правоприемнику по заключенному договору займа (кредита) или иному договору, информация об обязательствах по которым передается в БКИ</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="2">
+        <xs:annotation>
+          <xs:documentation>Согласие субъекта кредитных истории передано кредитной организации, осуществляющей обслуживание денежных требований по договору займа (кредита), уступленных специализированному финансовому обществу или ипотечному агенту</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="refConsentExpirationType">
+		<xs:annotation>
+			<xs:documentation>Срок действия согласия</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+		  <xs:enumeration value="1">
+			<xs:annotation>
+			  <xs:documentation>Согласие действительно в течение шести месяцев со дня его оформления</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="2">
+			<xs:annotation>
+			  <xs:documentation>Согласие действительно в течение года со дня его оформления</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="3">
+			<xs:annotation>
+			  <xs:documentation>В течение срока действия согласия с субъектом кредитной истории были заключены договор займа (кредита), договор лизинга, договор залога, договор поручительства, выдана независимая гарантия</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="refSourceCodeType">
+		<xs:annotation>
+			<xs:documentation>Тип источника данных</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+		  <xs:enumeration value="2">
+			<xs:annotation>
+			  <xs:documentation>КБКИ</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="refDataCodeType">
+		<xs:annotation>
+			<xs:documentation>Тип предоставляемых данных</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+		  <xs:enumeration value="1">
+			<xs:annotation>
+			  <xs:documentation>Тип организации, от которой получили запросы</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="2">
+			<xs:annotation>
+			  <xs:documentation>Количество запросов за сутки</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="3">
+			<xs:annotation>
+			  <xs:documentation>Цель запросов СМП (цель кредитования)</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="4">
+			<xs:annotation>
+			  <xs:documentation>Сумма заявок на кредит</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="5">
+			<xs:annotation>
+			  <xs:documentation>Минимальная сумма заявок на кредит</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="6">
+			<xs:annotation>
+			  <xs:documentation>Средняя сумма заявок на кредит</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="7">
+			<xs:annotation>
+			  <xs:documentation>Максимальная сумма заявок на кредит</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="refErrorCodeType">
+		<xs:annotation>
+			<xs:documentation>Типы ошибок</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+		  <xs:enumeration value="1">
+			<xs:annotation>
+			  <xs:documentation>Нет данных</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="2">
+			<xs:annotation>
+			  <xs:documentation>Значение userId указано неверно</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="3">
+			<xs:annotation>
+			  <xs:documentation>Отсутствуют права для сертификата с отпечатком</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="4">
+			<xs:annotation>
+			  <xs:documentation>Отсутствует сертификат запроса</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="5">
+			<xs:annotation>
+			  <xs:documentation>Параметр userId не указан</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="6">
+			<xs:annotation>
+			  <xs:documentation>Ошибка проверки запроса по XSD</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="7">
+			<xs:annotation>
+			  <xs:documentation>Ошибка чтения xml-файла</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="8">
+			<xs:annotation>
+			  <xs:documentation>При постановке на триггеры возникла ошибка</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		  <xs:enumeration value="99">
+			<xs:annotation>
+			  <xs:documentation>Иная ошибка</xs:documentation>
+			</xs:annotation>
+		  </xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

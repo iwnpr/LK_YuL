@@ -1,0 +1,1405 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.1">
+	<xs:complexType name="tReport">
+		<xs:sequence>
+			<xs:element name="TitlePart" type="TitlePartType"/>
+			<xs:element name="MainPart" type="MainPartType" minOccurs="0"/>
+			<xs:element name="AdditionalPart" type="AdditionalPartType" minOccurs="0"/>
+			<xs:element name="InformationalPart" type="InformationalPartType" minOccurs="0"/>
+			<xs:element name="SourcesInfo" type="SourcesInfoType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*********Титульная часть*********-->
+	<xs:complexType name="TitlePartType">
+		<xs:choice>
+			<xs:element name="FL_TitlePart" type="FL_TitlePartType"/>
+			<xs:element name="UL_TitlePart" type="UL_TitlePartType"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="FL_TitlePartType">
+		<xs:sequence>
+			<xs:element name="FL_Name" type="FL_NameType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 1-->
+			<xs:element name="FL_PrevName" type="FL_PrevNameType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 2-->
+			<xs:element name="FL_Birth" type="FL_BirthType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 3-->
+			<xs:element name="FL_Doc" type="FL_DocType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 4-->
+			<xs:element name="FL_PrevDoc" type="FL_PrevDocType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 5-->
+			<xs:element name="FL_Tax" type="FL_TaxType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 6-->
+			<xs:element name="FL_Social" type="FL_SocialType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 7-->
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UL_TitlePartType">
+		<xs:sequence>
+			<xs:element name="UL_Name" type="UL_NameType" maxOccurs="unbounded"/>
+			<!--ЮЛ 1-->
+			<xs:element name="UL_Address" type="UL_AddressType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ЮЛ 2-->
+			<xs:element name="UL_AddressOld" type="AddrOldType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="UL_Reg" type="UL_RegType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ЮЛ 3-->
+			<xs:element name="UL_Tax" type="UL_TaxType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ЮЛ 4-->
+			<xs:element name="UL_Reorg" type="UL_ReorgType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ЮЛ 5-->
+		</xs:sequence>
+	</xs:complexType>
+	<!--*********Основная часть*********-->
+	<xs:complexType name="MainPartType">
+		<xs:sequence>
+			<xs:element name="AddrReg" type="AddrRegType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 8-->
+			<xs:element name="AddrFact" type="AddrFactType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 9-->
+			<xs:element name="AddrOld" type="AddrOldType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Contact" type="ContactType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 10-->
+			<xs:element name="IndividualEntrepreneur" type="IndividualEntrepreneurType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 11-->
+			<xs:element name="Capacity" type="CapacityType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 12-->
+			<xs:element name="Bankruptcy" type="BankruptcyType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 13 = ЮЛ 6-->
+			<xs:element name="BankruptcyEnd" type="BankruptcyEndType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 14 = ЮЛ 7-->
+			<xs:element name="IndividualBorrowerRating" type="IndividualBorrowerRatingType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 15-->
+			<xs:element name="CreditRecord" type="CreditRecordType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="DebtBurdenInfo" type="DebtBurdenInfoType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 29(1)-->
+			<xs:element name="Collection" type="CollectionType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 43 = ЮЛ 33-->
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CreditRecordType">
+		<xs:sequence>
+			<xs:element name="DealUid" type="DealUidType"/>
+			<!--ФЛ 17 = ЮЛ 10-->
+			<xs:element name="Deal" type="DealType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 18 = ЮЛ 11-->
+			<xs:element name="Amount" type="AmountType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 19 = ЮЛ 12-->
+			<xs:element name="AmountInfo" type="AmountInfoType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 19(1) = ЮЛ 12(1)-->
+			<xs:element name="JointDebtors" type="JointDebtorsType" minOccurs="0"/>
+			<!--ФЛ 20 = ЮЛ 13-->
+			<xs:element name="PaymentTerms" type="PaymentTermsType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 21 = ЮЛ 14-->
+			<xs:element name="TotalCost" type="TotalCostType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 22 -->
+			<xs:element name="ContractChanges" type="ContractChangesType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 23 = ЮЛ 15-->
+			<xs:element name="ContractTermsChanges" type="ContractTermsChangesType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 23(1)-->
+			<xs:element name="Fund" type="FundType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 24 = ЮЛ 16-->
+			<xs:element name="Debt_group" type="DebtGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 25-28 = ЮЛ 17-20-->
+			<xs:element name="MonthlyPayment" type="MonthlyPaymentType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 29 = ЮЛ-->
+			<xs:element name="NonMonetarySource" type="NonMonetarySourceType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 30 = ЮЛ 21-->
+			<xs:element name="NonMonetarySubject" type="NonMonetarySubjectType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 31 = ЮЛ 22-->
+			<xs:element name="Collateral_group" type="CollateralGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 32,35 = ЮЛ 23,26-->
+			<xs:element name="Warranty" type="WarrantyType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 33 = ЮЛ 24-->
+			<xs:element name="Guarantee" type="GuaranteeType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 34 = ЮЛ 25-->
+			<xs:element name="ProvisionPayment" type="ProvisionPaymentType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 36 = ЮЛ 27-->
+			<xs:element name="ProvisionPaymentOffset" type="ProvisionPaymentOffsetType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 36(1) = ЮЛ 27 (1)-->
+			<!--New-->
+			<xs:element name="WarrantyReturn" type="WarrantyReturnType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 37 = ЮЛ 28-->
+			<xs:element name="ContractEnd" type="ContractEndType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 38 = ЮЛ 29-->
+			<xs:element name="Court" type="CourtType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 39 = ЮЛ 30-->
+			<xs:element name="AvgPayment" type="AvgPaymentType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 40-->
+			<xs:element name="SourceBankruptcy" type="SourceBankruptcyType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 41 = ЮЛ 31-->
+			<xs:element name="SourceLiquidation" type="SourceLiquidationType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 42 = ЮЛ 32-->
+			<xs:element name="StopSend" type="StopSendType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 45 = ЮЛ 35-->
+			<xs:element name="ConfidentionalPart" type="ConfidentionalPartType" minOccurs="0"/>
+			<!--ФЛ 46-48, 51-54 = ЮЛ 36-38, 41-44 из закрытой части-->
+		</xs:sequence>
+		<xs:attribute name="ownerId" type="xs:integer"/>
+		<xs:attribute name="lastUpdateInfoDate" type="xs:date"/>
+	</xs:complexType>
+	<xs:complexType name="ConfidentionalPartType">
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:element name="OrgAcquirer" type="OrgAcquirerType"/>
+				<!--ФЛ 51 = ЮЛ 41-->
+				<xs:element name="PersonAcquirer" type="PersonAcquirerType"/>
+				<!--ФЛ 52 = ЮЛ 42-->
+			</xs:choice>
+			<xs:element name="ServiceOrg" type="ServiceOrgType" minOccurs="0"/>
+			<!--ФЛ 53 = ЮЛ 43-->
+			<xs:element name="Accounting" type="AccountingType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 54 = ЮЛ 44-->
+		</xs:sequence>
+	</xs:complexType>
+	<!--*********Закрытая часть*********-->
+	<xs:complexType name="AdditionalPartType">
+		<xs:sequence>
+			<xs:element name="OrgSource" type="OrgSourceType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 46 = ЮЛ 36-->
+			<xs:element name="PersonSource" type="PersonSourceType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 47 = ЮЛ 37-->
+			<xs:element name="ArbitrationManagerSource" type="ArbitrationManagerSourceType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 48 = ЮЛ 38-->
+			<xs:element name="RequestInfo" type="RequestType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RequestType">
+		<xs:sequence>
+			<xs:element name="requestKindCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="responseDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="requestDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="requestGoal_group" type="RequestGoalGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="requestSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="requestCurrency" type="xs:string" minOccurs="0"/>
+			<xs:choice>
+				<xs:element name="monitoringChangingFact_0"/>
+				<xs:sequence>
+					<xs:element name="monitoringChangingFact_1"/>
+					<xs:element name="beginDateMonitoringChanging" type="xs:date"/>
+				</xs:sequence>
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="OrgCustomer" type="OrgCustomerType"/>
+				<!--ФЛ 49 = ЮЛ 39 (б/полей запроса)-->
+				<xs:element name="PersonCustomer" type="PersonCustomerType"/>
+				<!--ФЛ 50 = ЮЛ 40 (б/полей запроса)-->
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RequestGoalGroupType">
+		<xs:sequence>
+			<xs:element name="requestGoalCode" type="xs:string"/>
+			<xs:element name="requestOtherGoal" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*********Информационная часть*********-->
+	<xs:complexType name="InformationalPartType">
+		<xs:sequence>
+			<xs:element name="Application" type="ApplicationType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 55 = ЮЛ 45-->
+			<xs:element name="Participation" type="ParticipationType" minOccurs="0" maxOccurs="unbounded"/>
+			<!--ФЛ 56 = ЮЛ 46-->
+			<xs:element name="ProhibitionsInfo" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:choice>
+							<xs:element name="ProhibitionAndLifting" type="ProhibitionAndLiftingType" maxOccurs="unbounded"/>
+							<xs:element name="prohibitionNoData"/>
+						</xs:choice>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FL_ProhibitionsInfo" type="FL_ProhibitionsInfoType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProhibitionAndLiftingType">
+		<xs:sequence>
+			<xs:element name="ProhibitionInfo" type="ProhibitionInfoType" minOccurs="0"/>
+			<!--ФЛ 58-->
+			<xs:element name="ProhibitionLiftingInfo" type="ProhibitionLiftingInfoType" minOccurs="0"/>
+			<!--ФЛ 59-->
+		</xs:sequence>
+		<!--<xs:attribute name="taxNum" type="xs:string"/>-->
+	</xs:complexType>
+	<!--**********Блоки****************-->
+	<!--ФЛ_1-->
+	<xs:complexType name="FL_NameType">
+		<xs:sequence>
+			<xs:element name="lastName" type="xs:string" minOccurs="0"/>
+			<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+			<xs:element name="middleName" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ФЛ_2-->
+	<xs:complexType name="FL_PrevNameType">
+		<xs:complexContent>
+			<xs:extension base="FL_NameType">
+				<xs:sequence>
+					<xs:element name="date" type="xs:date" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!--ФЛ_3-->
+	<xs:complexType name="FL_BirthType">
+		<xs:sequence>
+			<xs:element name="birthDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="countryCode" type="xs:integer" minOccurs="0"/>
+			<xs:element name="birthPlace" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ФЛ_4-->
+	<xs:complexType name="FL_DocType">
+		<xs:sequence>
+			<xs:element name="countryCode" type="xs:integer" minOccurs="0"/>
+			<xs:element name="countryOther" type="xs:string" minOccurs="0"/>
+			<xs:element name="docCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="docOtherName" type="xs:string" minOccurs="0"/>
+			<xs:element name="docSeries" type="xs:string" minOccurs="0"/>
+			<xs:element name="docNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="issueDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="docIssuer" type="xs:string" minOccurs="0"/>
+			<xs:element name="deptCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="endDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="foreignerCode" type="xs:unsignedShort" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ФЛ_5-->
+	<xs:complexType name="FL_PrevDocType">
+		<xs:sequence>
+			<xs:element name="countryCode" type="xs:integer" minOccurs="0"/>
+			<xs:element name="countryOther" type="xs:string" minOccurs="0"/>
+			<xs:element name="docCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="docOtherName" type="xs:string" minOccurs="0"/>
+			<xs:element name="docSeries" type="xs:string" minOccurs="0"/>
+			<xs:element name="docNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="issueDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="docIssuer" type="xs:string" minOccurs="0"/>
+			<xs:element name="deptCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="endDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ФЛ_6-->
+	<xs:complexType name="FL_TaxType">
+		<xs:sequence>
+			<xs:element name="TaxNum_group" minOccurs="0" maxOccurs="unbounded">
+			<!--<xs:choice minOccurs="0">									
+				<xs:element name="innChecked_0"/>
+				<xs:element name="innChecked_1"/>
+			</xs:choice>-->
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="taxCode" type="xs:unsignedShort" minOccurs="0"/>
+						<xs:element name="taxNum" type="xs:string" minOccurs="0"/>
+						<xs:choice minOccurs="0">
+							<xs:element name="innChecked_0"/>
+							<xs:element name="innChecked_1"/>
+						</xs:choice>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="regNum" type="xs:string" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="specialMode_0"/>
+				<xs:element name="specialMode_1"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	
+	<xs:complexType name="TaxNumGroupType">
+		<xs:sequence>
+			<xs:element name="taxCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="taxNum" type="xs:string" minOccurs="0"/>
+<!--			<xs:choice minOccurs="0">
+				<xs:element name="innChecked_0"/>
+				<xs:element name="innChecked_1"/>
+			</xs:choice>-->
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ_7-->
+	<xs:complexType name="FL_SocialType">
+		<xs:sequence>
+			<xs:element name="socialNum" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ЮЛ_1-->
+	<xs:complexType name="UL_NameType">
+		<xs:sequence>
+			<xs:element name="fullName" type="xs:string" minOccurs="0"/>
+			<xs:element name="shortName" type="xs:string" minOccurs="0"/>
+			<xs:element name="otherName" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="prevFull" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ЮЛ_2-->
+	<xs:complexType name="UL_AddressType">
+		<xs:sequence>
+			<xs:element name="countryCode" type="xs:integer" minOccurs="0"/>
+			<xs:element name="countryOther" type="xs:string" minOccurs="0"/>
+			<xs:element name="regStateNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="locationCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="locationOther" type="xs:string" minOccurs="0"/>
+			<xs:element name="street" type="xs:string" minOccurs="0"/>
+			<xs:element name="house" type="xs:string" minOccurs="0"/>
+			<xs:element name="estate" type="xs:string" minOccurs="0"/>
+			<xs:element name="block" type="xs:string" minOccurs="0"/>
+			<xs:element name="build" type="xs:string" minOccurs="0"/>
+			<xs:element name="apart" type="xs:string" minOccurs="0"/>
+			<xs:element name="Phone_group" type="PhoneGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="email" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="foreignerFact_0"/>
+				<xs:element name="foreignerFact_1"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<xs:complexType name="PhoneGroupType">
+		<xs:sequence>
+			<xs:element name="phone" type="xs:string" minOccurs="0"/>
+			<xs:element name="phoneComment" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ЮЛ_3-->
+	<xs:complexType name="UL_RegType">
+		<xs:sequence>
+			<xs:element name="regNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="lei" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ЮЛ_4-->
+	<xs:complexType name="UL_TaxType">
+		<xs:sequence>
+			<xs:element name="TaxNum_group" type="TaxNumGroupType" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ЮЛ_5-->
+	<xs:complexType name="UL_ReorgType">
+		<xs:sequence>
+			<xs:element name="fullName" type="xs:string" minOccurs="0"/>
+			<xs:element name="shortName" type="xs:string" minOccurs="0"/>
+			<xs:element name="regNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ФЛ 8-->
+	<xs:complexType name="AddrRegType">
+		<xs:sequence>
+			<xs:element name="code" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="postCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="countryCode" type="xs:integer" minOccurs="0"/>
+			<xs:element name="countryOther" type="xs:string" minOccurs="0"/>
+			<xs:element name="regStateNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="locationCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="locationOther" type="xs:string" minOccurs="0"/>
+			<xs:element name="street" type="xs:string" minOccurs="0"/>
+			<xs:element name="house" type="xs:string" minOccurs="0"/>
+			<xs:element name="estate" type="xs:string" minOccurs="0"/>
+			<xs:element name="block" type="xs:string" minOccurs="0"/>
+			<xs:element name="build" type="xs:string" minOccurs="0"/>
+			<xs:element name="apart" type="xs:string" minOccurs="0"/>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+			<xs:element name="dept" type="xs:string" minOccurs="0"/>
+			<xs:element name="deptCode" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ФЛ 9-->
+	<xs:complexType name="AddrFactType">
+		<xs:sequence>
+			<xs:element name="postCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="countryCode" type="xs:integer" minOccurs="0"/>
+			<xs:element name="countryOther" type="xs:string" minOccurs="0"/>
+			<xs:element name="regStateNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="locationCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="locationOther" type="xs:string" minOccurs="0"/>
+			<xs:element name="street" type="xs:string" minOccurs="0"/>
+			<xs:element name="house" type="xs:string" minOccurs="0"/>
+			<xs:element name="estate" type="xs:string" minOccurs="0"/>
+			<xs:element name="block" type="xs:string" minOccurs="0"/>
+			<xs:element name="build" type="xs:string" minOccurs="0"/>
+			<xs:element name="apart" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--Адрес до 758-П-->
+	<xs:complexType name="AddrOldType">
+		<xs:sequence>
+			<xs:element name="addressCode" type="xs:integer" minOccurs="0"/>
+			<xs:element name="address" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ФЛ 10-->
+	<xs:complexType name="ContactType">
+		<xs:sequence>
+			<xs:element name="Phone_group" type="PhoneGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="email" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ФЛ 11-->
+	<xs:complexType name="IndividualEntrepreneurType">
+		<xs:choice>
+			<xs:element name="endDate" type="xs:date" minOccurs="0"/>
+			<!--New-->
+			<xs:sequence>
+				<xs:element name="regNum" type="xs:string" minOccurs="0"/>
+				<xs:element name="date" type="xs:date" minOccurs="0"/>
+			</xs:sequence>
+		</xs:choice>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ФЛ 12-->
+	<xs:complexType name="CapacityType">
+		<xs:sequence>
+			<xs:element name="code" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="Incapacity_group" type="IncapacityGroupType"/>
+				<xs:element name="LegalCapacity_group" type="LegalCapacityGroupType"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<xs:complexType name="IncapacityGroupType">
+		<xs:sequence>
+			<xs:element name="incapacityDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="incapacityDecisionNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="incapacityCourtName" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LegalCapacityGroupType">
+		<xs:sequence>
+			<xs:element name="legalCapacityDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="legalCapacityDecisionNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="legalCapacityCourtName" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 13 = ЮЛ 6-->
+	<xs:complexType name="BankruptcyType">
+		<xs:sequence>
+			<!--<xs:element name="Date_group" type="DateGroupType" minOccurs="0" maxOccurs="unbounded"/>-->
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+			<xs:element name="stage" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="link" type="xs:string" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="illegalActExist_0"/>
+				<xs:sequence>
+					<xs:element name="illegalActExist_1"/>
+					<xs:element name="illegalActDate" type="xs:date" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="fakeActExist_0"/>
+				<xs:sequence>
+					<xs:element name="fakeActExist_1"/>
+					<xs:element name="fakeActDate" type="xs:date" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:choice>
+			<xs:element name="info" type="xs:string" minOccurs="0"/>
+			<xs:element name="num" type="xs:string" minOccurs="0"/>
+			<!--New-->
+		</xs:sequence>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--<xs:complexType name="DateGroupType">
+		<xs:sequence>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+			<xs:element name="stage" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="link" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>-->
+	<!--ФЛ 14 = ЮЛ 7-->
+	<xs:complexType name="BankruptcyEndType">
+		<xs:choice>
+			<xs:sequence>
+				<xs:element name="bankruptcyEndFact_0" minOccurs="0"/>
+				<xs:element name="resumeDate" type="xs:date" minOccurs="0"/>
+			</xs:sequence>
+			<xs:sequence>
+				<xs:element name="bankruptcyEndFact_1" minOccurs="0"/>
+				<xs:element name="completionDate" type="xs:date" minOccurs="0"/>
+				<xs:choice>
+					<xs:element name="settlementExist_0" minOccurs="0"/>
+					<xs:sequence>
+						<xs:element name="settlementExist_1" minOccurs="0"/>
+						<xs:element name="settlementDate" type="xs:date" minOccurs="0"/>
+					</xs:sequence>
+				</xs:choice>
+			</xs:sequence>
+		</xs:choice>
+		<xs:attributeGroup ref="agServiceAttr"/>
+	</xs:complexType>
+	<!--ФЛ 15-->
+	<xs:complexType name="IndividualBorrowerRatingType">
+		<xs:sequence>
+			<xs:element name="ratingValue" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="calcDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="FactorCode_group" type="FactorCodeGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="causeCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="otherCause" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FactorCodeGroupType">
+		<xs:sequence>
+			<xs:element name="factorCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="factorPortion" type="xs:decimal" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 17 = ЮЛ 10-->
+	<xs:complexType name="DealUidType">
+		<xs:sequence>
+			<xs:element name="uid" type="xs:string" minOccurs="0"/>
+			<xs:element name="num" type="xs:string" minOccurs="0"/>
+			<xs:element name="refUid" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="openDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 18 = ЮЛ 11-->
+	<xs:complexType name="DealType">
+		<xs:sequence>
+			<xs:element name="role" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="code" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="kindCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="purposeCode" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="consumerExist_0"/>
+				<xs:element name="consumerExist_1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="cardExist_0"/>
+				<xs:element name="cardExist_1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="novationExist_0"/>
+				<xs:element name="novationExist_1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="monetarySourceExist_0"/>
+				<xs:element name="monetarySourceExist_1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="monetarySubjectExist_0"/>
+				<xs:element name="monetarySubjectExist_1"/>
+			</xs:choice>
+			<xs:element name="endDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="creditorCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="partialExist_0"/>
+				<xs:sequence>
+					<xs:element name="partialExist_1"/>
+					<xs:element name="transferUid" type="xs:string"/>
+				</xs:sequence>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="creditLineExist_0"/>
+				<xs:sequence>
+					<xs:element name="creditLineExist_1"/>
+					<xs:element name="creditLineCode" type="xs:unsignedShort"/>
+				</xs:sequence>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="floatRateExist_0"/>
+				<xs:element name="floatRateExist_1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="partialTransferExist_0"/>
+				<xs:element name="partialTransferExist_1"/>
+			</xs:choice>
+			<xs:element name="startDate" type="xs:date" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="repaymentFact_0"/>
+				<xs:element name="repaymentFact_1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="transferFact_0"/>
+				<xs:element name="transferFact_1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="partnerFinancingFact_0"/>
+				<xs:element name="partnerFinancingFact_1"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 19 = ЮЛ 12-->
+	<xs:complexType name="AmountType">
+		<xs:sequence>
+			<xs:element name="sum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+			<xs:element name="calcDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 19(1) = ЮЛ 12(1)-->
+	<xs:complexType name="AmountInfoType">
+		<xs:sequence>
+			<xs:element name="securitySum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="securityCurrency" type="xs:string" minOccurs="0"/>
+			<xs:element name="securityTypeCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="calcDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="securityUid" type="xs:string" minOccurs="0"/>
+			<xs:element name="liabilityLimit" type="xs:unsignedLong" minOccurs="0"/>
+			<xs:element name="limitCurrency" type="xs:string" minOccurs="0"/>
+			<!--New-->
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 20 = ЮЛ 13-->
+	<xs:complexType name="JointDebtorsType">
+		<xs:sequence>
+			<xs:element name="num" type="xs:unsignedShort" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 21 = ЮЛ 14-->
+	<xs:complexType name="PaymentTermsType">
+		<xs:sequence>
+			<xs:element name="mainPaySum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="mainPayDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="percentPaySum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="percentPayDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="freqCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="minCardPay" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="graceDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="graceEndDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="percentEndDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 22-->
+	<xs:complexType name="TotalCostType">
+		<xs:sequence>
+			<xs:element name="minPercentCost" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="minCost" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="calcDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="maxPercentCost" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="maxCost" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="maxPercentCash" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="maxPercentCashless" type="xs:decimal" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 23 = ЮЛ 15-->
+	<xs:complexType name="ContractChangesType">
+		<xs:sequence>
+			<xs:element name="changeDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="code" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="specialCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="otherDesc" type="xs:string" minOccurs="0"/>
+			<xs:element name="startDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="endDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="actualEndDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="endCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="currencyRate" type="xs:decimal" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 23(1)-->
+	<xs:complexType name="ContractTermsChangesType">
+		<xs:sequence>
+			<xs:element name="termsChangeCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="termsChangeDesc" type="xs:string" minOccurs="0"/>
+			<xs:element name="changingDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 24 = ЮЛ 16-->
+	<xs:complexType name="FundType">
+		<xs:sequence>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+			<xs:element name="num" type="xs:positiveInteger" minOccurs="0"/>
+			<xs:element name="startSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+			<!--New-->
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 25-28 = ЮЛ 17-20-->
+	<xs:complexType name="DebtGroupType">
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:element name="lastPayExist_0"/>
+				<xs:element name="lastPayExist_1"/>
+			</xs:choice>
+			<xs:element name="calcDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="Debt" type="DebtType" minOccurs="0"/>
+			<!--ФЛ 25 = ЮЛ 17-->
+			<xs:element name="DebtDue" type="DebtDueType" minOccurs="0"/>
+			<!--ФЛ 26 = ЮЛ 18-->
+			<xs:element name="DebtOverdue" type="DebtOverdueType" minOccurs="0"/>
+			<!--ФЛ 27 = ЮЛ 19-->
+			<xs:element name="Payment" type="PaymentType" minOccurs="0"/>
+			<!--ФЛ 28 = ЮЛ 20-->
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DebtType">
+		<xs:sequence>
+			<xs:element name="debtSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="debtMainSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="debtPercentSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="debtOtherSum" type="xs:decimal" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="graceUnconfExist_0"/>
+				<xs:element name="graceUnconfExist_1"/>
+			</xs:choice>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+			<!--New-->
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DebtDueType">
+		<xs:sequence>
+			<xs:element name="debtDueSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="debtDueMainSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="debtDuePercentSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="debtDueOtherSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="debtDueStartDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DebtOverdueType">
+		<xs:sequence>
+			<xs:element name="debtOverdueSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="debtOverdueMainSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="debtOverduePercentSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="debtOverdueOtherSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="debtOverdueStartDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="mainMissDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="percentMissDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="missDuration" type="xs:unsignedLong" minOccurs="0"/>
+			<xs:element name="repaidMissDuration" type="xs:unsignedLong" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PaymentType">
+		<xs:sequence>
+			<xs:element name="paymentSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="paymentMainSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="paymentPercentSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="paymentOtherSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="totalSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="totalMainSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="totalPercentSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="totalOtherSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+			<xs:element name="sizeCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="scheduleCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="lastMissPaySum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="paySum24" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="payCurrency" type="xs:string" minOccurs="0"/>
+			<!--New-->
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 29-->
+	<xs:complexType name="MonthlyPaymentType">
+		<xs:sequence>
+			<xs:element name="sum" type="xs:unsignedInt" minOccurs="0"/>
+			<xs:element name="calcDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="sumTotal" type="xs:decimal" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 29(1)-->
+	<xs:complexType name="DebtBurdenInfoType">
+		<xs:sequence>
+			<xs:element name="loadRange" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="loadCalcDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="incomeInfo" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="incomeInfoSource" type="xs:unsignedShort" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="loadFact_0"/>
+				<xs:element name="loadFact_1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="loadCalculationFact_0"/>
+				<xs:element name="loadCalculationFact_1"/>
+			</xs:choice>
+			<xs:element name="dealUid" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+		<xs:attribute name="ownerId" type="xs:integer"/>
+	</xs:complexType>
+	<!--ФЛ 30 = ЮЛ 21-->
+	<xs:complexType name="NonMonetarySourceType">
+		<xs:sequence>
+			<xs:element name="item" type="xs:string" minOccurs="0"/>
+			<xs:element name="code" type="xs:string" minOccurs="0"/>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+			<!--допустим "-"-->
+			<xs:element name="propertyId" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 31 = ЮЛ 22-->
+	<xs:complexType name="NonMonetarySubjectType">
+		<xs:sequence>
+			<xs:element name="item" type="xs:string" minOccurs="0"/>
+			<xs:element name="fulfillment" type="xs:string" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="fulfillmentFailExist_0"/>
+				<xs:element name="fulfillmentFailExist_1"/>
+			</xs:choice>
+			<xs:element name="сode" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 32,35 = ЮЛ 23,26-->
+	<xs:complexType name="CollateralGroupType">
+		<xs:sequence>
+			<xs:element name="propertyId" type="xs:string" minOccurs="0"/>
+			<xs:element name="Collateral" type="CollateralType" minOccurs="0"/>
+			<!--ФЛ 32 = ЮЛ 23-->
+			<xs:element name="Insurance" type="InsuranceType" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- ФЛ 35 = ЮЛ 26-->
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<xs:complexType name="CollateralType">
+		<xs:sequence>
+			<xs:element name="code" type="xs:string" minOccurs="0"/>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+			<xs:element name="SumGroup" type="SumGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="collateralEndDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="collateralFactEndDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="endReason" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="contractTotalSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="contractCount" type="xs:unsignedLong" minOccurs="0"/>
+			<xs:element name="location" type="xs:string" minOccurs="0"/>
+			<xs:element name="actualCost" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="calcDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SumGroupType">
+		<xs:sequence>
+			<xs:element name="sum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+			<xs:element name="assessDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="priceCode" type="xs:unsignedShort" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InsuranceType">
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:element name="franchiseExist_0"/>
+				<xs:element name="franchiseExist_1"/>
+			</xs:choice>
+			<xs:element name="insPaymentsLimit" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="insPaymentsCurrency" type="xs:string" minOccurs="0"/>
+			<xs:element name="startDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="insuranceEndDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="insuranceFactEndDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="endCode" type="xs:unsignedShort" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 33 = ЮЛ 24-->
+	<xs:complexType name="WarrantyType">
+		<xs:sequence>
+			<xs:element name="uid" type="xs:string" minOccurs="0"/>
+			<xs:element name="sum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+			<xs:element name="openDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="endDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="factEndDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="endCode" type="xs:unsignedShort" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 34 = ЮЛ 25-->
+	<xs:complexType name="GuaranteeType">
+		<xs:complexContent>
+			<xs:extension base="WarrantyType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<!--ФЛ 36 = ЮЛ 27-->
+	<xs:complexType name="ProvisionPaymentType">
+		<xs:sequence>
+			<xs:element name="code" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+			<xs:element name="sum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+			<!--New-->
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 36(1) = ЮЛ 27(1)-->
+	<!--New-->
+	<xs:complexType name="ProvisionPaymentOffsetType">
+		<xs:sequence>
+			<xs:element name="wayCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+			<xs:element name="sum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 37 = ЮЛ 28-->
+	<xs:complexType name="WarrantyReturnType">
+		<xs:sequence>
+			<xs:element name="sum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="paidSum" type="xs:decimal" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="compliance_0"/>
+				<xs:element name="compliance_1"/>
+			</xs:choice>
+			<xs:element name="calcDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+			<!--New-->
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+		<!--<xs:element name="currency" type="xs:string" minOccurs="0"/>			<!{1}**New**{1}>-->
+	</xs:complexType>
+	<!--ФЛ 38 = ЮЛ 29-->
+	<xs:complexType name="ContractEndType">
+		<xs:sequence>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+			<xs:element name="code" type="xs:unsignedShort" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 39 = ЮЛ 30-->
+	<xs:complexType name="CourtType">
+		<xs:choice>
+			<xs:element name="actExist_0" minOccurs="0"/>
+			<xs:sequence>
+				<xs:element name="actExist_1" minOccurs="0"/>
+				<xs:element name="date" type="xs:date" minOccurs="0"/>
+				<xs:element name="num" type="xs:string" minOccurs="0"/>
+				<xs:element name="actResolution" type="xs:integer" minOccurs="0"/>
+				<xs:choice minOccurs="0">
+					<xs:element name="actStartExist_0"/>
+					<xs:element name="actStartExist_1"/>
+				</xs:choice>
+				<xs:element name="lawsuitCode" type="xs:unsignedShort" minOccurs="0"/>
+				<xs:element name="sumTotal" type="xs:decimal" minOccurs="0"/>
+				<xs:element name="info" type="xs:string" minOccurs="0"/>
+				<xs:element name="currency" type="xs:string" minOccurs="0"/>
+				<!--New-->
+			</xs:sequence>
+		</xs:choice>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 40-->
+	<xs:complexType name="AvgPaymentType">
+		<xs:sequence>
+			<xs:element name="sum" type="xs:unsignedInt" minOccurs="0"/>
+			<xs:element name="calcDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+			<xs:element name="uid" type="xs:string" minOccurs="0"/>
+			<xs:element name="bureauRegNum" type="xs:string" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="stopReceiveExist_0"/>
+				<xs:element name="stopReceiveExist_1"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 41 = ЮЛ 31-->
+	<xs:complexType name="SourceBankruptcyType">
+		<xs:sequence>
+			<xs:element name="debtSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="startDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="debtEndSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="endDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="debtLastPaySum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="lastPayDate" type="xs:date" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="ownerChangeExist_0"/>
+				<xs:element name="ownerChangeExist_1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="obligationEndExist_0"/>
+				<xs:sequence>
+					<xs:element name="obligationEndExist_1"/>
+					<xs:element name="obligationEndCode" type="xs:unsignedShort"/>
+				</xs:sequence>
+			</xs:choice>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+			<xs:element name="transferDate" type="xs:date" minOccurs="0"/>
+			<!--New-->
+			<xs:element name="transferDebtSum" type="xs:decimal" minOccurs="0"/>
+			<!--New-->
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 42 = ЮЛ 32-->
+	<xs:complexType name="SourceLiquidationType">
+		<xs:complexContent>
+			<xs:extension base="SourceBankruptcyType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<!--ФЛ 43 = ЮЛ 33-->
+	<xs:complexType name="CollectionType">
+		<xs:sequence>
+			<xs:element name="code" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="courtName" type="xs:string" minOccurs="0"/>
+			<xs:element name="actNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="actDate" type="xs:date" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="actResolution" type="xs:integer"/>
+				<xs:element name="actResolutionOld" type="xs:string"/>
+			</xs:choice>
+			<xs:element name="execDocNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="endDate" type="xs:date" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="onceSum" type="xs:decimal"/>
+				<xs:element name="periodSum" type="xs:decimal"/>
+			</xs:choice>
+			<xs:element name="totalSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="calcDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="freqCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+			<xs:element name="debtSum" type="xs:decimal" minOccurs="0"/>
+			<!--New-->
+			<xs:element name="debtBalance" type="xs:decimal" minOccurs="0"/>
+			<!--New-->
+			<xs:element name="debtCurrency" type="xs:string" minOccurs="0"/>
+			<!--New-->
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+		<xs:attribute name="ownerId" type="xs:integer"/>
+	</xs:complexType>
+	<!--ФЛ 45 = ЮЛ 35-->
+	<xs:complexType name="StopSendType">
+		<xs:sequence>
+			<xs:element name="code" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 46 = ЮЛ 36-->
+	<xs:complexType name="OrgSourceType">
+		<xs:sequence>
+			<xs:element name="code" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="regRusExist_0"/>
+				<xs:element name="regRusExist_1"/>
+			</xs:choice>
+			<xs:element name="fullName" type="xs:string" minOccurs="0"/>
+			<xs:element name="shortName" type="xs:string" minOccurs="0"/>
+			<xs:element name="otherName" type="xs:string" minOccurs="0"/>
+			<xs:element name="lei" type="xs:string" minOccurs="0"/>
+			<xs:element name="sourceDateStart" type="xs:date" minOccurs="0"/>
+			<xs:element name="regNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="TaxNum_group" type="TaxNumGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="beginDateSourceBankruptcy" type="xs:date" minOccurs="0"/>
+			<xs:element name="endDateSourceBankruptcy" type="xs:date" minOccurs="0"/>
+			<xs:element name="beginDateSourceLiquidation" type="xs:date" minOccurs="0"/>
+			<xs:element name="endDateSourceLiquidation" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="ownerId" type="xs:integer"/>
+	</xs:complexType>
+	<!--ФЛ 47 = ЮЛ 37-->
+	<xs:complexType name="PersonSourceType">
+		<xs:sequence>
+			<xs:element name="lastName" type="xs:string" minOccurs="0"/>
+			<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+			<xs:element name="middleName" type="xs:string" minOccurs="0"/>
+			<xs:element name="birthDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="birthPlace" type="xs:string" minOccurs="0"/>
+			<xs:element name="docCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="docOtherName" type="xs:string" minOccurs="0"/>
+			<xs:element name="docSeries" type="xs:string" minOccurs="0"/>
+			<xs:element name="docNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="issueDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="docIssuer" type="xs:string" minOccurs="0"/>
+			<xs:element name="deptCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="regNum" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="ownerId" type="xs:integer"/>
+	</xs:complexType>
+	<!--ФЛ 48 = ЮЛ 38-->
+	<xs:complexType name="ArbitrationManagerSourceType">
+		<xs:sequence>
+			<xs:element name="lastName" type="xs:string" minOccurs="0"/>
+			<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+			<xs:element name="middleName" type="xs:string" minOccurs="0"/>
+			<xs:element name="birthDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="birthPlace" type="xs:string" minOccurs="0"/>
+			<xs:element name="sroName" type="xs:string" minOccurs="0"/>
+			<xs:element name="sroAddress" type="xs:string" minOccurs="0"/>
+			<xs:element name="acceptDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="terminationDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="TaxNum_group" type="TaxNumGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="socialNum" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="ownerId" type="xs:integer"/>
+	</xs:complexType>
+	<!--ФЛ 49 = ЮЛ 39-->
+	<xs:complexType name="OrgCustomerType">
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:element name="regRusExist_0"/>
+				<xs:element name="regRusExist_1"/>
+			</xs:choice>
+			<xs:element name="code" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="fullName" type="xs:string" minOccurs="0"/>
+			<xs:element name="shortName" type="xs:string" minOccurs="0"/>
+			<xs:element name="otherName" type="xs:string" minOccurs="0"/>
+			<xs:element name="lei" type="xs:string" minOccurs="0"/>
+			<xs:element name="regNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="TaxNum_group" type="TaxNumGroupType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="customerId" type="xs:integer"/>
+	</xs:complexType>
+	<!--ФЛ 50 = ЮЛ 40-->
+	<xs:complexType name="PersonCustomerType">
+		<xs:sequence>
+			<xs:element name="lastName" type="xs:string" minOccurs="0"/>
+			<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+			<xs:element name="middleName" type="xs:string" minOccurs="0"/>
+			<xs:element name="birthDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="birthPlace" type="xs:string" minOccurs="0"/>
+			<xs:element name="regNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="TaxNum_group" type="TaxNumGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="socialNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="docCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="docOtherName" type="xs:string" minOccurs="0"/>
+			<xs:element name="docSeries" type="xs:string" minOccurs="0"/>
+			<xs:element name="docNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="issueDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="docIssuer" type="xs:string" minOccurs="0"/>
+			<xs:element name="deptCode" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="customerId" type="xs:integer"/>
+	</xs:complexType>
+	<!--ФЛ 51 = ЮЛ 41-->
+	<xs:complexType name="OrgAcquirerType">
+		<xs:sequence>
+			<xs:element name="code" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="regRusExist_0"/>
+				<xs:element name="regRusExist_1"/>
+			</xs:choice>
+			<xs:element name="fullName" type="xs:string" minOccurs="0"/>
+			<xs:element name="shortName" type="xs:string" minOccurs="0"/>
+			<xs:element name="otherName" type="xs:string" minOccurs="0"/>
+			<xs:element name="lei" type="xs:string" minOccurs="0"/>
+			<xs:element name="regNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="TaxNum_group" type="TaxNumGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 52 = ЮЛ 42-->
+	<xs:complexType name="PersonAcquirerType">
+		<xs:sequence>
+			<xs:element name="lastName" type="xs:string" minOccurs="0"/>
+			<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+			<xs:element name="middleName" type="xs:string" minOccurs="0"/>
+			<xs:element name="birthDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="birthPlace" type="xs:string" minOccurs="0"/>
+			<xs:element name="TaxNum_group" type="TaxNumGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="socialNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="docCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="docOtherName" type="xs:string" minOccurs="0"/>
+			<xs:element name="docSeries" type="xs:string" minOccurs="0"/>
+			<xs:element name="docNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="issueDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="docIssuer" type="xs:string" minOccurs="0"/>
+			<xs:element name="deptCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 53 = ЮЛ 43-->
+	<xs:complexType name="ServiceOrgType">
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:element name="regRusExist_0"/>
+				<xs:element name="regRusExist_1"/>
+			</xs:choice>
+			<xs:element name="fullName" type="xs:string" minOccurs="0"/>
+			<xs:element name="shortName" type="xs:string" minOccurs="0"/>
+			<xs:element name="otherName" type="xs:string" minOccurs="0"/>
+			<xs:element name="regNum" type="xs:string" minOccurs="0"/>
+			<xs:element name="TaxNum_group" type="TaxNumGroupType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="date" type="xs:date" minOccurs="0"/>
+			<xs:element name="endDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="issuerName" type="xs:string" minOccurs="0"/>
+			<xs:element name="issuerRegNum" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 54 = ЮЛ 44-->
+	<xs:complexType name="AccountingType">
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:sequence>
+					<xs:element name="exist_0"/>
+					<xs:element name="sum" type="xs:decimal" minOccurs="0"/>
+					<xs:element name="currency" type="xs:string" minOccurs="0"/>
+					<!--New-->
+				</xs:sequence>
+				<xs:element name="exist_1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:sequence>
+					<xs:element name="minInterest" type="xs:decimal" minOccurs="0"/>
+					<xs:element name="maxInterest" type="xs:decimal" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element name="rate" type="xs:decimal"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="supportExist_0"/>
+				<xs:sequence>
+					<xs:element name="supportExist_1"/>
+					<xs:element name="supportInfo" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:choice>
+			<xs:element name="calcDate" type="xs:date" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+	</xs:complexType>
+	<!--ФЛ 55 = ЮЛ 45-->
+	<xs:complexType name="ApplicationType">
+		<xs:sequence>
+			<xs:element name="role" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="sum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="currency" type="xs:string" minOccurs="0"/>
+			<xs:element name="uid" type="xs:string" minOccurs="0"/>
+			<xs:element name="applicationDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="sourceCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="wayCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="approvalEndDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="stageEndDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="purposeCode" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="stageCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="stageDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="applicationCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="num" type="xs:string" minOccurs="0"/>
+			<xs:element name="loanSum" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="loanCurrency" type="xs:string" minOccurs="0"/>
+			<!--New-->
+			<xs:choice minOccurs="0">
+				<!--New-->
+				<xs:element name="platformExist_0"/>
+				<xs:element name="platformExist_1"/>
+			</xs:choice>
+			<xs:element name="Reject" type="RejectType" minOccurs="0"/>
+			<!--ФЛ 57 = ЮЛ 47-->
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+		<xs:attribute name="ownerId" type="xs:integer"/>
+	</xs:complexType>
+	<!--ФЛ 56 = ЮЛ 46-->
+	<xs:complexType name="ParticipationType">
+		<xs:sequence>
+			<xs:element name="role" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="kindCode" type="xs:unsignedShort" minOccurs="0"/>
+			<xs:element name="uid" type="xs:string" minOccurs="0"/>
+			<xs:element name="fundDate" type="xs:date" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="overdueExist_0"/>
+				<xs:element name="overdueExist_1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="stopExist_0"/>
+				<xs:element name="stopExist_1"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="actualityDate" type="xs:date"/>
+		<xs:attribute name="ownerId" type="xs:integer"/>
+		<xs:attribute name="acquirerId" type="xs:integer"/>
+	</xs:complexType>
+	<!--ФЛ 57 = ЮЛ 47-->
+	<xs:complexType name="RejectType">
+		<xs:sequence>
+			<xs:element name="rejectDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="rejectCode" type="xs:unsignedShort" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 58-->
+	<xs:complexType name="ProhibitionInfoType">
+		<xs:sequence>
+			<xs:element name="prohibitionApplicationDate" type="xs:date"/>
+			<xs:element name="prohibitionApplicationTime" type="xs:time"/>
+			<xs:element name="prohibitionDate" type="xs:date"/>
+			<xs:element name="prohibitionConditions" type="xs:unsignedShort" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--ФЛ 59-->
+	<xs:complexType name="ProhibitionLiftingInfoType">
+		<xs:sequence>
+			<xs:element name="liftingApplicationDate" type="xs:date"/>
+			<xs:element name="liftingApplicationTime" type="xs:time"/>
+			<xs:element name="liftingDate" type="xs:date"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--СЗ для КО ФЛ (pdf)-->
+	<xs:complexType name="FL_ProhibitionsInfoType">
+		<xs:sequence>
+			<xs:element name="FL_Info" type="FL_InfoType"/>
+			<xs:element name="CurrentProhibitionsInfo" type="CurrentProhibitionsInfoType" minOccurs="0"/>
+			<xs:element name="HistoryProhibitionsInfo" type="HistoryProhibitionsInfoType" minOccurs="0"/>
+			<xs:element name="QcbInfo" type="QcbInfoType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FL_InfoType">
+		<xs:sequence>
+			<xs:element name="lastName" type="xs:string"/>
+			<xs:element name="firstName" type="xs:string"/>
+			<xs:element name="middleName" type="xs:string" minOccurs="0"/>
+			<xs:element name="birthDate" type="xs:date"/>
+			<xs:element name="taxNum" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CurrentProhibitionsInfoType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="ProhibitionInfo" type="ProhibitionInfoType" maxOccurs="unbounded"/>
+				<xs:element name="prohibitionNoData"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="HistoryProhibitionsInfoType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="HistoryProhibitionInfo" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ProhibitionInfo" type="ProhibitionInfoType" minOccurs="0"/>
+							<xs:element name="ProhibitionLiftingInfo" type="ProhibitionLiftingInfoType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="historyProhibitionNoData"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QcbInfoType">
+		<xs:sequence>
+			<xs:element name="qcbStateNum" type="xs:string"/>
+			<xs:element name="qcbName" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--******************************************************-->
+	<xs:complexType name="SourcesInfoType">
+		<xs:sequence>
+			<xs:element name="Source" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="ownerId" type="xs:integer"/>
+					<xs:attribute name="ownership" type="xs:boolean"/>
+					<xs:attribute name="sourceCode" type="xs:integer"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="tReportPdf">
+		<xs:sequence>
+			<xs:element name="pdf" type="xs:base64Binary" minOccurs="0"/>
+			<xs:element name="reportKindCode" type="xs:int"/>
+			<xs:choice>
+				<xs:element name="hasCreditHistory_0"/>
+				<xs:element name="hasCreditHistory_1"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:attributeGroup name="agServiceAttr">
+		<xs:attribute name="actualityDate" type="xs:date"/>
+		<xs:attribute name="creationDate" type="xs:date"/>
+		<xs:attribute name="ownerId" type="xs:integer"/>
+	</xs:attributeGroup>
+</xs:schema>

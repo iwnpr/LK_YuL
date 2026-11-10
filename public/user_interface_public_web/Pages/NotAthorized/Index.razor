@@ -1,0 +1,144 @@
+﻿@layout NonAuthorizeLayout
+@page "/"
+
+
+<PageTitle>Авторизация</PageTitle>
+
+<CommentWindow InfoComment="_result" />
+
+<div class="authorization__wrapper" @onkeypress="OnEnterAsync">
+    <form class="authorization__form form">
+        <div class="form__top">
+            <div class="form__icon"><img src="img/svg/login.svg" alt=""></div>
+            <div class="form__title">Вход в систему для Юридических лиц</div>
+        </div>
+        <div class="form__body">
+            <div class="form__inputs">
+                <div class="form__input">
+                    <div class="form__input-label">Ваш логин:</div>
+                    @* <div class="form__input-description">Формат логина: номер телефона без 8, электронная почта, буквенно-цифровой</div> *@
+                    <input type="text" name="login" @bind=@_creditional.Login>
+                </div>
+                <div class="form__input">
+                    <div class="form__input-label">Ваш пароль:</div>
+                    <input type="password" name="password" @bind=@_creditional.Password>
+                </div>
+            </div>
+            <div class="form__bottom">
+                @* <div class="form__input form__checkbox">
+                <input type="checkbox" id="1">
+                <label class="form__checkbox-label" for="1">Запомнить меня</label>
+                </div> *@
+                <div class="form__link">
+                    @* <div class="form__link-icon">
+                    <svg class="ico ico-color-forgot">
+                    <use xlink:href="img/sprite-color.svg#ico-color-forgot"></use>
+                    </svg>
+                    </div> *@
+                    <div class="form__link-text" @onclick="@RestorePassword">Забыли пароль?</div>
+                </div>
+            </div>
+            <div class="form__btns">
+                <button class="form__btn btn btn--green" type="button" @onclick=@(() => _navigator.NavigateTo("/registration")) disabled="@_disabled">Регистрация</button>
+                <button class="form__btn btn btn--green" type="button" disabled="@_disabled" @onclick=SignAsync>
+                    @if (_disabled)
+        {
+                    <img src="/img/loading.gif" width="20" />
+        }
+                    &nbsp;Войти
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="authorization__img">
+        <picture>
+            <source srcset="/img/authorization/men.webp" type="image/webp" />
+            <source srcset="/img/authorization/men.png" type="image/png" /><img src="/img/authorization/men.png" alt="undefined" />
+        </picture>
+    </div>
+</div>
+
+@code {
+    /// <summary>
+    /// Содержимое модального окна
+    /// </summary>
+    private Comment _result = new(false, string.Empty, string.Empty, string.Empty);
+
+    /// <summary>
+    /// Данные для входа в ЛК
+    /// </summary>
+    private Creditionals _creditional = new Creditionals { Login = string.Empty, Password = string.Empty };
+
+    /// <summary>
+    /// Блокировка кнопки
+    /// </summary>
+    private bool _disabled = false;
+
+    /// <summary>
+    /// Ответное сообщение от сервисов
+    /// </summary>
+    Answer? _error = new Answer(0, string.Empty);
+
+    private ConnectionParameters? _connection;
+
+    protected override async Task OnInitializedAsync()
+    {
+    try
+    {
+        _connection = JsonSerializer.Deserialize<ConnectionParameters>((await _session.GetAsync<string>("Connection")).Value!);
+        _creditional.IpAddress = _connection.IpAddress;    
+    }
+    catch
+    {
+        _navigator.NavigateTo("/");
+        return;
+    }
+    }
+
+
+    /// <summary>
+    /// Вход в личный кабинет
+    /// </summary>
+    /// <returns></returns>
+    private async Task SignAsync()
+    {
+    _disabled = true;
+
+    await Task.Delay(1);
+
+    _error = await _userMngr.SignAsync(_creditional);
+
+    if (!_error.Code.Equals(200))
+    {
+        _result = new(true, "error", "Ошибка входа в личный кабинет!", _error.Message);
+        _disabled = false;
+        return;
+    };
+
+    await _session.SetAsync("User", _error.Message);
+
+    _authenticationStateProvider.UpdateAsync();
+
+    _navigator.NavigateTo("personal");
+
+    _disabled = false;
+    }
+
+    private void RestorePassword()
+    {
+    _navigator.NavigateTo("forgot_password");
+    }
+
+    private async Task OnEnterAsync(KeyboardEventArgs e)
+    {
+    if (e.Code == "Enter" || e.Code == "NumpadEnter")
+    {
+        if (!_disabled)
+        {
+            await SignAsync();
+        }
+
+    }
+    }
+}

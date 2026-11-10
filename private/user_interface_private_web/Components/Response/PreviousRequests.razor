@@ -1,0 +1,228 @@
+﻿@if (Response.Descendants("PreviousRequests").Any())
+{
+    <div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+        <div class="status-popup__item-arrow dropdown-arrow">
+            <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+            </svg>
+        </div>
+        <div class="status-popup__item-title">Предыдущие запросы по субъекту</div>
+    </div>
+    @if (_show)
+    {
+        <div class="document__caption">
+            <span class="document__table-icon">
+                Общее количество запросов (всего: @(
+        _totalCount?.Attribute("TotalByAllTime")?.Value ?? "0"
+        ))
+            </span>
+        </div>
+        <div class="document__table-content document__table--general">
+            <table class="document__table">
+                <thead>
+                    <tr>
+                        <td>За час</td>
+                        <td>За день</td>
+                        <td>За неделю</td>
+                        <td>За месяц</td>
+                        <td>За квартал</td>
+                        <td>За год</td>
+                    </tr>
+                </thead>
+                <tbody style="background: #fff;">
+                    <tr>
+                        <td>
+                            @(
+                                _totalCount?.Attribute("ByLastHourPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                        <td>
+                            @(
+                                _totalCount?.Attribute("ByLastDayPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                        <td>
+                            @(
+                                _totalCount?.Attribute("ByLastWeekPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                        <td>
+                            @(
+                                _totalCount?.Attribute("ByLastMonthPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                        <td>
+                            @(
+                                _totalCount?.Attribute("ByLastQuarterPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                        <td>
+                            @(
+                                _totalCount?.Attribute("ByLastYearPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="document__caption">
+            <span class="document__table-icon">
+                Из них собственных (всего: @(
+        _seltTotalCount?.Attribute("TotalByAllTime")?.Value ?? "0"
+        ))
+            </span>
+        </div>
+        <div class="document__table-content document__table--general">
+            <table class="document__table">
+                <thead>
+                    <tr>
+                        <td>За час</td>
+                        <td>За день</td>
+                        <td>За неделю</td>
+                        <td>За месяц</td>
+                        <td>За квартал</td>
+                        <td>За год</td>
+                    </tr>
+                </thead>
+                <tbody style="background: #fff;">
+                    <tr>
+                        <td>
+                            @(
+                                _seltTotalCount?.Attribute("ByLastHourPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                        <td>
+                            @(
+                                _seltTotalCount?.Attribute("ByLastDayPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                        <td>
+                            @(
+                                _seltTotalCount?.Attribute("ByLastWeekPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                        <td>
+                            @(
+                                _seltTotalCount?.Attribute("ByLastMonthPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                        <td>
+                            @(
+                                _seltTotalCount?.Attribute("ByLastQuarterPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                        <td>
+                            @(
+                                _seltTotalCount?.Attribute("ByLastYearPeriod")?.Value ?? "0"
+                                )
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="document__caption">
+            <span class="document__table-icon">
+                <img class="image_icon" src="img/doc-id.svg" alt="">Запросы
+            </span>
+        </div>
+
+        @foreach (var _item in _previosuRequests)
+        {
+            <div class="document__caption">
+                <span class="document__table-icon">
+                    Запрос от @(
+              _item.Element("RequestAttributes")?.Attribute("DateTime")?.Value ?? "-"
+              )
+                </span>
+            </div>
+
+            <div class="document__table-content document__table--general">
+                <table class="document__table">
+                    <thead>
+                        <tr>
+                            <td>Фамилия, имя, отчество, дата рождения</td>
+                            <td>Документ</td>
+                            <td>Адрес</td>
+                            <td>Пол</td>
+                        </tr>
+                    </thead>
+                    <tbody style="background: #fff;">
+                        <tr>
+                            <td>
+                                @(
+                                    _item.Element("NaturalPersonSubject")?.Element("Title")?.Attribute("LastName")?.Value ?? "-"
+                                    )
+                                @(
+                                    _item.Element("NaturalPersonSubject")?.Element("Title")?.Attribute("FirstName")?.Value ?? "-"
+                                    )
+                                @(
+                                    _item.Element("NaturalPersonSubject")?.Element("Title")?.Attribute("MiddleName")?.Value ?? "-"
+                                    ),
+                                @(
+                                    _item.Element("NaturalPersonSubject")?.Attribute("BirthDate")?.Value ?? "-"
+                                    )
+                            </td>
+                            <td>
+                                @(
+                                    string.Join(null, _item.Element("NaturalPersonSubject")?.Elements("IdentificationDocument")?
+                                    .Select(_doc =>
+                                    $"{_doc.Attribute("DocSer")?.Value} {_doc.Attribute("DocNum")?.Value} {_doc.Attribute("DocDate")?.Value} {_doc.Attribute("DocDelivInstName")?.Value}\n")?.ToList() ?? new())
+                                    )
+                            </td>
+                            <td>-</td>
+                            @switch (_item.Element("NaturalPersonSubject")?.Attribute("Gender")?.Value ?? "-")
+                            {
+                                case "2":
+                                    <td>Женский</td>
+                                    ; break;
+                                case "1":
+                                    <td>Мужской</td>
+                                    ; break;
+                                default:
+                                    <td>Нет данных</td>
+                                    ; break;
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+}
+else if (!Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("PreviousRequestsCountLimit")?.Value.StartsWith("-") ?? false)
+{
+    <div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+        <div class="status-popup__item-arrow dropdown-arrow">
+            <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+            </svg>
+        </div>
+        <div class="status-popup__item-title">Предыдущие запросы по субъекту</div>
+    </div>
+    @if (_show)
+    {
+        <span style="margin: 10px;">
+            Информация не найдена
+        </span>
+    }
+}
+
+
+@code {
+    [Parameter] public XDocument Request { get; set; } = new XDocument(new XElement("REQUEST"));
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+
+    private XElement _totalCount = new("TotalCount");
+    private XElement _seltTotalCount = new("SelfTotalCount");
+    private List<XElement> _previosuRequests = new();
+    private bool _show = false;
+
+    protected override void OnInitialized()
+    {
+        _totalCount = Response.Descendants("TotalCount")?.FirstOrDefault() ?? new XElement("TotalCount");
+        _seltTotalCount = Response.Descendants("SelfTotalCount")?.FirstOrDefault() ?? new XElement("SelfTotalCount");
+        _previosuRequests = Response.Descendants("PreviousRequests")?.FirstOrDefault()?.Descendants("Request").ToList() ?? new();
+    }
+}

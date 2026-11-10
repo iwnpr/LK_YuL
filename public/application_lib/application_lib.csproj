@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\legal_persons_lib\legal_persons_lib.csproj" />
+    <ProjectReference Include="..\private_lib\private_lib.csproj" />
+    <ProjectReference Include="..\qbch_lib\qbch_lib.csproj" />
+  </ItemGroup>
+
+</Project>

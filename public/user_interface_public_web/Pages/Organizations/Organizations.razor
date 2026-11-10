@@ -1,0 +1,574 @@
+﻿@page "/organizations"
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<BureauUsersContext> _bureauUsersFactory
+@attribute [Authorize(Roles = "organizations")]
+
+<PageTitle>Организации</PageTitle>
+
+<CommentWindow InfoComment="@_comment" />
+
+<CascadingValue Name="Disabled" Value="_disabled">
+    <OrganizationWindow Organization=_organization
+                        Show=_popupShow
+                        OnGetTaxData=GetTaxData
+                        Save=SaveAsync
+                        OrgTypes="_types"
+                        Accesses="_orgAccesses"
+                        OnClose="@(() => _popupShow = false)" />
+</CascadingValue>
+
+<section class="organizations">
+    <div class="l-content">
+        <div class="organizations__top">
+            <h1 class="organizations__title title title--h1">Организации</h1>
+            <a class="organizations__btn btn btn--green" @onclick="CreateNewOrganization">Новая организация</a>
+        </div>
+        <div class="organizations__filters filters">
+            <div class="filters__top" @onclick="OnFilterShow">
+                <div class="filters__top-icon">
+                    <svg class="ico ico-mono-arrow-dropdown">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                    </svg>
+                </div>
+                <div class="filters__top-title">Фильтр</div>
+            </div>
+            <div class="filters__content  @_filter">
+                <form class="form">
+                    <div class="form__inputs">
+                        <div class="form__input">
+                            <div class="form__input-label">Идентификатор:</div>
+                            <input type="text" @bind=orgId>
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">ИНН:</div>
+                            <input type="text" @bind=orgItn>
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">Краткое название:</div>
+                            <input type="text" @bind=orgShortName>
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">Дата создания:</div>
+                            <input type="text">
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">ОГРН:</div>
+                            <input type="text" @bind=orgPsrn>
+                        </div>
+                        <div class="form__input form__select">
+                            <div class="form__input-label">Тип:</div>
+                            <SelectionList ValuesList=@_types
+                                           OnChange=@((_value) => orgType = _value)
+                                           SelectionValue="@orgType" />
+                        </div>
+                    </div>
+                    <div class="form__btns">
+                        <button class="form__btn btn" type="reset">Очистить</button>
+                        <button class="form__btn btn btn--green" type="button" @onclick=OnSubmitFilter>Применить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Добавлена</td>
+                    <td>Краткое название</td>
+                    <td>ИНН</td>
+                    <td>ОГРН</td>
+                    <td>Тип</td>
+                    <td>Дата регистрации</td>
+                    <td>Действия</td>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_organizations?.Any() ?? false)
+                {
+                    foreach (DBOrganization _org in _organizations)
+                    {
+                        <tr style="color:@(_org.IsActive ? "" : "red")">
+                            <td>@_org.LegalPersonId</td>
+                            <td>@_org.Inserted</td>
+                            <td>@_org.ShortName</td>
+                            <td>@_org.Itn</td>
+                            <td>@_org.Psrn</td>
+                            <td>@_org.OrganizationType</td>
+                            <td>@(_org.RegDate?.ToString() ?? string.Empty)</td>
+                            <td>
+                                <div class="table__icons">
+                                    <div class="table__icon" @onclick="@(() => OrganizationDetailsAsync(_org.Id))">
+                                        <svg class="ico ico-mono-edit">
+                                            <use xlink:href="img/sprite-mono.svg#ico-mono-edit"></use>
+                                            <title>Редактировать</title>
+                                        </svg>
+                                    </div>
+                                    <div class="table__icon" @onclick="@(() => UsersAsync(_org.Id))">
+                                        <svg class="ico ico-mono-users">
+                                            <use xlink:href="img/sprite-mono.svg#ico-mono-users"></use>
+                                            <title>К пользователям</title>
+                                        </svg>
+                                    </div>
+                                    <div class="table__icon">
+                                        <svg class="ico ico-mono-registration" @onclick="@(() => RegistrationsAsync(_org.Id))">
+                                            <use xlink:href="img/sprite-mono.svg#ico-mono-registration"></use>
+                                            <title>К регистрации</title>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                    <td colspan="8">
+                        <div class="pagination">
+                            <div class="table__icons">
+                                <div class="table__icon" @onclick="@(() => PreviousPage())">
+                                    <svg class="ico ico-mono-edit" style="width: 0.8em !important;">
+                                        <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                                        <title>Назад</title>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="table__icons">
+                                <div class="table__icon">
+                                    <svg class="ico ico-mono-registration" @onclick="@(() => NextPage())" style="transform: rotate(180deg);width: 0.8em !important;">
+                                        <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                                        <title>Вперед</title>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+@code {
+    /// <summary>
+    /// Номер страницы
+    /// </summary>
+    private int _page = 0;
+
+    /// <summary>
+    /// Количество записей на странице
+    /// </summary>
+    private int _pageSize = 50;
+
+    [CascadingParameter(Name = "Disabled")] public bool _disabled { get; set; } = false;
+
+    /// <summary>
+    /// Отображение параметров фильтрации
+    /// </summary>
+    private string _filter = "close";
+
+    /// <summary>
+    /// Признак создания новой организации
+    /// </summary>
+    private bool _isCreating = true;
+
+    /// <summary>
+    /// Комментарий для информационного модального окна
+    /// </summary>
+    private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+    /// <summary>
+    /// Отображение модального окна параметров организации
+    /// </summary>
+    private bool _popupShow = false;
+
+    /// <summary>
+    /// Организация для изменения параметров
+    /// </summary>
+    private DBOrganization _organization = new DBOrganization();
+
+    private LegalPerson _legalPerson = new();
+
+    /// <summary>
+    /// Список всех организаций
+    /// </summary>
+    private List<DBOrganization> _organizations = new List<DBOrganization>();
+
+    /// <summary>
+    /// Права доступа к сервисам организации
+    /// </summary>
+    private List<DBOrganizationAccess> _orgAccesses = new List<DBOrganizationAccess>();
+
+    /// <summary>
+    /// Сервисы бюро
+    /// </summary>
+    private List<DBService> _services = new List<DBService>();
+
+    /// <summary>
+    /// Типы организаций
+    /// </summary>
+    private Dictionary<string, string>? _types = new();
+
+    //TODO вынести в отдельный класс
+    //Переменные для фильтрации
+    private string orgItn = string.Empty;
+    private string orgId = string.Empty;
+    private string orgType = string.Empty;
+    private string orgShortName = string.Empty;
+    private string orgPsrn = string.Empty;
+    private List<DBOrganization> _organizationsTmp = new List<DBOrganization>();
+
+    /// <summary>
+    /// Инициализация страницы
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+        //Получаем список организаций
+        _organizations = (await _orgMngr.GetListAsync()).OrderByDescending(item => item.LegalPersonId).ToList();
+
+        //Для фильтрации сохраняем список
+        _organizationsTmp.AddRange(_organizations);
+
+        _organizations = _organizations.Skip(_pageSize * _page).Take(_pageSize).ToList();
+
+        //Получаем список типов организаций
+        _types = (await _orgMngr.GetTypesAsync()).OrderBy(t => t.Id).ToDictionary(x => x.Id.ToString(), x => x.OrgType);
+
+        //Получаем список сервисов
+        _services = await _svcMngr.GetListAsync();
+
+    }
+
+    /// <summary>
+    /// Отображение|сокрытие параметров фильтра
+    /// </summary>
+    private void OnFilterShow() => _filter = _filter.Equals("close") ? "" : "close";
+
+    /// <summary>
+    /// Настройка параметров организации
+    /// </summary>
+    /// <param name="id">Идентификатор организации</param>
+    /// <returns></returns>
+    private async Task OrganizationDetailsAsync(int id)
+    {
+        await _session.SetAsync("OrgId", id);
+
+        _organization = _organizations.FirstOrDefault(o => o.Id.Equals(id))!;
+
+        orgType = _organization.OrganizationType;
+
+        _isCreating = false;
+
+        _orgAccesses = await _orgMngr.GetAccessesAsync(id);
+
+        _orgAccesses = !_orgAccesses.Any()
+        ?
+            _services.Select(s =>
+            new DBOrganizationAccess
+                {
+                    Comment = s.Comment,
+                    Access = false,
+                    ServiceId = s.Id,
+                    ServiceName = s.ServiceName,
+                }).ToList()
+        :
+            _services.Select(s =>
+            new DBOrganizationAccess
+                {
+                    Comment = s.Comment,
+                    Access = _orgAccesses.FirstOrDefault(o => o.ServiceId.Equals(s.Id))?.Access ?? false,
+                    ServiceId = s.Id,
+                    ServiceName = s.ServiceName,
+                }).ToList();
+
+        await using (var bureauUsers = await _bureauUsersFactory.CreateDbContextAsync())
+        {
+            _legalPerson = (await bureauUsers.TdLegalPersons.FirstOrDefaultAsync(item => item.KeyId.Equals(_organization.LegalPersonId)))!;
+        }
+
+        _popupShow = true;
+    }
+
+    /// <summary>
+    /// Переход на страницу редактирования пользователей организации
+    /// </summary>
+    /// <param name="keyId"></param>
+    /// <returns></returns>
+    private async Task UsersAsync(int keyId)
+    {
+        await _session.SetAsync("OrgId", keyId);
+
+        _navigator.NavigateTo("/users");
+    }
+
+    /// <summary>
+    /// Переход на страницу редактирования пользователей организации
+    /// </summary>
+    /// <param name="keyId"></param>
+    /// <returns></returns>
+    private async Task RegistrationsAsync(int keyId)
+    {
+        await _session.SetAsync("OrgId", keyId);
+
+        _navigator.NavigateTo("/registrations");
+    }
+
+    /// <summary>
+    /// Модальное окно для новой организации
+    /// </summary>
+    /// <returns></returns>
+    private void CreateNewOrganization()
+    {
+        _organization = new DBOrganization()
+            {
+                OrganizationTypeId = 1,
+                OrganizationType = "Кредитная организация"
+            };
+
+        //_isBlocked = false;
+        _isCreating = true;
+
+        _legalPerson = new();
+
+        _orgAccesses = _services.Select(s =>
+        new DBOrganizationAccess
+            {
+                Comment = s.Comment,
+                Access = false,
+                ServiceId = s.Id,
+                ServiceName = s.ServiceName
+            }).ToList();
+
+        _popupShow = true;
+    }
+
+    /// <summary>
+    /// Запрос информации ЕГРЮЛ
+    /// </summary>
+    /// <returns></returns>
+    private async Task GetTaxData()
+    {
+        _disabled = true;
+
+        if (string.IsNullOrEmpty(_organization.Itn))
+        {
+            _comment = new Comment(true, "warning", "Запрос информации ЕГРЮЛ", "Необходимо заполнить ИНН организации");
+            _disabled = false;
+            return;
+        }
+
+        //Отправляем запрос к сервису
+        Answer error = await _sender.SendStringAsync($"{_configuration.GetSection("Links:TaxService").Value}", "POST", $"<Title caps=\"11111111111111111111111111111111111\"><IndividualTaxpayerNumber>{_organization.Itn}</IndividualTaxpayerNumber></Title>");
+
+        if (!error.Code.Equals(200))
+        {
+            _comment = new Comment(true, "error", "Запрос информации ЕГРЮЛ", error.Message);
+            _disabled = false;
+            return;
+        }
+
+        if (error.Message.Contains("Error"))
+        {
+            _comment = new Comment(true, "error", "Запрос информации ЕГРЮЛ", XDocument.Parse(error.Message).Descendants("Error").First().Value);
+            _disabled = false;
+            return;
+        }
+
+        _legalPerson.TaxServiceData = XDocument.Parse(error.Message)?.Descendants("Data")?.FirstOrDefault()?.ToString();
+
+        XElement? taxInfo;
+
+        try
+        {
+            taxInfo = XDocument.Parse(error.Message)?.Descendants("LPMain")?.FirstOrDefault();
+        }
+        catch
+        {
+            _comment = new Comment(true, "Запрос информации ЕГРЮЛ", "Не уадлось получить данные с сервиса, попробуйте позднее!", "error");
+            _disabled = false;
+            return;
+        }
+
+        if (taxInfo is null)
+        {
+            _comment = new Comment(true, "error", "Запрос информации ЕГРЮЛ", "По данному ИНН информация не найдена!");
+            _disabled = false;
+            return;
+        }
+
+        //Заполняем поля из ответа
+        _organization.Psrn = taxInfo.Element("PSRN")?.Value ?? string.Empty;
+        _organization.FullName = taxInfo.Element("FullName")?.Value ?? string.Empty;
+        _organization.ShortName = taxInfo.Element("FullName")?.Value ?? string.Empty;
+        _organization.OKPO = taxInfo.Element("OKPO")?.Value ?? string.Empty;
+        _organization.OwnershipForm = taxInfo.Element("Form")?.Value;
+
+        string? _date = XDocument.Parse(error.Message)?.Descendants("LPEstabl")?.FirstOrDefault()?.Element("RegDate")?.Value;
+
+        if (_date is not null)
+            _organization.RegDate = DateOnly.Parse(_date);
+
+        _disabled = false;
+    }
+
+    /// <summary>
+    /// Сохранение параметров организации
+    /// </summary>
+    /// <returns></returns>
+    private async Task SaveAsync()
+    {
+        _disabled = true;
+        Answer _answer = _validator.Check(_organization);
+
+        if (!_answer.Code.Equals(200))
+        {
+            _comment = new(true, "error", "Создание | обновление организации", _answer.Message);
+            _disabled = false;
+            return;
+        }
+
+        if (string.IsNullOrEmpty(_organization.FullName))
+            _organization.FullName = _organization.ShortName;
+
+        _legalPerson.KeyId = _organization.LegalPersonId;
+        _legalPerson.ITN = _organization.Itn;
+        _legalPerson.Caption = _organization.ShortName;
+        _legalPerson.Active = _organization.IsActive;
+
+
+        //TODO добавить тип организации
+
+        if (!_isCreating)
+        {
+
+            XDocument _settings = _legalPerson.Settings is null ? new(new XElement("settings", new XElement("service-access"))) : XDocument.Parse(_legalPerson.Settings);
+
+            List<XElement> _services = _settings.Descendants("service").ToList();
+
+            foreach (var _access in _orgAccesses)
+            {
+                XElement? _service = _services.FirstOrDefault(item => (item.Attribute("name")?.Value.Equals(_access.ServiceName) ?? false));
+
+                if (_service is not null)
+                    _settings
+                    .Descendants("service")
+                    .FirstOrDefault(item => (item.Attribute("name")?.Value.Equals(_access.ServiceName) ?? false))!.Attribute("access-type")!.Value = _access.Access ? "execute" : "none";
+                else
+                    if (_access.Access)
+                    _settings.Root?.Element("service-access")?.Add(new XElement("service", new XAttribute("name", _access.ServiceName), new XAttribute("access-type", "execute")));
+
+            }
+
+            _legalPerson.Settings = _settings.ToString();
+
+        }
+        else
+        {
+            _legalPerson.Created = DateTime.Now;
+
+            XDocument _services = new(new XElement("settings", new XElement("service-access")));
+
+            foreach (var _access in _orgAccesses.Where(item => item.Access))
+            {
+                _services.Root?.Element("service-access")?.Add(new XElement("service", new XAttribute("name", _access.ServiceName), new XAttribute("access-type", "execute")));
+            }
+
+            _legalPerson.Settings = _services.ToString();
+
+        }
+
+        try
+        {
+            await using var bureauUsers = await _bureauUsersFactory.CreateDbContextAsync();
+
+            if (_isCreating)
+                await bureauUsers.AddAsync(_legalPerson);
+            else
+                bureauUsers.Entry(_legalPerson).State = EntityState.Modified;
+
+            await bureauUsers.SaveChangesAsync();
+        }
+        catch
+        {
+            _comment = new Comment(true, "error", "Ошибка создания | обновления организации!", "Не удалось создать организацию");
+            _disabled = false;
+            return;
+        }
+
+
+        _answer = _isCreating
+        ? await _orgMngr.InsertAsync(_organization, _orgAccesses)
+        : await _orgMngr.UpdateAsync(_organization, _orgAccesses);
+
+        if (!_answer.Code.Equals(200))
+        {
+            _comment = new Comment(true, "error", "Ошибка создания | обновления организации!", _answer.Message);
+            _disabled = false;
+            return;
+        }
+
+        //Выводим сообщение пользователю
+        _comment = new Comment(true, "ok", "Обновление данных организации", _answer.Message);
+
+        //Получаем список организаций
+        _organizations = (await _orgMngr.GetListAsync()).OrderByDescending(item => item.LegalPersonId).Take(_pageSize).ToList() ?? new List<DBOrganization>();
+
+        //Для фильтрации сохраняем список
+        _organizationsTmp.Clear();
+        _organizationsTmp.AddRange(_organizations);
+
+
+
+        _popupShow = false;
+        _disabled = false;
+
+    }
+
+    /// <summary>
+    /// Фильтрация организаций по параметрам
+    /// </summary>
+    /// <returns>Результат фильтрации</returns>
+    private void OnSubmitFilter()
+    {
+        _organizations.Clear();
+
+        _organizations.AddRange(_organizationsTmp);
+
+        if (!string.IsNullOrEmpty(orgItn))
+            _organizations = _organizations.Where(o => o.Itn.Contains(orgItn, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+        if (!string.IsNullOrEmpty(orgShortName))
+            _organizations = _organizations.Where(o => o.ShortName.Contains(orgShortName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+        if (!string.IsNullOrEmpty(orgPsrn))
+            _organizations = _organizations.Where(o => o.Psrn.Contains(orgPsrn, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+        if (!string.IsNullOrEmpty(orgType))
+            _organizations = _organizations.Where(o => o.OrganizationType.Contains(orgType, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+        if (!string.IsNullOrEmpty(orgId))
+            _organizations = _organizations.Where(o => o.LegalPersonId.ToString().Contains(orgId, StringComparison.InvariantCultureIgnoreCase)).ToList();
+    }
+
+    /// <summary>
+    /// Предыдущая страница
+    /// </summary>
+    /// <returns></returns>
+    private async Task PreviousPage()
+    {
+        _page = _page > 0 ? _page - 1 : 0;
+        _organizations = (await _orgMngr.GetListAsync()).OrderByDescending(item => item.LegalPersonId).Skip(_page * _pageSize).Take(_pageSize).ToList() ?? new List<DBOrganization>();
+
+    }
+
+    /// <summary>
+    /// Следующая страница
+    /// </summary>
+    /// <returns></returns>
+    private async Task NextPage()
+    {
+        _page = _organizations.Count() == _pageSize ? _page + 1 : _page;
+        _organizations = (await _orgMngr.GetListAsync()).OrderByDescending(item => item.LegalPersonId).Skip(_page * _pageSize).Take(_pageSize).ToList() ?? new List<DBOrganization>();
+    }
+
+}

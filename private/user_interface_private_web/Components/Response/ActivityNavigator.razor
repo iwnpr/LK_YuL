@@ -1,0 +1,75 @@
+﻿@if (Response.Descendants("ActivityNavigator").Any())
+{
+    <div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+        <div class="status-popup__item-arrow dropdown-arrow">
+            <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+            </svg>
+        </div>
+        <div class="status-popup__item-title">Навигатор активности</div>
+    </div>
+    @if (_show)
+    {
+        <div class="document__caption">
+            <span class="document__table-icon">
+                Общее количество дней активности: @(activityNavigator?.Attribute("daysCount")?.Value ?? "0")
+            </span>
+        </div>
+
+        @foreach (var _item in activityNavigator?.Elements("ActivityDay") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__caption">
+                <span class="document__table-icon">
+                    Запрос от @(_item.Attribute("date")?.Value ?? "-")
+                </span>
+            </div>
+
+            <div class="document__table-content document__table--general">
+                <table class="document__table">
+                    <thead>
+                        <tr>
+                            <td>Кредитные организации</td>
+                            <td>Микрофинансовые организации</td>
+                            <td>Прочие организации</td>
+                        </tr>
+                    </thead>
+                    <tbody style="background: #fff;">
+                        <tr>
+                            <td>
+                                @(_item.Element("bank")?.Attribute("requestCount")?.Value ?? "-")
+                            </td>
+                            <td>
+                                @(_item.Element("mfo")?.Attribute("requestCount")?.Value ?? "-")
+                            </td>
+                            <td>
+                                @(_item.Element("otherOrganization")?.Attribute("requestCount")?.Value ?? "-")
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (activityNavigator?.Element("activityNoData") is not null)
+        {
+            <span style="margin: 10px;">
+                Сведения об активности отсутствуют
+            </span>
+        }
+    }
+}
+
+
+
+@code {
+    [Parameter] public XDocument Request { get; set; } = new XDocument(new XElement("REQUEST"));
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+
+    private XElement activityNavigator = new("ActivityNavigator");
+    private bool _show = false;
+
+    protected override void OnInitialized()
+    {
+        activityNavigator = Response.Descendants("ActivityNavigator")?.FirstOrDefault() ?? new XElement("ActivityNavigator");
+    }
+}

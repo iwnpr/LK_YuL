@@ -1,0 +1,221 @@
+﻿@page "/registrations"
+@attribute [Authorize(Roles = "organizations")]
+
+<PageTitle>Коды регистрации</PageTitle>
+
+<CommentWindow InfoComment="@_comment" />
+
+<section class="organizations">
+    <div class="l-content">
+        <div class="organizations__top">
+            <h1 class="organizations__title title title--h1">Коды регистрации</h1>
+            <a class="organizations__btn btn btn--green" @onclick="CreateNewRegistrationCode">Создать код регистрации</a>
+        </div>
+
+        <div class="form__input form__select">
+            <div class="form__input-label">Организация:</div>
+            <SelectionList ValuesList=@_organizations.ToDictionary(x => x.Id.ToString(), x => x.ShortName)
+                           OnChange="@OnOrganizationSelectedAsync"
+                           SelectionValue=@_organizations.FirstOrDefault(o => o.Id.Equals(_orgId))?.ShortName />
+        </div>
+        @*Коды регистрации*@
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Добавлен</td>
+                    <td>Истекает</td>
+                    <td>Код регистрации</td>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_codes?.Any() ?? false)
+                {
+                    foreach (DBRegistrationCode _code in _codes)
+                    {
+                        <tr style="color:@(_code.Inserted.AddMonths(1) > DateTime.Now ? "" : "red")">
+                            <td>@_code.Id</td>
+                            <td>@_code.Inserted</td>
+                            <td>@_code.Inserted.AddMonths(1)</td>
+                            <td>@_code.Code</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4">Коды регистрации не найдены</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+        @*Зарегистрированные пользователи*@
+        <table class="table" style="margin-top: 10px;">
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Логин</td>
+                    <td>Пользователь</td>
+                    <td>email</td>
+                    <td>Действие</td>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_unaprovedUsers?.Any() ?? false)
+                {
+                    foreach (DBUser _user in _unaprovedUsers)
+                    {
+                        <tr>
+                            <td>@_user.Id</td>
+                            <td>@_user.Login</td>
+                            <td>@_user.LastName @_user.FirstName</td>
+                            <td>@_user.Email</td>
+                            <td>
+                                <div class="table__icons">
+                                    <div class="table__icon" @onclick="@(() => AproveAccountAsync(_user))">
+                                        <svg class="ico ico-mono-edit">
+                                            <use xlink:href="img/sprite-mono.svg#ico-mono-edit"></use>
+                                            <title>Подтвердить</title>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">Заявки на подтверждение аккаунта не найдены</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</section>
+
+
+@code {
+    /// <summary>
+    /// Комментарий для информационного модального окна
+    /// </summary>
+    private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+    /// <summary>
+    /// Список кодов регистрации организаций
+    /// </summary>
+    private List<DBRegistrationCode> _codes = new List<DBRegistrationCode>();
+
+    /// <summary>
+    /// Список организаций
+    /// </summary>
+    private List<DBOrganization> _organizations = new();
+
+    /// <summary>
+    /// Идентификатор организации
+    /// </summary>
+    private int _orgId;
+
+    /// <summary>
+    /// Коллекция зарегистрированных пользователей организации
+    /// </summary>
+    private List<DBUser> _unaprovedUsers = new();
+
+    /// <summary>
+    /// Инициализация страницы
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+
+        var _id = (await _session.GetAsync<int>("OrgId"));
+
+        _orgId = _id.Success ? _id.Value : -1;
+
+        _organizations = await _orgMngr.GetListAsync();
+
+        //Получаем список кодов регистрации организаций
+        _codes = (await _registration.GetListAsync()).Where(_code => _code.OrganizationId.Equals(_orgId)).ToList() ?? new List<DBRegistrationCode>();
+
+        _unaprovedUsers = (await _userMngr.GetListAsync(_orgId)).Where(_item => !_item.IsAproved)?.ToList() ?? new List<DBUser>();
+    }
+
+    /// <summary>
+    /// Создание нового кода регистрации
+    /// </summary>
+    /// <returns></returns>
+    private async Task CreateNewRegistrationCode()
+    {
+        DBRegistrationCode _code = new DBRegistrationCode()
+            {
+                Inserted = DateTime.Now,
+                OrganizationId = _orgId,
+                Code = _stringMngr.CreateCode(50)
+            };
+
+        if (!await _registration.InsertAsync(_code))
+        {
+            _comment = new Comment(true, "error", "Создание кода регистрации!", "При создании кода регистрации произошла ошибка");
+            return;
+        }
+
+        //Выводим сообщение пользователю
+        _comment = new Comment(true, "ok", "Создание кода регистрации!", "Код регистрации успешно создан");
+
+        _codes = (await _registration.GetListAsync()).Where(_code => _code.OrganizationId.Equals(_orgId)).ToList();
+    }
+
+    /// <summary>
+    /// Создание нового кода регистрации
+    /// </summary>
+    /// <returns></returns>
+    private async Task AproveAccountAsync(DBUser _user)
+    {
+        _user.IsAproved = true;
+
+        Answer _error = await _userMngr.UpdateAsync(_user, await _userMngr.GetAccessesAsync(_user.Id));
+
+        if (!_error.Code.Equals(200))
+        {
+            _comment = new Comment(true, "error", "Подтверждение аккаунта", "При подтверждении аккаунта произошла ошибка!");
+            return;
+        }
+
+        //Выводим сообщение пользователю
+        _comment = new Comment(true, "ok", "Подтверждение аккаунта", "Аккаунт подтвержден!");
+
+        List<EmailCorrespondent> _recipients = new() { new EmailCorrespondent() { CorrespondentName = _user.Login, Email = _user.Email, SendingType = "to" } };
+
+        EmailMessage _message = new()
+            {
+                Body = $"В личном кабинете ООО \"БКИ КредитИнфо\" администратор подтвердил Вашу регистрацию",
+                Subject = "Подтверждение регистрации",
+                BodySubject = "Подтверждение регистрации",
+                Sender = "noreply@bki-ci.ru",
+                Correspondents = _recipients,
+                TemplateName = "MailSimpleTpl"
+            };
+
+        _error = await _sender.SendEmailAsync(_message);
+
+        _unaprovedUsers = (await _userMngr.GetListAsync(_orgId)).Where(_item => !_item.IsAproved)?.ToList() ?? new List<DBUser>();
+    }
+
+    /// <summary>
+    /// Обработка события выбора организации
+    /// </summary>
+    /// <param name="value">Наименование оргнаизации</param>
+    /// <returns></returns>
+    private async Task OnOrganizationSelectedAsync(string value)
+    {
+        _orgId = _organizations.Where(org => org.ShortName.Equals(value)).First().Id;
+
+        _codes = (await _registration.GetListAsync()).Where(code => code.OrganizationId.Equals(_orgId)).ToList();
+
+        _unaprovedUsers = (await _userMngr.GetListAsync(_orgId)).Where(_item => !_item.IsAproved)?.ToList() ?? new List<DBUser>();
+    }
+
+}

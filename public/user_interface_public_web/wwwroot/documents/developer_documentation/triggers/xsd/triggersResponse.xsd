@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2024 (x64) (http://www.altova.com) by  () -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="entity-types-triggers.xsd"/>
+	<xs:element name="TriggersResponse">
+		<xs:annotation>
+			<xs:documentation>Корневой тег</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice>
+				<xs:element name="Trigger" type="TriggerType" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Описание триггера</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Errors">
+					<xs:annotation>
+						<xs:documentation>Групповой блок для ошибок  на весь пакет</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Error" type="ErrorType" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Ошибка</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+			<xs:attribute name="version" type="versionType" use="required">
+				<xs:annotation>
+					<xs:documentation>Версия</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="TriggerType">
+		<xs:choice>
+			<xs:sequence>
+				<xs:element name="triggerId" type="xs:integer">
+					<xs:annotation>
+						<xs:documentation>Id субъекта</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DataSources">
+					<xs:annotation>
+						<xs:documentation>Групповой блок для данных</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="DataSource" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Data" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="triggerValue" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Данные</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="dataCode" type="refDataCodeType" use="required">
+																		<xs:annotation>
+																			<xs:documentation>Тип предоставляемых данных</xs:documentation>
+																		</xs:annotation>
+																	</xs:attribute>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="orderId" type="xs:integer" use="required">
+													<xs:annotation>
+														<xs:documentation>Порядковый номер данных</xs:documentation>
+													</xs:annotation>
+												</xs:attribute>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="sourceCode" type="refSourceCodeType" use="required">
+										<xs:annotation>
+											<xs:documentation>Тип источника данных</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:element name="Errors">
+				<xs:annotation>
+					<xs:documentation>Групповой блок для ошибок по триггерам</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Error" type="ErrorType" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Ошибка</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="requestOrderId" type="xs:integer" use="required">
+			<xs:annotation>
+				<xs:documentation>Порядковый номер запроса, на который отдается ответ</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="startDate" type="xs:date">
+			<xs:annotation>
+				<xs:documentation>Дата начала действия триггера</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="endDate" type="xs:date">
+			<xs:annotation>
+				<xs:documentation>Дата окончания действия триггера</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="unsubscribe" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>Признак отписки от триггера</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ErrorType">
+		<xs:sequence>
+			<xs:element name="code" type="refErrorCodeType">
+				<xs:annotation>
+					<xs:documentation>Код ошибки</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="message" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Описание ошибки</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

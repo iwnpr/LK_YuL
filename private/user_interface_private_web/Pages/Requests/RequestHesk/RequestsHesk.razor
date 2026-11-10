@@ -1,0 +1,76 @@
+﻿@page "/private/hesk-requests"
+@attribute [Authorize(Roles = "hesk")]
+
+<PageTitle>Информация об обращениях</PageTitle>
+
+<CommentWindow InfoComment="@_comment" />
+
+
+<section class="status">
+    <div class="l-content">
+        <h1 class="status__title title title--h1">Информация об обращениях</h1>
+        <TableHeskRequests Requests="_issues" Url="private/current-hesk-request-check" />
+    </div>
+</section>
+
+
+@code {
+    /// <summary>
+    /// Пользователь, осуществивший вход
+    /// </summary>
+    private DBUser _user = new();
+
+    /// <summary>
+    /// Комментарий для информационного модального окна
+    /// </summary>
+    private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+    /// <summary>
+    /// Список запросов проверки статусов от организации
+    /// </summary>
+    private XDocument _requests = new();
+
+    private List<XElement> _issues = new();
+
+    private Answer _answer = new(300, "error");
+
+    /// <summary>
+    /// Инициализация страницы
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+    ProtectedBrowserStorageResult<DBUser> _result = await _session.GetAsync<DBUser>("UserDB");
+
+    if (!_result.Success)
+    {
+        _navMngr.NavigateTo("error");
+        return;
+    }
+
+    _user = (await _session.GetAsync<DBUser>("UserDB")).Value!; ;
+
+    var _id = _user.OrganizationId.Equals(1) ? "1" : _user.Organization.LegalPersonId.ToString();
+
+    _answer = await _sender.SendStringAsync(_configuration.GetSection("Links:Hesk").Value.Replace("#", _id), "GET", string.Empty);
+
+    if (!_answer.Equals(200))
+    {
+        try
+        {
+            _requests = XDocument.Parse(_answer.Message);
+        }
+        catch (Exception ex)
+        {
+            _answer = new(300, ex.Message);
+
+        }
+        _issues = _requests.Descendants("issue").ToList();
+    }
+
+    }
+
+
+
+}
+

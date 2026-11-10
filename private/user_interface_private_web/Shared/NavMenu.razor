@@ -1,0 +1,218 @@
+﻿<div class="menu">
+    <AuthorizeView Roles="verification, data-upload, fssp, credit-report-for-state, credit-record-status, editor, debt-rating, employer-rating, prescoring-np-string-rating, tax-service-request, credit-report-for-user, previous-requests, fsspNP, fsspLP, historicalFssp, fsspCetelem, historicalFsspWithFines, fbs-debt-request">
+        <div class="menu__item @MenuItems[4]">
+            <div class="menu__item-content" @onclick="@(() => ItemCLick(4))">
+                <div class="menu__item-icon">
+                    <svg class="ico ico-mono-a2a">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-a2a"></use>
+                    </svg>
+                </div><a class="menu__item-text">Сервисы Бюро</a>
+                <div class="menu__item-arrow">
+                    <svg class="ico ico-mono-arrow-dropdown">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                    </svg>
+                </div>
+            </div>
+            <div class="menu__submenu">
+                <AuthorizeView Roles="data-upload" Context="a2a">
+                    <NavLink class="menu__submenu-item" href="private/uploads">Файлы выгрузки</NavLink>
+                </AuthorizeView>
+                <AuthorizeView Roles="verification,
+fms-document-check,
+debt-rating, employer-rating,
+prescoring-np-string-rating,
+tax-service-request,
+credit-report-for-user, 
+previous-requests, 
+fsspNP, fsspLP, historicalFssp, fsspCetelem, historicalFsspWithFines, 
+fbs-debt-request,
+mia-service-doc-check,
+tax-service-tax-num,
+report-with-bailiffs-debt-info,
+mia-service-reg-check,
+tax-service-tax-num-check,
+pfr-service-social-num-check,
+activity-navigator,
+self-employment-service" Context="a2a">
+                    <NavLink class="menu__submenu-item" href="private/requests-of-bureau">Запросы в Бюро</NavLink>
+                </AuthorizeView>
+                @* <AuthorizeView Roles="credit-report-for-state" Context="a2a">
+                    <NavLink class="menu__submenu-item" href="private/requests-from-government">Запросы для Госорганов</NavLink>
+                </AuthorizeView> *@
+                <AuthorizeView Roles="qbch" Context="a2a">
+                    <NavLink class="menu__submenu-item" href="private/requests-of-qbch">Запросы ССП</NavLink>
+                </AuthorizeView>
+                <AuthorizeView Roles="credit-record-status" Context="a2a">
+                    <NavLink class="menu__submenu-item" href="private/credit-history-check">Информация о договорах</NavLink>
+                </AuthorizeView>
+                <AuthorizeView Roles="hesk" Context="a2a">
+                    <NavLink class="menu__submenu-item" href="private/hesk-requests">Информация об обращениях</NavLink>
+                </AuthorizeView>
+                @* <AuthorizeView Roles="editor" Context="a2a">
+                <NavLink class="menu__submenu-item" href="@_configuration.GetSection("Links:CreditEditor").Value" target="_blank">Редактор КИ</NavLink>
+                </AuthorizeView> *@
+
+            </div>
+        </div>
+    </AuthorizeView>
+
+    <div class="menu__item @MenuItems[0]">
+        <div class="menu__item-content" @onclick="@(() => ItemCLick(0))">
+            <div class="menu__item-icon">
+                <svg class="ico ico-mono-lk">
+                    <use xlink:href="img/sprite-mono.svg#ico-mono-lk"></use>
+                </svg>
+            </div><a class="menu__item-text">Пользовательская информация</a>
+            <div class="menu__item-arrow">
+                <svg class="ico ico-mono-arrow-dropdown">
+                    <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                </svg>
+            </div>
+        </div>
+        <div class="menu__submenu">
+            <NavLink class="menu__submenu-item" href="@($"{_url}/personal")">Личные данные</NavLink>
+            <NavLink class="menu__submenu-item" href="@($"{_url}/user-certificates")">Сертификаты</NavLink>
+            <NavLink class="menu__submenu-item" href="@($"{_url}/requests-parameters")">Параметры запроса в Бюро</NavLink>
+            @*<NavLink class="menu__submenu-item" href="">Параметры запросов ЦККИ</NavLink>
+            <NavLink class="menu__submenu-item" href="">Подписка на рассылки</NavLink>*@
+            <NavLink class="menu__submenu-item" href="@($"{_url}/diagnostic")">Диагностическая страница</NavLink>
+        </div>
+    </div>
+
+    <AuthorizeView Roles="organizations, users, certificates">
+        <div class="menu__item @MenuItems[1]">
+            <div class="menu__item-content" @onclick="@(() => ItemCLick(1))">
+                <div class="menu__item-icon">
+                    <svg class="ico ico-mono-admin">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-admin"></use>
+                    </svg>
+                </div>
+                <a class="menu__item-text">Администрирование</a>
+                <div class="menu__item-arrow">
+                    <svg class="ico ico-mono-arrow-dropdown">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                    </svg>
+                </div>
+            </div>
+            <div class="menu__submenu">
+                <AuthorizeView Roles="organizations" Context="administration">
+                    <NavLink class="menu__submenu-item" href="@($"{_url}/organizations")">Организации</NavLink>
+                </AuthorizeView>
+                <AuthorizeView Roles="users" Context="administration">
+                    <NavLink class="menu__submenu-item" href="@($"{_url}/users")">Пользователи</NavLink>
+                </AuthorizeView>
+                @*<NavLink class="menu__submenu-item" href="">Регистрация</NavLink>*@
+                <AuthorizeView Roles="abonents" Context="administration">
+                    <NavLink class="menu__submenu-item" href="@($"{_url}/abonents")">Абоненты КБКИ</NavLink>
+                </AuthorizeView>
+                <AuthorizeView Roles="certificates" Context="administration">
+                    <NavLink class="menu__submenu-item" href="@($"{_url}/requests-of-certificates")">Запросы сертификатов</NavLink>
+                </AuthorizeView>
+                <AuthorizeView Roles="users" Context="administration">
+                    <NavLink class="menu__submenu-item" href="@($"{_url}/not-uproved-users")">Подтверждение регистрации</NavLink>
+                </AuthorizeView>
+            </div>
+        </div>
+    </AuthorizeView>
+
+    @*<div class="menu__item @MenuItems[2]">
+    <div class="menu__item-content" @onclick="@(() => ItemCLick(2))">
+    <div class="menu__item-icon">
+    <svg class="ico ico-mono-settings">
+    <use xlink:href="img/sprite-mono.svg#ico-mono-settings"></use>
+    </svg>
+    </div><a class="menu__item-text">Настройки</a>
+    <div class="menu__item-arrow">
+    <svg class="ico ico-mono-arrow-dropdown">
+    <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+    </svg>
+    </div>
+    </div>
+    <div class="menu__submenu">
+    <NavLink class="menu__submenu-item" href="">Параметры запросов БКИ</NavLink>
+    <NavLink class="menu__submenu-item" href="">Параметры запросов ЦККИ</NavLink>
+    </div>
+    </div>*@
+
+    <AuthorizeView Roles="documentation">
+        <div class="menu__item @MenuItems[3]">
+            <div class="menu__item-content" @onclick="@(() => ItemCLick(3))">
+                <div class="menu__item-icon">
+                    <svg class="ico ico-mono-documents">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-documents"></use>
+                    </svg>
+                </div><a class="menu__item-text">Документы</a>
+                <div class="menu__item-arrow">
+                    <svg class="ico ico-mono-arrow-dropdown">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                    </svg>
+                </div>
+            </div>
+            <div class="menu__submenu">
+                @* <NavLink class="menu__submenu-item" href="@($"{_url}/contract-documentation")">Договорная документация</NavLink> *@
+                <NavLink class="menu__submenu-item" href="@($"{_url}/developer-documentation")">Документация разработчика</NavLink>
+                <NavLink class="menu__submenu-item" href="@($"{_url}/user-guide")">Документация пользователя</NavLink>
+            </div>
+        </div>
+    </AuthorizeView>
+
+
+
+
+
+    @*<div class="menu__item @MenuItems[5]">
+    <div class="menu__item-content" @onclick="@(() => ItemCLick(5))">
+    <div class="menu__item-icon">
+    <svg class="ico ico-mono-kbki">
+    <use xlink:href="img/sprite-mono.svg#ico-mono-kbki"></use>
+    </svg>
+    </div><a class="menu__item-text">КБКИ</a>
+    <div class="menu__item-arrow">
+    <svg class="ico ico-mono-arrow-dropdown">
+    <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+    </svg>
+    </div>
+    </div>
+    <div class="menu__submenu">
+    <NavLink class="menu__submenu-item" href="">Загрузки</NavLink>
+    <NavLink class="menu__submenu-item" href="">Сервис 1</NavLink>
+    <NavLink class="menu__submenu-item" href="">Сервис 2</NavLink>
+    <NavLink class="menu__submenu-item" href="">Сервис 3</NavLink>
+    </div>
+    </div>
+    <div class="menu__item @MenuItems[6]">
+    <div class="menu__item-content" @onclick="@(() => ItemCLick(6))">
+    <div class="menu__item-icon">
+    <svg class="ico ico-mono-search">
+    <use xlink:href="img/sprite-mono.svg#ico-mono-search"></use>
+    </svg>
+    </div><a class="menu__item-text">Поиск информации</a>
+    <div class="menu__item-arrow">
+    <svg class="ico ico-mono-arrow-dropdown">
+    <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+    </svg>
+    </div>
+    </div>
+    <div class="menu__submenu">
+    <NavLink class="menu__submenu-item" href="">Сервис 1</NavLink><NavLink class="menu__submenu-item" href="">Сервис 2</NavLink>
+    </div>
+    </div>*@
+</div>
+
+@code {
+    private string _url = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _url = _configuration.GetSection("Links:Public").Value;
+    }
+
+
+    private List<string> MenuItems = new List<string>()
+    {
+        "", "", "", "", "active", "", ""
+    };
+
+    private void ItemCLick(byte id) => MenuItems[id] = MenuItems[id].Equals("active") ? string.Empty : "active";
+}
+

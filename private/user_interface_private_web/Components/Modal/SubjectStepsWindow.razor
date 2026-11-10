@@ -1,0 +1,324 @@
+﻿<CascadingValue Name="Disabled" Value="Disabled">
+    @if (Show)
+    {
+    <CommentWindow InfoComment="_comment" />
+
+    <div class="fancybox-container fancybox-is-open fancybox-can-swipe" role="dialog" tabindex="-1" id="fancybox-container-1" style="transition-duration: 366ms;">
+        <div class="fancybox-bg"></div><div class="fancybox-inner">
+            <div class="fancybox-infobar"><span data-fancybox-index="">1</span>&nbsp;/&nbsp;<span data-fancybox-count="">1</span></div>
+            <div class="fancybox-toolbar">
+                <button data-fancybox-zoom="" class="fancybox-button fancybox-button--zoom" title="Zoom" disabled="">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M18.7 17.3l-3-3a5.9 5.9 0 0 0-.6-7.6 5.9 5.9 0 0 0-8.4 0 5.9 5.9 0 0 0 0 8.4 5.9 5.9 0 0 0 7.7.7l3 3a1 1 0 0 0 1.3 0c.4-.5.4-1 0-1.5zM8.1 13.8a4 4 0 0 1 0-5.7 4 4 0 0 1 5.7 0 4 4 0 0 1 0 5.7 4 4 0 0 1-5.7 0z"></path>
+                    </svg>
+                </button><button data-fancybox-play="" class="fancybox-button fancybox-button--play" title="Start slideshow" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 5.4v13.2l11-6.6z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.33 5.75h2.2v12.5h-2.2V5.75zm5.15 0h2.2v12.5h-2.2V5.75z"></path></svg></button><button data-fancybox-thumbs="" class="fancybox-button fancybox-button--thumbs" title="Thumbnails" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.59 14.59h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76H5.65V5.65z"></path></svg></button><button data-fancybox-close="" class="fancybox-button fancybox-button--close" title="Close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 10.6L6.6 5.2 5.2 6.6l5.4 5.4-5.4 5.4 1.4 1.4 5.4-5.4 5.4 5.4 1.4-1.4-5.4-5.4 5.4-5.4-1.4-1.4-5.4 5.4z"></path></svg></button>
+            </div><div class="fancybox-navigation">
+                <button data-fancybox-prev="" class="fancybox-button fancybox-button--arrow_left" title="Previous" disabled=""><div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.28 15.7l-1.34 1.37L5 12l4.94-5.07 1.34 1.38-2.68 2.72H19v1.94H8.6z"></path></svg></div></button><button data-fancybox-next="" class="fancybox-button fancybox-button--arrow_right" title="Next" disabled="">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M15.4 12.97l-2.68 2.72 1.34 1.38L19 12l-4.94-5.07-1.34 1.38 2.68 2.72H5v1.94z"></path>
+                        </svg>
+                    </div>
+                </button>
+            </div><div class="fancybox-stage">
+                <div class="fancybox-slide fancybox-slide--html fancybox-slide--current fancybox-slide--complete" style="">
+                    <div class="popup popup-certificate fancybox-content" id="popup-certificate" style="display: inline-block;">
+                        <div class="popup__top">
+                            <div class="popup__top-icon"><svg class="ico ico-mono-new-request"><use xlink:href="img/sprite-mono.svg#ico-mono-new-request"></use></svg></div>
+                            <div class="popup__top-title">Данные субъекта запроса</div>
+                        </div>
+                        <div class="popup__content">
+                            @*<div class="popup__subtitle @step1">Выберите нужное действие и нажмите кнопку «Далее»</div>*@
+                            <form class="form">
+                                @if (step1)
+                                                {
+                                <div class="popup__step" data-step="1">
+                                    @if (Subject.Body.NaturalPersonSubject is not null)
+                                                        {
+                                    <div class="form__item">
+                                        <div class="caption">ФИО и дата рождения</div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Фамилия*</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.Title!.LastName" required>
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Имя*</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.Title!.FirstName" required>
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Отчество</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.Title!.MiddleName">
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Дата рождения*</div>
+                                            <input type="text" data-format="00.00.0000" @bind="@Subject.Body.NaturalPersonSubject.BirthDate" required>
+                                        </div>
+                                    </div>
+                                    <div class="form__btns">
+                                        <button class="form__btn btn" data-btn="next" type="button" @onclick=@(() => { var _answer = _validator.Check(Subject.Body.NaturalPersonSubject); if (!_answer.Code.Equals(200)) { _comment = new (true, "error", "Информация о договорах", _answer.Message); } else { step1 = false; step2 = true; }})>Далее</button>
+                                    </div>
+                                                        }
+                                                        else
+{
+                                    <div class="form__item">
+                                        @* <div class="caption">Наименование</div> *@
+                                        <div class="form__input">
+                                            <div class="form__input-label">Полное наименование*</div>
+                                            <input type="text" @bind="@Subject.Body.LegalPersonSubject!.Title!.Name!.FullName" required>
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Сокращенное наименование</div>
+                                            <input type="text" @bind="@Subject.Body.LegalPersonSubject!.Title!.Name!.ShortName" required>
+                                        </div>
+                                    </div>
+                                    <div class="form__item">
+                                        @* <div class="caption">Реквизиты</div> *@
+                                        <div class="form__input">
+                                            <div class="form__input-label">ИНН*</div>
+                                            <input type="text" @bind="@Subject.Body.LegalPersonSubject.Title.IndividualTaxpayerNumber" data-format="0000000000" required>
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">ОГРН*</div>
+                                            <input type="text" @bind="@Subject.Body.LegalPersonSubject.Title.PrimaryStateRegistrationNumber" data-format="0000000000000" required>
+                                        </div>
+                                    </div>
+                                    @if (Type.Equals(RequestType.check))
+    {
+                                    <div class="form__btns">
+                                        <button class="form__btn btn btn--green @step2" type="button" @onclick=Method disabled="@Disabled">
+                                            @if (Disabled)
+        {
+                                            <img src="/img/loading.gif" width="20" />
+        }Отправить
+                                        </button>
+                                    </div>
+    }
+}
+                                </div>
+                                                }
+
+                                @if (step2)
+{
+                                @*TODO реализовать возможность добавления несколько документов*@
+                                @if (Subject.Body.NaturalPersonSubject is not null)
+    {
+                                <div class="popup__step" data-step="2">
+                                    <div class="form__item">
+                                        <div class="caption">Документ</div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Тип документа</div>
+                                            <SelectionList ValuesList=@DocTypes
+                                                           OnChange=@((value) => Subject.Body.NaturalPersonSubject.IdentificationDocuments[0]!.DocTypeID = DocTypes.FirstOrDefault(t => t.Value.Equals(value)).Key)
+                                                           SelectionValue=@DocTypes[Subject.Body.NaturalPersonSubject.IdentificationDocuments[0]!.DocTypeID] />
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Серия*</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.IdentificationDocuments[0]!.DocSer">
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Номер*</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.IdentificationDocuments[0]!.DocNum" required>
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Дата выдачи</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.IdentificationDocuments[0]!.DocDate" data-format="00.00.0000">
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Документ выдан (госучреждение)</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.IdentificationDocuments[0]!.DocDelivInstName">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form__btns">
+                                    <button class="form__btn btn" data-btn="prev" type="button" disabled="@Disabled" @onclick=@(() => { step1 = true; step2 = false; })>Назад</button>
+                                    @if (Type.Equals(RequestType.check))
+        {
+                                    <button class="form__btn btn btn--green" type="button" disabled="@Disabled" @onclick=Method>
+                                        @if (Disabled)
+            {
+                                        <img src="/img/loading.gif" width="20" />
+            }
+                                        Отправить
+                                    </button>
+        }
+        else
+        {
+                                    <button class="form__btn btn" data-btn="next" type="button" @onclick=@(() => { step3 = true; step2 = false; })>Далее</button>
+        }
+                                </div>
+
+    }
+}
+
+                                @if (step3)
+{
+                                @if (Type.Equals(RequestType.government))
+    {
+                                <div class="popup__step @step3" data-step="3">
+                                    <div class="form__item">
+                                        <div class="caption">Информация о запросе</div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Тип организации</div>
+                                            <SelectionList ValuesList=@_governments
+                                                           OnChange=@((value) => OnGovernmentChange(value))
+                                                           SelectionValue=@RequestForGovernment!.GovernmentId.GetEnumDescription() />
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Наименование гос. учреждения</div>
+                                            <input type="text" @bind="@RequestForGovernment.GovernmentName" required>
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">№ вх., присвоенный бюро</div>
+                                            <input type="text" @bind="@RequestForGovernment.IncomingRequestId" required>
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Дата регистрации вх.</div>
+                                            <input type="text" @bind="@RequestForGovernment.RequestDate" data-format="00.00.0000" required>
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">№ исходящего</div>
+                                            <input type="text" @bind="@RequestForGovernment.OutgoingResponseId" required>
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">Дата составления запроса</div>
+                                            <input type="text" @bind="@RequestForGovernment.ResponseDate" data-format="date" required>
+                                        </div>
+                                    </div>
+                                </div>
+    }
+
+                                @if (Type.Equals(RequestType.bureau))
+    {
+                                <section class="parameters">
+                                    <div class="l-content">
+                                        @*<form class="form">*@
+                                        <BureauRequestParametersForm Parameters="@RequestParameters" />
+                                        @*</form>*@
+                                    </div>
+                                </section>
+    }
+
+                                <div class="form__btns">
+                                    <button class="form__btn btn" data-btn="prev" type="button" disabled="@Disabled" @onclick=@(() => { step3 = false; step2 = true; })>Назад</button>
+                                    <button class="form__btn btn btn--green" type="button" disabled="@Disabled" @onclick=Method>
+                                        @if (Disabled)
+    {
+                                        <img src="/img/loading.gif" width="20" />
+    }  Отправить
+                                    </button>
+                                </div>
+}
+                            </form>
+                        </div>
+                        <button type="button" data-fancybox-close="" class="fancybox-button fancybox-close-small" title="Close" @onclick=OnClose>
+                            <svg xmlns="http://www.w3.org/2000/svg" version="1" viewBox="0 0 24 24">
+                                <path d="M13 12l5-5-1-1-5 5-5-5-1 1 5 5-5 5 1 1 5-5 5 5 1-1z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="fancybox-caption fancybox-caption--separate">
+                <div class="fancybox-caption__body"></div>
+            </div>
+        </div>
+    </div>
+    }
+</CascadingValue>
+
+@code {
+    [CascadingParameter(Name = "Disabled")] public bool Disabled { get; set; } = false;
+
+/// <summary>
+/// Параметры модального окна
+/// </summary>
+private Comment _comment = new(false, "error", string.Empty, string.Empty);
+
+/// <summary>
+/// Отображение окна
+/// </summary>
+[Parameter] public bool Show { get; set; } = false;
+
+/// <summary>
+/// Запрос в формате бюро
+/// </summary>
+[Parameter] public Request Subject { get; set; } = new();
+
+/// <summary>
+/// Типы документов
+/// </summary>
+private Dictionary<string, string> DocTypes { get; set; } = null!;
+
+/// <summary>
+/// Тип запроса к сервису
+/// </summary>
+[Parameter] public RequestType Type { get; set; } = RequestType.check;
+
+/// <summary>
+/// Метод запроса к сервису
+/// </summary>
+[Parameter] public EventCallback Method { get; set; }
+
+
+[Parameter] public DBRequestForGovernmentByUser? RequestForGovernment { get; set; }
+
+    [Parameter] public ParametersBureau? RequestParameters { get; set; } = new();
+
+/// <summary>
+/// Событие на закрытие формы
+/// </summary>
+[Parameter] public EventCallback OnClose { get; set; }
+
+private bool step1 = true;
+private bool step2 = false;
+private bool step3 = false;
+
+private Dictionary<string, string> _governments = new();
+
+protected override void OnInitialized()
+{
+    DocTypes = _configuration.GetSection("DCodes").GetChildren().ToDictionary(x => x.Key, x => x.Value)!;
+
+    foreach (DBGovernment _gov in Enum.GetValues(typeof(DBGovernment)))
+    {
+    Enum.GetNames(typeof(DBGovernment));
+    _governments.Add(_gov.ToString(), _gov.GetEnumDescription());
+    }
+}
+
+protected async override Task OnParametersSetAsync()
+{
+    if (!Disabled)
+    {
+    step1 = true;
+    step2 = false;
+    step3 = false;
+    }
+    await _jsr.InvokeVoidAsync("mask");
+}
+
+protected async override Task OnAfterRenderAsync(bool firstRender)
+{
+    await _jsr.InvokeVoidAsync("mask");
+}
+
+private void OnGovernmentChange(string value)
+{
+    RequestForGovernment!.GovernmentId = Enum.Parse<DBGovernment>(_governments.FirstOrDefault(t => t.Value.Equals(value)).Key);
+
+    RequestForGovernment.GovernmentName = RequestForGovernment.GovernmentId.GetEnumDescription();
+
+    Subject.Body.RequestAttributes.ResponseCapabilities.CreditReportDetalization = RequestForGovernment.GovernmentId switch
+    {
+    DBGovernment.court => -10001,
+    DBGovernment.preliminary_investigation_authorities => -10002,
+    DBGovernment.financial_manager => -10003,
+    DBGovernment.federal_bailiff_service => -10004,
+    DBGovernment.notary => -10005,
+    DBGovernment.central_bank => -10006,
+    _ => 3
+    };
+
+}
+
+}

@@ -1,0 +1,60 @@
+﻿<div class="documentation-develop__item">
+    <div class="documentation-develop__item-img">
+        <picture>
+            <source srcset="/img/documentation/@(Icon).webp" type="image/webp" />
+            <source srcset="/img/documentation/@(Icon).png" type="image/png" /><img src="/img/documentation/@(Icon).png" alt="lazy" />
+        </picture>
+    </div>
+    <div class="documentation-develop__item-info">
+        <div class="documentation-develop__item-doc">
+            <div class="documentation-develop__item-icon">
+                <svg class="ico ico-color-scheme">
+                    <use xlink:href="img/sprite-color.svg#ico-color-scheme"></use>
+                </svg>
+            </div>
+            @if (Directory.Exists(Folder))
+            {
+                _documents = Directory.GetFiles(Folder).ToList();
+            }
+            else
+            {
+                _documents = new();
+            }
+            @if (_documents.Where(d => !d.EndsWith("html")).Any())
+            {
+            List<string> _list = _documents.Where(d => !d.EndsWith("html")).ToList();
+            <div class="documentation-develop__item-text">
+                @SchemeDescription (
+                @foreach (string _file in _list)
+                {
+                    <a target="_blank" rel="noopener noreferrer" href="@(_file.Replace("wwwroot", string.Empty).Replace("\\", "/"))">@($"{Path.GetFileName(_file)}")</a>
+                    if (!_documents.IndexOf(_file).Equals(_list.Count - 1))
+                    {
+                        <span>, </span>
+                    }
+                }
+                )
+            </div>
+            }
+        </div>
+        @if (Directory.GetFiles(Folder).FirstOrDefault(f => f.EndsWith(".html"))?.Any() ?? false)
+            {
+        <div class="documentation-develop__item-doc">
+            <div class="documentation-develop__item-icon">
+                <svg class="ico ico-color-colors">
+                    <use xlink:href="img/sprite-color.svg#ico-color-colors"></use>
+                </svg>
+            </div>
+            <div class="documentation-develop__item-text"><a href="@($"{Directory.GetFiles(Folder).FirstOrDefault(f => f.EndsWith(".html"))!.Replace("wwwroot", string.Empty).Replace("\\", "/")}")" target="_blank" rel="noopener noreferrer">@Path.GetFileNameWithoutExtension(Directory.GetFiles(Folder).FirstOrDefault(f => f.EndsWith(".html")))</a></div>
+        </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<string> _documents { get; set; } = new();
+    [Parameter] public string Folder { get; set; } = string.Empty;
+    [Parameter] public string SchemeDescription { get; set; } = string.Empty;
+    [Parameter] public string Icon { get; set; } = string.Empty;
+
+}                    

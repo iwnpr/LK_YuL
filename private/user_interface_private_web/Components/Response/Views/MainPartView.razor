@@ -1,0 +1,2152 @@
+﻿<h2 class="document__title document__title--h2 document__title--black">Основная часть кредитной истории</h2>
+
+@if ((_mainPart?.Descendants("AddressOld")?.Any() ?? false) || (_mainPart?.Descendants("AddressInfo")?.Any() ?? false))
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/location.svg" alt="">  Адреса субъекта </span></div>
+
+    @if ((_mainPart?.Descendants("AddressOld")?.Where(x => x.Element("Caption")?.Attribute("ID")?.Value == "1").Any() ?? false) || (_mainPart?.Descendants("AddressInfo")?.Where(a => (a?.Attribute("ActualAddressDif")?.Value ?? a?.Attribute("IsActualAddress")?.Value ?? "0").Equals("0"))?.Any() ?? false))
+    {
+        <div class="document__table-content document__table--general">
+            <table class="document__table">
+                <thead>
+                    <tr>
+                        <td>Адрес регистрации по месту жительства</td>
+                        <td>Дата актуальности</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ad in _mainPart?.Descendants("AddressOld")?.Where(x => x.Element("Caption")?.Attribute("ID")?.Value == "1") ?? Enumerable.Empty<XElement>())
+                    {
+                        <tr>
+                            <td>@ad?.Element("AddressString")?.Value д. @ad?.Element("StreetAddress")?.Attribute("HouseNum")?.Value кв. @ad?.Element("StreetAddress")?.Attribute("FlatNum")?.Value</td>
+                            <td>@ad?.Attribute("ActualityDate")?.Value</td>
+                        </tr>
+                    }
+                    @foreach (var _address in _mainPart?.Descendants("AddressInfo")?.Where(a => (a?.Attribute("ActualAddressDif")?.Value ?? a?.Attribute("IsActualAddress")?.Value ?? "0").Equals("0")) ?? Enumerable.Empty<XElement>())
+                    {
+                        <tr>
+                            <td>
+                                @*индекс @(_address.Element("Address")?.Attribute("PostCode")?.Value ?? "-"), *@
+                                @*страна *@ @(_address.Element("Address")?.Attribute("CountryName")?.Value ?? _address.Element("Address")?.Attribute("AnotherCountryName")?.Value ?? "-"),
+                                @*фиас @(_address.Element("Address")?.Attribute("FiasNum")?.Value ?? "-"), *@
+                                @*нас. пункт*@ @(_address.Element("Address")?.Attribute("LocalityName")?.Value ?? _address.Element("Address")?.Attribute("OtherLocalityName")?.Value ?? "-"),
+                                ул. @(_address.Element("Address")?.Attribute("Street")?.Value ?? "-"),
+                                д. @(_address.Element("Address")?.Attribute("HouseNum")?.Value ?? "-"),
+                                владение @(_address.Element("Address")?.Attribute("Ownership")?.Value ?? "-"),
+                                к. @(_address.Element("Address")?.Attribute("Housing")?.Value ?? "-"),
+                                стр. @(_address.Element("Address")?.Attribute("Building")?.Value ?? "-"),
+                                кв. @(_address.Element("Address")?.Attribute("FlatNum")?.Value ?? "-")
+                            </td>
+                            <td>@_address?.Attribute("ActualityDate")?.Value</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if ((_mainPart?.Descendants("AddressOld")?.Where(x => x.Element("Caption")?.Attribute("ID")?.Value == "2").Any() ?? false) || (_mainPart?.Descendants("AddressInfo")?.Where(a => (a?.Attribute("ActualAddressDif")?.Value ?? a?.Attribute("IsActualAddress")?.Value ?? "0").Equals("1"))?.Any() ?? false))
+    {
+        <div class="document__table-content document__table--general">
+            <table class="document__table">
+                <thead>
+                    <tr>
+                        <td>Адрес фактического проживания</td>
+                        <td>Дата актуальности</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ad in _mainPart?.Descendants("AddressOld")?.Where(x => x.Element("Caption")?.Attribute("ID")?.Value == "2") ?? Enumerable.Empty<XElement>())
+                    {
+                        <tr>
+                            <td>@ad?.Element("AddressString")?.Value д. @ad?.Element("StreetAddress")?.Attribute("HouseNum")?.Value кв. @ad?.Element("StreetAddress")?.Attribute("FlatNum")?.Value</td>
+                            <td>@ad?.Attribute("ActualityDate")?.Value</td>
+                        </tr>
+                    }
+                    @foreach (var _address in _mainPart?.Descendants("AddressInfo")?.Where(a => (a?.Attribute("ActualAddressDif")?.Value ?? a?.Attribute("IsActualAddress")?.Value ?? "0").Equals("1")) ?? Enumerable.Empty<XElement>())
+                    {
+                        <tr>
+                            <td>
+                                @*индекс @(_address.Element("Address")?.Attribute("PostCode")?.Value ?? "-"), *@
+                                @*страна*@ @(_address.Element("Address")?.Attribute("CountryName")?.Value ?? _address.Element("Address")?.Attribute("AnotherCountryName")?.Value ?? "-"),
+                                @*фиас @(_address.Element("Address")?.Attribute("FiasNum")?.Value ?? "-"), *@
+                                @*нас. пункт*@ @(_address.Element("Address")?.Attribute("LocalityName")?.Value ?? _address.Element("Address")?.Attribute("OtherLocalityName")?.Value ?? "-"),
+                                ул. @(_address.Element("Address")?.Attribute("Street")?.Value ?? "-"),
+                                д. @(_address.Element("Address")?.Attribute("HouseNum")?.Value ?? "-"),
+                                владение @(_address.Element("Address")?.Attribute("Ownership")?.Value ?? "-"),
+                                к. @(_address.Element("Address")?.Attribute("Housing")?.Value ?? "-"),
+                                стр. @(_address.Element("Address")?.Attribute("Building")?.Value ?? "-"),
+                                кв. @(_address.Element("Address")?.Attribute("FlatNum")?.Value ?? "-")
+                            </td>
+                            <td>@_address?.Attribute("ActualityDate")?.Value</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+
+@if (_mainPart?.Descendants("Phone")?.Any() ?? false)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/phone-grey.svg" alt="">  Номера телефонов </span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Тип</td>
+                    <td>Номер телефона</td>
+                    <td>Дата актуальности</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var _phone in _mainPart?.Descendants("Phone") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td>@_dictionary.PhoneType[_phone.Attribute("ID")?.Value ?? "-"]</td>
+                        <td>@(_phone.Attribute("Number")?.Value ?? "-")</td>
+                        <td>@(_phone.Attribute("ActualityDate")?.Value ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+@if (_mainPart?.Descendants("EMail")?.Any() ?? false)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/email-grey.svg" alt="">  Адреса электронной почты </span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Электронная почта</td>
+                    <td>Дата актуальности</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var _email in _mainPart?.Descendants("EMail") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td>@(_email.Attribute("address")?.Value ?? "-")</td>
+                        <td>@(_email.Attribute("ActualityDate")?.Value ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+@if (_mainPart?.Descendants("Incapacity").Any() ?? false)
+{
+    <div class="document__caption"><span class="document__table-icon">@*<img src="img/doc-1.svg" alt="">*@  Сведения о дееспособности </span></div>
+
+    <div class="document__list">
+        @foreach (var _incapacity in _mainPart?.Descendants("Incapacity") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/Incapacity.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column" colspan="3">
+                                        <div class="document__column-title">Статус недееспособности:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_dictionary.IncapacityCode[_incapacity.Attribute("Status")!.Value])</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата актуальности:</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(_incapacity.Attribute("ActualityDate")?.Value ?? "-")
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                @foreach (var _courtInfo in _incapacity.Elements("IncapacityCourtInfo") ?? Enumerable.Empty<XElement>())
+                                {
+                                    @if (_courtInfo.Element("CourtInfo") is not null)
+                                    {
+                                        <tr>
+                                            <td class="document__column" colspan="4">
+                                                <div class="document__column-title">Информация решения суда:</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(_incapacity.Elements("IncapacityCourtInfo")?.First()?.Element("CourtInfo")!.Value ?? "-")</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Наименование судебного органа:</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(_courtInfo.Element("CourtData")?.Attribute("Name")?.Value ?? "-")</li>
+                                                </ul>
+                                            </td>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Место нахождения судебного органа:</div>
+                                                <ul class="document__column-text">
+                                                    <li>
+                                                        @(_courtInfo.Element("CourtData")?.Attribute("Locality")?.Value ?? "-")
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Номер дела/решения:</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(_courtInfo.Element("CourtData")?.Attribute("CaseId")?.Value ?? "-")</li>
+                                                </ul>
+                                            </td>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Информация резолютивной части решения/постановления:</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(_courtInfo.Element("CourtData")?.Attribute("Decision")?.Value ?? "-")</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        @foreach (var _date in _courtInfo.Element("CourtData")?.Elements("CourtDate") ?? Enumerable.Empty<XElement>())
+                                        {
+                                            <tr>
+                                                <td class="document__column" colspan="2">
+                                                    <div class="document__column-title">Тип даты:</div>
+                                                    <ul class="document__column-text">
+                                                        <li>@(_dictionary.DateType[_date.Attribute("ID")?.Value ?? "-"])</li>
+                                                    </ul>
+                                                </td>
+                                                <td class="document__column" colspan="2">
+                                                    <div class="document__column-title">Дата:</div>
+                                                    <ul class="document__column-text">
+                                                        <li>
+                                                            @(_date.Attribute("Date")?.Value ?? "-")
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+    </div>
+
+}
+
+
+@if (_mainPart?.Descendants("IndividualEntrepreneur").Any() ?? false)
+{
+    <div class="document__caption"><span class="document__table-icon">@*<img src="img/doc-1.svg" alt="">*@  Сведения о регистрации физического лица в качестве индивидуального предпринимателя </span></div>
+    @foreach (var _individual in _mainPart?.Descendants("IndividualEntrepreneur") ?? Enumerable.Empty<XElement>())
+    {
+        <div class="document__table-content document__table--general">
+            <table class="document__table">
+                <thead>
+                    <tr>
+                        <td>Регистрационный номер</td>
+                        <td>Дата выдачи свидетельства о регистрации индивидуального предпринимателя</td>
+                        <td>Информация о регистрации индивидуального предпринимателя</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@(_individual.Attribute("PSRN")?.Value ?? _individual.Attribute("ForeignRegNumber")?.Value ?? "-")</td>
+                        <td>@(_individual.Attribute("RegDate")?.Value ?? "-")</td>
+                        <td>@(_individual.Attribute("RegData")?.Value ?? "-")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+@if ((_mainPart?.Descendants("Bankruptcy").Any() ?? false) || (_mainPart?.Descendants("BankruptcyOld")?.Any() ?? false))
+{
+    <div class="document__caption"><span class="document__table-icon">@*<img src="img/doc-1.svg" alt="">*@ Сведения о состоянии банкротства субъекта кредитной истории </span></div>
+    <div class="document__list">
+        @foreach (var _bankruptcy in _mainPart?.Descendants("Bankruptcy") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                @*<div class="document__item-title">Сведения о состоянии банкротства субъекта кредитной истории</div>*@
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/Bankruptcy.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Cтадия рассмотрения дела о банкротстве:</div>
+                                        <ul class="document__column-text">
+                                            <li>@_dictionary.BankruptcyStageCode[_bankruptcy.Attribute("StageCode")?.Value ?? "-"]</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата публикации в ЕФРСБ:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_bankruptcy.Attribute("CaseDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Ссылка на публикацию сведений в ЕФРСБ:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_bankruptcy.Attribute("PublicationLink")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Наличие неправомерных действий в деле о банкротстве:</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_bankruptcy.Attribute("IllegalActions")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата публикации в ЕФРСБ сообщения о неправомерных действиях:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_bankruptcy.Attribute("IllegalActionsDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Преднамеренное или фиктивное банкротство:</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_bankruptcy.Attribute("FictitiousBankruptcy")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата публикации в ЕФРСБ сообщения о признаках преднамеренного или фиктивного банкротства:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_bankruptcy.Attribute("FictitiousBankruptcyDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column" colspan="3">
+                                        <div class="document__column-title">Дополнительные сведения по делу:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_bankruptcy.Attribute("AdditionalInfo")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+        @foreach (var _bankruptcy in _mainPart?.Descendants("BankruptcyOld") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                @*<div class="document__item-title">Сведения о состоянии банкротства субъекта кредитной истории</div>*@
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/doc-1.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column" colspan="2">
+                                        <div class="document__column-title">Статус состояния банкротства:</div>
+                                        <ul class="document__column-text">
+                                            <li>@_dictionary.BankruptcyStatusCode[_bankruptcy.Attribute("Status")?.Value ?? "-"]</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column" colspan="1">
+                                        <div class="document__column-title">Дата актуальности:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_bankruptcy.Attribute("CreationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column" colspan="1">
+                                        <div class="document__column-title">Источник КИ:</div>
+                                        <ul class="document__column-text">
+                                            <li>GetOwnerById(_bankruptcy.Attribute("OwnerID")!.Value).Caption</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                @if (_bankruptcy.Element("EFRSBData") is not null)
+                                {
+                                    <tr>
+                                        <td class="document__column" colspan="2">
+                                            <div class="document__column-title">Номер записи о банкротстве на сайте ЕФРСБ:</div>
+                                            <ul class="document__column-text">
+                                                <li>@(_bankruptcy.Element("EFRSBData")?.Attribute("ID")?.Value ?? "-")</li>
+                                            </ul>
+                                        </td>
+                                        <td class="document__column" colspan="2">
+                                            <div class="document__column-title">Дата внесения записи о банкротстве на сайте ЕФРСБ:</div>
+                                            <ul class="document__column-text">
+                                                <li>@(_bankruptcy.Element("EFRSBData")?.Attribute("Date")?.Value ?? "-")</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                }
+                                @foreach (var _info in _bankruptcy.Elements("BankruptcyCourtInfo") ?? Enumerable.Empty<XElement>())
+                                {
+                                    @if (_info.Element("CourtInfo") is not null)
+                                    {
+                                        <tr>
+                                            <td class="document__column" colspan="4">
+                                                <div class="document__column-title">Информация решения суда в текстовом виде:</div>
+                                                <ul class="document__column-text">
+                                                    <li>
+                                                        @(_info.Element("CourtInfo")!.Value)
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Наименование судебного органа:</div>
+                                                <ul class="document__column-text">
+                                                    <li>
+                                                        @(_info.Element("CourtData")?.Attribute("Name")?.Value ?? "-")
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Место нахождения судебного органа:</div>
+                                                <ul class="document__column-text">
+                                                    <li>
+                                                        @(_info.Element("CourtData")?.Attribute("Locality")?.Value ?? "-")
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Номер дела / решения:</div>
+                                                <ul class="document__column-text">
+                                                    <li>
+                                                        @(_info.Element("CourtData")?.Attribute("CaseId")?.Value ?? "-")
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                            <td class="document__column" colspan="2">
+                                                <div class="document__column-title">Информация резолютивной части решения / постановления:</div>
+                                                <ul class="document__column-text">
+                                                    <li>
+                                                        @(_info.Element("CourtData")?.Attribute("Decision")?.Value ?? "-")
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        @foreach (var _date in _info.Elements("CourtDate") ?? Enumerable.Empty<XElement>())
+                                        {
+                                            <tr>
+                                                <td class="document__column">
+                                                    <div class="document__column-title">Тип даты:</div>
+                                                    <ul class="document__column-text">
+                                                        <li>
+                                                            @(_dictionary.DateType[_date.Attribute("ID")?.Value ?? "-"])
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                                <td class="document__column">
+                                                    <div class="document__column-title">Дата:</div>
+                                                    <ul class="document__column-text">
+                                                        <li>
+                                                            @(_date.Attribute("Date")?.Value ?? "-")
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+    </div>
+}
+
+@if (_mainPart?.Descendants("CompletionOfSettlements")?.Any() ?? false)
+{
+    <div class="document__caption"><span class="document__table-icon">@*<img src="img/doc-1.svg" alt="">*@  Сведения о завершении расчетов с кредиторами и освобождении субъекта от исполнения обязательств в связи с банкротством </span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Дата завершения расчетов с кредиторами</td>
+                    @*<td>Освобождение от исполнения требований кредиторов</td>*@
+                    <td>Дата освобождения от исполнения требований кредиторов</td>
+                    <td>Дата восстановления обязательства</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var _settlement in _mainPart?.Descendants("CompletionOfSettlements") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td>@(_settlement.Attribute("CompletionOfSettlementsDate")?.Value ?? "-")</td>
+                        @*<td>@((_settlement.Attribute("ObligationsExcemptionFlag")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</td>*@
+                        <td>@(_settlement.Attribute("ObligationsExcemptionDate")?.Value ?? "-")</td>
+                        <td>@(_settlement.Attribute("ObligationsRestorationDate")?.Value ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@foreach (var _credit in _mainPart?.Descendants("CreditContractRecord").Where(c => !c.Descendants("AMPQCB").Any()) ?? Enumerable.Empty<XElement>())
+{
+    <div class="document__caption">
+        <span class="document__table-icon">
+            @*<img src="img/doc-1.svg" alt="">*@  Договор @(_credit.Attribute("CreditContractNum")?.Value ?? string.Empty)
+        </span>
+    </div>
+    <div class="document__list">
+
+        @*Общие сведения о договоре*@
+        <div class="document__list-item">
+            <div class="document__item-title">Общие сведения о сделке:</div>
+            <table class="document__list-content">
+                <tr>
+                    <td class="document__list-icon"><img src="img/doc-id.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column" colspan="3">
+                                    <div class="document__column-title">Уникальный идентификатор договора (сделки):</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Attribute("CreditContractUID")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" colspan="2">
+                                    <div class="document__column-title">Дата последнего обновления информации по договору:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Attribute("LastUpdateInfoDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="document__list-content">
+                <tr>
+                    <td class="document__list-icon"><img src="img/CreditDeal.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата совершения сделки:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("OpenDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Вид участия в сделке:</div>
+                                    <ul class="document__column-text">
+                                        <li>@_dictionary.ParticipationCode[_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("ParticipationCode")?.Value ?? "-"]</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Тип сделки:</div>
+                                    <ul class="document__column-text">
+                                        <li>@_dictionary.DealTypeCode[_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("DealTypeCode")?.Value ?? "-"]</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Вид займа (кредита):</div>
+                                    <ul class="document__column-text">
+                                        <li>@_dictionary.CreditTypeCode[_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("CreditTypeCode")?.Value ?? "-"]</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column" colspan="@(_titlePart?.Element("NaturalPersonSubject") is not null ? "1" : "2")">
+                                    <div class="document__column-title">Цель займа:</div>
+                                    <ul class="document__column-text">
+                                        <li>@_dictionary.PurposeCode[_credit.Elements("CreditDeal")?.FirstOrDefault()?.Element("PurposeCode")?.Value ?? "-"]</li>
+                                    </ul>
+                                </td>
+                                @if (_titlePart?.Element("NaturalPersonSubject") is not null)
+                                {
+                                    <td class="document__column">
+                                        <div class="document__column-title">Признак потребительского кредита (займа)</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("ConsumerCredit")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                        </ul>
+                                    </td>
+                                }
+                                <td class="document__column">
+                                    <div class="document__column-title">Признак использования платежной карты:</div>
+                                    <ul class="document__column-text">
+                                        <li>@((_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("PaymentCard")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Признак возникновения обязательства в результате новации:</div>
+                                    <ul class="document__column-text">
+                                        <li>@((_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("ContractNovation")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Признак денежного обязательства источника:</div>
+                                    <ul class="document__column-text">
+                                        <li>@((_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("MonetaryObligationOfTheSource")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Признак денежного обязательства субъекта:</div>
+                                    <ul class="document__column-text">
+                                        <li>@((_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("MonetaryObligationOfTheSubject")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Число солидарных должников:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Attribute("NumberOfJointDebtors")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата прекращения обязательства по договору:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("EstimatedCloseDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата возникновения обязательства субъекта:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("ObligationDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Вида кредитора - заимодавца:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_dictionary.CreditorType[_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("CreditorType")?.Value ?? "-"])</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Признак возникновения обязательства в результате получения части прав кредитора от другого лица:</div>
+                                    <ul class="document__column-text">
+                                        <li>@((_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("GettingPartialRights")?.Value ?? "0").Equals("0") ? "Нет" : "Да")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Признак кредитной линии:</div>
+                                    <ul class="document__column-text">
+                                        <li>@((_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("CreditLine")?.Value ?? "0").Equals("0") ? "Нет" : "Да")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Тип кредитной линии:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_dictionary.CreditLineType[_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("CreditLineType")?.Value ?? "-"])</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Признак плавающей (переменной) процентной ставки:</div>
+                                    <ul class="document__column-text">
+                                        <li>@((_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("FloatingInterestRate")?.Value ?? "0").Equals("0") ? "Нет" : "Да")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Признак частичной передачи прав кредитора другому лицу:</div>
+                                    <ul class="document__column-text">
+                                        <li>@((_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("PartialRightsTransfered")?.Value ?? "0").Equals("0") ? "Нет" : "Да")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">УИд сделки, по которой права кредитора частично переданы другому лицу:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("CreditDeal")?.FirstOrDefault()?.Attribute("PartialRightsTransferedUid")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        @*Сумма и валюта обязательства*@
+        <div class="document__list-item">
+            <div class="document__item-title">Сумма и валюта обязательства:</div>
+            <table class="document__list-content">
+                <tr>
+                    <td class="document__list-icon"><img src="img/ContractPayment.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма обязательства субъекта кредитной истории:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("CreditSum")?.FirstOrDefault()?.Attribute("ContractTotal")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма обеспечиваемого обязательства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("CreditSum")?.FirstOrDefault()?.Attribute("AmountOfSecuredObligation")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("SecuredObligationCurrency")?.Value ?? "")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Тип обеспечиваемого обязательства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("CreditSum")?.FirstOrDefault()?.Attribute("SecuredObligationType")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата расчета:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("CreditSum")?.FirstOrDefault()?.Attribute("CalculationDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" colspan="2">
+                                    <div class="document__column-title">УИд сделки, в результате которой возникло обеспечиваемое обязательство:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("CreditSum")?.FirstOrDefault()?.Attribute("SecuredObligationUid")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        @*Полная стоимость потребительского кредита (займа)*@
+        @if (_credit.Elements("CreditTotalSum")?.Any() ?? false)
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Полная стоимость потребительского кредита (займа):</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/ContractPayment.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Полная стоимость кредита (займа) в процентах годовых:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_credit.Elements("CreditTotalSum")?.FirstOrDefault()?.Attribute("ContractTotalPercents")?.Value ?? "-") %</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Полная стоимость кредита (займа) в денежном выражении:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_credit.Elements("CreditTotalSum")?.FirstOrDefault()?.Attribute("ContractTotalAmount")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата расчета полной стоимости кредита (займа):</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_credit.Elements("CreditTotalSum")?.FirstOrDefault()?.Attribute("ContractTotalDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        @*Сведения о платежах по договору*@
+        <div class="document__list-item">
+            <div class="document__item-title">Сведения о платежах по договору:</div>
+            <table class="document__list-content">
+                <tr>
+                    <td class="document__list-icon"><img src="img/ContractPayment.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма всех внесенных платежей по обязательству:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("MakingPayment")?.FirstOrDefault()?.Attribute("AllPaymentsSum")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма всех внесенных платежей по основному долгу:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("MakingPayment")?.FirstOrDefault()?.Attribute("AllPaymentsSumPrincipal")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма всех внесенных платежей по процентам:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("MakingPayment")?.FirstOrDefault()?.Attribute("AllPaymentsSumInterest")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма всех внесенных платежей по иным требованиям:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("MakingPayment")?.FirstOrDefault()?.Attribute("AllPaymentsSumOther")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма и дата ближайшего следующего платежа по основному долгу:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("PaymentConditions")?.FirstOrDefault()?.Attribute("NextPrincipalPaymentSum")?.Value ?? "-") @(_credit.Elements("CreditSum")?.FirstOrDefault()?.Attribute("Currency")?.Value ?? "") / @(_credit.Elements("PaymentConditions")?.FirstOrDefault()?.Attribute("NextPrincipalPaymentDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма и дата ближайшего следующего платежа по процентам:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("PaymentConditions")?.FirstOrDefault()?.Attribute("NextInterestPaymentSum")?.Value ?? "-") @(_credit.Elements("CreditSum")?.FirstOrDefault()?.Attribute("Currency")?.Value ?? "") / @(_credit.Elements("PaymentConditions")?.FirstOrDefault()?.Attribute("NextInterestPaymentDate")?.Value ?? "-") </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" colspan="2">
+                                    <div class="document__column-title">Частота платежей:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_dictionary.FrequencyCode[_credit.Elements("PaymentConditions")?.FirstOrDefault()?.Attribute("PaymentFrequencyCode")?.Value ?? "-"])</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма минимального платежа по кредитной карте:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("PaymentConditions")?.FirstOrDefault()?.Attribute("MinCardPaymentSum")?.Value ?? "-") @(_credit.Elements("CreditSum")?.FirstOrDefault()?.Attribute("Currency")?.Value ?? "")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата начала беспроцентного периода:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("PaymentConditions")?.FirstOrDefault()?.Attribute("FreeOfChargePeriodStartDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата окончания беспроцентного периода:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("PaymentConditions")?.FirstOrDefault()?.Attribute("FreeOfChargePeriodEndDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата окончания срока уплаты процентов:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("PaymentConditions")?.FirstOrDefault()?.Attribute("ExpirationInterestDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        @*Сведения об изменении договора*@
+        @foreach (var _change in _credit.Descendants("CreditContractChange") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения об изменении договора:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/CreditContractChange.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата изменения договора:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_change.Attribute("ChangesDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Вид изменения договора:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_dictionary.ChangeCode[_change.Attribute("ChangeCode")?.Value ?? "-"])</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Cпециальное изменение договора:</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_dictionary.SpecialChangeCode[_change.Attribute("ChangeCode")?.Value ?? "-"])[_change.Attribute("SpecialChangeCode")?.Value ?? "-"])</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата вступления изменения договора в силу:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_change.Attribute("ChangesStartDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="document__column" colspan="4">
+                                        <div class="document__column-title">Описание иного изменения договора:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_change.Attribute("OtherChange")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата планового прекращения действия изменения договора:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_change.Attribute("ChangesExpirationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата фактического прекращения действия изменения договора:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_change.Attribute("ChangesTerminationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Причина прекращения действия изменения договора:</div>
+                                        <ul class="document__column-text">
+                                            <li>@_dictionary.PledgeTerminationReason[_change.Attribute("ChangesTerminationCode")?.Value ?? "-"]</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Конверсия валюты долга:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_change.Attribute("CurrencyConversionRate")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        @*Сведения о передаче финансирования субъекту или о возникновении обеспечения исполнения обязательства*@
+        @if (_credit.Descendants("FundingTransferInfo").Any())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения о передаче финансирования субъекту или о возникновении обеспечения исполнения обязательства:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/doc-status-time.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                @foreach (var item in _credit.Descendants("FundingTransferInfo"))
+                                {
+                                    <tr>
+                                        <td class="document__column">
+                                            <div class="document__column-title">Дата передачи финансирования субъекту или возникновения обеспечения исполнения обязательства:</div>
+                                            <ul class="document__column-text">
+                                                <li>@(item.Attribute("TransferOfFundingDate")?.Value ?? "-")</li>
+                                            </ul>
+                                        </td>
+                                        <td class="document__column">
+                                            <div class="document__column-title">Порядковый номер транша:</div>
+                                            <ul class="document__column-text">
+                                                <li>@(item.Attribute("TrancheNumber")?.Value ?? "-")</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+        @if (_credit.Attribute("TransferOfFundingDate") is not null)
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения о передаче финансирования субъекту или о возникновении обеспечения исполнения обязательства:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/doc-status-time.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата передачи финансирования субъекту или возникновения обеспечения исполнения обязательства:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_credit.Attribute("TransferOfFundingDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Порядковый номер транша:</div>
+                                        <ul class="document__column-text">
+                                            <li>-</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        @if (_credit.Elements("AMP")?.Any() ?? false)
+        {
+            @*Сведения о среднемесячном платеже по договору займа (кредита)*@
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения о среднемесячном платеже по договору займа (кредита):</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/ContractPayment.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Величина среднемесячного платежа:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_credit.Elements("AMP")?.FirstOrDefault()?.Attribute("AMPSum")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата расчета величины среднемесячного платежа:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_credit.Elements("AMP")?.FirstOrDefault()?.Attribute("AMPCalculationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+
+        @*Сведения о неденежном обязательстве источника КИ*@
+        @foreach (var _surety in _credit.Descendants("ObligationSrc") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__item-title">Сведения о неденежном обязательстве источника КИ:</div>
+            <table class="document__list-content">
+                <tr>
+                    <td class="document__list-icon"><img src="img/Pledge.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Тип предоставляемого имущества:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_dictionary.PledgeCode[_surety.Attribute("ProvidedPropertyCode")?.Value ?? "-"])</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Предмет обязательства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_surety.Attribute("SubjectObligation")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            @* <tr>
+                    <td class="document__column" colspan="2">
+                    <div class="document__column-title">Объект предоставления:</div>
+                    <ul class="document__column-text">
+                    <li>@(_surety.Attribute("ProvisionObject")?.Value ?? "-")</li>
+                    </ul>
+                    </td>
+                    </tr> *@
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата передачи имущества субъекту кредитной истории:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_surety.Attribute("PropertyTransferDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Идентификационный код предоставляемого имущества:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_surety.Attribute("ProvidedPropertyId")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        }
+
+
+        @*Сведения о неденежном обязательстве субъекта КИ*@
+        @foreach (var _surety in _credit.Descendants("ObligationSub") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__item-title">Сведения о неденежном обязательстве субъекта КИ:</div>
+            <table class="document__list-content">
+                <tr>
+                    <td class="document__list-icon"><img src="img/Pledge.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Предмет обязательства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_surety.Attribute("SubjectObligation")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                @* <td class="document__column">
+                        <div class="document__column-title">Объект предоставления:</div>
+                        <ul class="document__column-text">
+                        <li>@(_surety.Attribute("ProvisionObject")?.Value ?? "-")</li>
+                        </ul>
+                        </td> *@
+                                <td class="document__column">
+                                    <div class="document__column-title">Порядок исполнения обязательства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_surety.Attribute("ExecutionOrderOfObligation")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Признак ненадлежащего исполнения обязательства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@((_surety.Attribute("ImproperExecutionOfObligation")?.Value ?? "0").Equals("0") ? "Нет" : "Да")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Код полученного имущества:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_surety.Attribute("ReceivedPropertyCode")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        }
+
+
+        @*Сведения о залоге*@
+        @foreach (var _pledge in _credit.Descendants("Pledge") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения о залоге:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/Pledge.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Предмет залога:</div>
+                                        <ul class="document__column-text">
+                                            <li>@_dictionary.PledgeCode[_pledge.Attribute("PledgeSubjectCode")?.Value ?? "-"]</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата заключения договора залога:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_pledge.Attribute("PledgeDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Оценочная стоимость предмета залога:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_pledge.Attribute("PledgeEstimateAmount")?.Value ?? "-") @(_pledge.Attribute("PledgeCurrency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата проведения оценки стоимости залога:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_pledge.Attribute("PledgeEstimateDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата окончания действия договора залога:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_pledge.Attribute("PledgeExpirationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата фактического прекращения залога:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_pledge.Attribute("PledgeTerminationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column" colspan="2">
+                                        <div class="document__column-title">Причина прекращения залога:</div>
+                                        <ul class="document__column-text">
+                                            <li>@_dictionary.PledgeTerminationReason[_pledge.Attribute("PledgeTerminationReason")?.Value ?? "-"]</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сумма обязательств по всем договорам, исполнение которых обеспечено предметом залога:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_pledge.Attribute("PledgeAllObligationsSum")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Количество договоров, исполнение обязательств по которым обеспечено предметом залога:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_pledge.Attribute("PledgeContractsNumber")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column" colspan="2">
+                                        <div class="document__column-title">Вид стоимости предмета залога:</div>
+                                        <ul class="document__column-text">
+                                            <li>@_dictionary.PledgeTerminationReason[_pledge.Attribute("PledgeSubjectCostType")?.Value ?? "-"]</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+
+        @*Сведения о поручительстве*@
+        @foreach (var _surety in _credit.Descendants("Surety") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__item-title">Сведения о поручительстве:</div>
+            <table class="document__list-content">
+                <tr>
+                    <td class="document__list-icon"><img src="img/Surety.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Уникальный идентификатор договора поручительства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_surety.Attribute("SuretyContractUID")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Размер поручительства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_surety.Attribute("SuretyAmount")?.Value ?? "-") @(_surety.Attribute("SuretyCurrency")?.Value ?? "")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата заключения договора поручительства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_surety.Attribute("SuretyContractDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата прекращения поручительства согласно договору:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_surety.Attribute("SuretyExpirationDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата фактического прекращения поручительства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_surety.Attribute("SuretyTerminationDate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Причина прекращения поручительства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@_dictionary.PledgeTerminationReason[_surety.Attribute("SuretyTerminationReason")?.Value ?? "-"]</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        }
+
+        @*Сведения о независимой гарантии*@
+        @foreach (var _guarantee in _credit.Descendants("IndependentGuarantee") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения о независимой гарантии:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/IndependentGuarantee.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Уникальный идентификатор договора независимой гарантии:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_guarantee.Attribute("IndependentGuaranteeUID")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сумма и валюта независимой гарантии:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_guarantee.Attribute("IndependentGuaranteeAmount")?.Value ?? "-") @(_guarantee.Attribute("IndependentGuaranteeCurrency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата выдачи независимой гарантии:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_guarantee.Attribute("IndependentGuaranteeDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата окончания независимой гарантии согласно ее условиям:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_guarantee.Attribute("IndependentGuaranteeExpirationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата фактического прекращения независимой гарантии:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_guarantee.Attribute("IndependentGuaranteeTerminationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Причина прекращения независимой гарантии:</div>
+                                        <ul class="document__column-text">
+                                            <li>@_dictionary.PledgeTerminationReason[_guarantee.Attribute("IndependentGuaranteeTerminationReason")?.Value ?? "-"]</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        @*Сведения о страховании предмета залога*@
+        @foreach (var _insurance in _credit.Descendants("PledgeInsurance") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения о страховании предмета залога:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/PledgeInsurance.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Лимит и валюта страховых выплат:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_insurance.Attribute("PaymentsLimit")?.Value ?? "-") @(_insurance.Attribute("PledgeInsuranceCurrency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Наличие франшизы:</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_insurance.Attribute("HasFranchise")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата начала действия страхования:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_insurance.Attribute("PledgeInsuranceStartDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Идентификационный код предмета залога:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_insurance.Attribute("PledgeSubjectId")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата окончания действия страхования согласно договору:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_insurance.Attribute("PledgeInsuranceExpirationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата фактического прекращения страхования:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_insurance.Attribute("PledgeInsuranceTerminationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column" colspan="2">
+                                        <div class="document__column-title">Причина прекращения страхования:</div>
+                                        <ul class="document__column-text">
+                                            <li>@_dictionary.PledgeTerminationReason[_insurance.Attribute("PledgeInsuranceTerminationReason")?.Value ?? "-"]</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        @*Сведения о погашении требований кредитора по обязательству за счет обеспечения*@
+        @foreach (var _repayment in _credit.Descendants("ObligationRepayment") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения о погашении требований кредитора по обязательству за счет обеспечения:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/ObligationRepayment.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Тип обеспечения:</div>
+                                        <ul class="document__column-text">
+                                            <li>@_dictionary.ObligationCode[_repayment.Attribute("PledgeCode")?.Value ?? "-"]</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата погашения требований за счет обеспечения:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_repayment.Attribute("Date")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сумма требований, погашенных за счет обеспечения:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_repayment.Attribute("Sum")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        @*Сведения о возмещении принципалом гаранту выплаченной суммы*@
+        @foreach (var _paid in _credit.Descendants("PaidSumReimbursement") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения о возмещении принципалом гаранту выплаченной суммы:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/PaidSumReimbursement.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сумма, подлежащая возмещению:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_paid.Attribute("ReimbursementSum")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сумма, выплаченная принципалом:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_paid.Attribute("SumPaidByPrincipal")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Соблюдение порядка возмещения:</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_paid.Attribute("ObedienceOfReimbursementProcedure")?.Value ?? "0").Equals("1") ? "Да" : "Нет") </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата расчета:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_paid.Attribute("СalculationDate")?.Value ?? "-") </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        @*Сведения о прекращении обязательства*@
+        @if (_credit.Descendants("ObligationTerm").Any())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения о прекращении обязательства:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/doc-status-like.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Основание прекращения обязательства:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_dictionary.OtReasonCode[_credit.Elements("ObligationTerm")?.FirstOrDefault()?.Attribute("TerminationReasonCode")?.Value ?? "-"])</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата фактического прекращения обязательства:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_credit.Elements("ObligationTerm")?.FirstOrDefault()?.Attribute("TerminationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+
+        @*Сведения о судебном споре или требовании по обязательству*@
+        @foreach (var _litigation in _credit.Descendants("Litigation") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения о судебном споре или требовании по обязательству:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/Litigation.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Наличие судебного акта:</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_litigation.Attribute("Judgement")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата принятия судебного акта:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_litigation.Attribute("JudgementDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Номер судебного акта:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_litigation.Attribute("JudgementNumber")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Вступление акта в законную силу:</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_litigation.Attribute("JudgementIntoForce")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column" colspan="2">
+                                        <div class="document__column-title">Резолютивная часть судебного акта:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_litigation.Attribute("JudgementOperativePart")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        @foreach (var _source in _credit.Descendants("SourceBankruptcy") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения об обязательстве, если в отношении источника формирования кредитных историй открыто конкурсное производство:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/SourceBankruptcy.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сумма задолженности на дату открытия конкурсного производства:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("DebtSumAtStartDate")?.Value ?? "-") @(_source.Attribute("DebtCurrency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата открытия конкурсного производства:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("StartDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сумма задолженности на дату завершения конкурсного производства:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("DebtSumAtTerminationDate")?.Value ?? "-") @(_source.Attribute("DebtCurrency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата завершения конкурсного производства:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("TerminationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сумма задолженности на дату последнего внесенного платежа:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("DebtSumAtLastPaymentDate")?.Value ?? "-") @(_source.Attribute("DebtCurrency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата последнего внесенного платежа:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("LastPaymentDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Переход прав кредитора к другому лицу:</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_source.Attribute("CreditorRightsTransfered")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Обязательство прекращено:</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_source.Attribute("ObligationTerminated")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column" colspan="2">
+                                        <div class="document__column-title">Основание прекращения обязательства:</div>
+                                        <ul class="document__column-text">
+                                            <li>@_dictionary.OtReasonCode[_source.Attribute("ObligationTerminationReasonCode")?.Value ?? "-"]</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        @foreach (var _source in _credit.Descendants("SourceLiquidation") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения об обязательстве, если источник формирования кредитных историй находится в процессе ликвидации:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/SourceLiquidation.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сумма задолженности на дату начала ликвидации:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("DebtSumAtStartDate")?.Value ?? "-")  @(_source.Attribute("DebtCurrency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата начала ликвидации:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("StartDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сумма задолженности на дату утверждения ликвидационного баланса:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("DebtSumAtTerminationDate")?.Value ?? "-")  @(_source.Attribute("DebtCurrency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата утверждения ликвидационного баланса:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("TerminationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сумма задолженности на дату последнего внесенного платежа:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("DebtSumAtLastPaymentDate")?.Value ?? "-") @(_source.Attribute("DebtCurrency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата последнего внесенного платежа:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_source.Attribute("LastPaymentDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Переход прав кредитора к другому лицу:</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_source.Attribute("CreditorRightsTransfered")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Обязательство прекращено:</div>
+                                        <ul class="document__column-text">
+                                            <li>@((_source.Attribute("ObligationTerminated")?.Value ?? "-").Equals("1") ? "Да" : "Нет")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column" colspan="2">
+                                        <div class="document__column-title">Основание прекращения обязательства:</div>
+                                        <ul class="document__column-text">
+                                            <li>@_dictionary.OtReasonCode[_source.Attribute("ObligationTerminationReasonCode")?.Value ?? "-"]</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        @foreach (var _process in _credit.Descendants("ProcessingTermination") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения о прекращении передачи информации источником формирования кредитной истории:</div>
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/ProcessingTermination.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Причина прекращения передачи информации:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_dictionary.ProcessTermination[_process.Attribute("Type")?.Value ?? "-"])</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата прекращения передачи:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_process.Attribute("Date")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+
+        @*Сведения об учете обязательства, о льготном финансировании с государственной поддержкой и процентной ставке*@
+        <div class="document__list-item">
+            <div class="document__item-title">Сведения об учете обязательства, о льготном финансировании с государственной поддержкой и процентной ставке:</div>
+            <table class="document__list-content">
+                <tr>
+                    <td class="document__list-icon"><img src="img/ContractPayment.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Признак учета обязательства:</div>
+                                    <ul class="document__column-text">
+                                        <li>@((_credit.Elements("ObligationAccountingInfo")?.FirstOrDefault()?.Attribute("ObligationAccounting")?.Value ?? _credit.Attribute("ObligationAccounting")?.Value ?? "0").Equals("0") ? "Нет" : "Да")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Процентная ставка:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("ObligationAccountingInfo")?.FirstOrDefault()?.Attribute("InterestRate")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма обязательства, учтенная на внебалансовых счетах:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("ObligationAccountingInfo")?.FirstOrDefault()?.Attribute("ObligationSumOffBalance")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Признак льготного финансирования с государственной поддержкой:</div>
+                                    <ul class="document__column-text">
+                                        <li>@((_credit.Elements("ObligationAccountingInfo")?.FirstOrDefault()?.Attribute("StateSupport")?.Value ?? "0").Equals("0") ? "Нет" : "Да")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" colspan="2">
+                                    <div class="document__column-title">Информация о программе государственной поддержки:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Elements("ObligationAccountingInfo")?.FirstOrDefault()?.Attribute("StateSupportProgram")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+    </div>
+
+
+
+
+    <div class="document__content">
+        <div class="document__item-title">Сведения о сумме задолженности:</div>
+    </div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Дата расчёта</td>
+                    <td>Дата возникновения срочной задолженности</td>
+                    <td>Сумма срочной задолженности</td>
+                    <td>1. Сумма по основному долгу, <br /> 2. по процентам <br /> 3. иным требованиям</td>
+                    <td>Дата возникновения просроченной задолженности</td>
+                    <td>Сумма просроченной задолженности</td>
+                    <td>1. Сумма по основному долгу, <br /> 2. по процентам <br /> 3. иным требованиям</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var _payment in _credit.Descendants("CreditDebt") ?? Enumerable.Empty<XElement>())
+                {
+
+                    <tr>
+                        <td>@(_payment.Attribute("CalculationDate")?.Value ?? "-")</td>
+                        <td>
+                            @(_credit.Descendants("CreditUrgentDebt").First(d => d.Attribute("CreditDebtId")!.Value.Equals(_payment.Attribute("CreditDebtId")!.Value)).Attribute("UrgentDebtDate")?.Value ?? "-")
+                        </td>
+                        <td>
+                            @(_credit.Descendants("CreditUrgentDebt").First(d => d.Attribute("CreditDebtId")!.Value.Equals(_payment.Attribute("CreditDebtId")!.Value)).Attribute("UrgentDebtSum")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "")
+                        </td>
+                        <td>
+                            (1) @(_credit.Descendants("CreditUrgentDebt").First(d => d.Attribute("CreditDebtId")!.Value.Equals(_payment.Attribute("CreditDebtId")!.Value)).Attribute("UrgentDebtSumPrincipal")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? ""); <br />
+                            (2) @(_credit.Descendants("CreditUrgentDebt").First(d => d.Attribute("CreditDebtId")!.Value.Equals(_payment.Attribute("CreditDebtId")!.Value)).Attribute("UrgentDebtSumInterest")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? ""); <br />
+                            (3) @(_credit.Descendants("CreditUrgentDebt").First(d => d.Attribute("CreditDebtId")!.Value.Equals(_payment.Attribute("CreditDebtId")!.Value)).Attribute("UrgentDebtSumOther")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "");
+                        </td>
+                        <td>
+                            @(_credit.Descendants("CreditOverdueDebt").First(d => d.Attribute("CreditDebtId")!.Value.Equals(_payment.Attribute("CreditDebtId")!.Value)).Attribute("OverdueDebtDate")?.Value ?? "-")
+                        </td>
+                        <td>
+                            @(_credit.Descendants("CreditOverdueDebt").First(d => d.Attribute("CreditDebtId")!.Value.Equals(_payment.Attribute("CreditDebtId")!.Value)).Attribute("OverdueDebtSum")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "")
+                        </td>
+                        <td>
+                            (1) @(_credit.Descendants("CreditOverdueDebt").First(d => d.Attribute("CreditDebtId")!.Value.Equals(_payment.Attribute("CreditDebtId")!.Value)).Attribute("OverdueDebtSumPrincipal")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? ""); <br />
+                            (2) @(_credit.Descendants("CreditOverdueDebt").First(d => d.Attribute("CreditDebtId")!.Value.Equals(_payment.Attribute("CreditDebtId")!.Value)).Attribute("OverdueDebtSumInterest")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? ""); <br />
+                            (3) @(_credit.Descendants("CreditOverdueDebt").First(d => d.Attribute("CreditDebtId")!.Value.Equals(_payment.Attribute("CreditDebtId")!.Value)).Attribute("OverdueDebtSumOther")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "");
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="document__content">
+        <div class="document__item-title">Фактические платежи по договору:</div>
+        <table class="document__statuses">
+            <tr>
+                <td class="document__status">
+                    <span class="document__status-icon"><img src="img/status-1.svg" alt=""></span>
+                    <span class="document__status-text">Платеж внесен своевременно и в полном объеме.</span>
+                </td>
+                <td class="document__status">
+                    <span class="document__status-icon"><img src="img/status-5.svg" alt=""></span>
+                    <span class="document__status-text">Платеж внесен своевременно и в неполном объеме.</span>
+                </td>
+                <td class="document__status">
+                    <span class="document__status-icon"><img src="img/status-2.svg" alt=""></span>
+                    <span class="document__status-text">Платеж внесен несвоевременно и в полном объеме.</span>
+                </td>
+                <td class="document__status">
+                    <span class="document__status-icon"><img src="img/status-3.svg" alt=""></span>
+                    <span class="document__status-text">Платеж внесен несвоевременно и в неполном объеме.</span>
+                </td>
+                <td class="document__status">
+                    <span class="document__status-icon"><img src="img/status-4.svg" alt=""></span>
+                    <span class="document__status-text">Платеж не внесен.<br /><br /><br /></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Дата последнего платежа</td>
+                    <td>Статус платежа</td>
+                    <td>Сумма платежа</td>
+                    <td>1. Сумма по основному долгу, <br /> 2. по процентам <br /> 3. иным требованиям</td>
+                    <td>Просрочка (дн)</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var _payment in _credit.Descendants("MakingPayment") ?? Enumerable.Empty<XElement>())
+                {
+                    @if (_payment.Attribute("LastPaymentDate")?.Value is not null && _payment.Attribute("DurationOfOverdue")?.Value is not null)
+                    {
+                        <tr>
+                            <td>@(_payment.Attribute("LastPaymentDate")?.Value ?? "-")</td>
+                            <td>
+                                @switch (_payment.Attribute("PaymentsDeadlineObservanceCode")?.Value, _payment.Attribute("PaymentsSumObservanceCode")?.Value)
+                                {
+                                    case ("1", "1"):
+                                        <img src="img/status-1.svg">
+                                        break;
+                                    case ("2", "1"):
+                                        <img src="img/status-1.svg">
+                                        break;
+                                    case ("2", "2"):
+                                        <img src="img/status-5.svg">
+                                        break;
+                                    case ("3", "1"):
+                                        <img src="img/status-2.svg">
+                                        break;
+                                    case ("3", "2"):
+                                        <img src="img/status-3.svg">
+                                        break;
+                                    case ("3", "3"):
+                                        <img src="img/status-4.svg">
+                                        break;
+                                    default:
+                                        <img src="img/status-5.svg">
+                                        break;
+                                }
+                            </td>
+                            <td>@(_payment.Attribute("LastPaymentSum")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "")</td>
+                            <td>
+                                (1) @(_payment.Attribute("LastPaymentSumPrincipal")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? ""); <br />
+                                (2) @(_payment.Attribute("LastPaymentSumInterest")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? ""); <br />
+                                (3) @(_payment.Attribute("LastPaymentSumOther")?.Value ?? "-") @(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? "");
+                            </td>
+                            <td>@(_payment.Attribute("DurationOfOverdue")?.Value ?? "-")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+
+
+
+}
+
+@foreach (var _credit in _mainPart?.Descendants("CreditContractRecord").Where(c => c.Descendants("AMPQCB").Any()) ?? Enumerable.Empty<XElement>())
+{
+    @if (_credit?.Descendants("AMPQCB")?.Any() ?? false)
+    {
+        <div class="document__caption"><span class="document__table-icon">@*<img src="img/doc-1.svg" alt="">*@  Сведения квалифицированного бюро о среднемесячных платежах по договору займа (кредита) </span></div>
+        <div class="document__list">
+            <div class="document__list-item">
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/doc-id.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column" colspan="5">
+                                        <div class="document__column-title">Уникальный идентификатор договора (сделки):</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_credit.Attribute("CreditContractUID")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            @if (true) { _ampQbch = _credit.Descendants("AMPQCB").First(); }
+            <div class="document__list-item">
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/doc-3.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Величина и валюта среднемесячного платежа:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_ampQbch.Attribute("AMPSum")?.Value ?? "-") @(_ampQbch.Attribute("AMPCurrency")?.Value ?? "")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата расчета величины среднемесячного платежа:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_ampQbch.Attribute("AMPCalculationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Регистрационный номер Бюро:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_ampQbch.Attribute("QCBRegNumber")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    }
+
+
+}
+
+@if (_mainPart?.Descendants("DebtCollectionRecord").Any() ?? false)
+        {
+<div class="document__caption"><span class="document__table-icon">@*<img src="Views/img/location.svg" alt="">*@ Сведения о взыскании долга по алиментам, платы за жилое помещение, коммунальные услуги или услуги связи </span></div>
+<div class="document__list">
+    @foreach (var _debt in _mainPart?.Descendants("DebtCollectionRecord") ?? Enumerable.Empty<XElement>())
+    {
+        <div class="document__list-item">
+            <div class="document__item-title">Сведения о взыскании долга по алиментам, платы за жилое помещение, коммунальные услуги или услуги связи</div>
+            <table class="document__list-content">
+                <tr>
+                    <td class="document__list-icon"><img src="Views/img/doc-1.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Тип долга:</div>
+                                    <ul class="document__column-text">
+                                        <li>@_dictionary.DebtCode[_debt.Attribute("DebtCode")?.Value ?? "-"]</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата принятия судебного акта:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(
+                                                _debt.Attribute("JudgementDate")?.Value ?? "-"
+                                                )
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Номер решения суда:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(
+                                                _debt.Attribute("JudgementNum")?.Value ?? "-"
+                                                )
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Наименование суда:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(
+                                                _debt.Attribute("CourtName")?.Value ?? "-"
+                                                )
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" colspan="2">
+                                    <div class="document__column-title">Резолютивная часть судебного акта:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(
+                                                _debt.Attribute("JudgementOperativePart")?.Value ?? "-"
+                                                )
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Номер исполнительного документа:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(
+                                                _debt.Attribute("ExecutiveDocumentNum")?.Value ?? "-"
+                                                )
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата прекращения взыскания:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(
+                                                _debt.Attribute("TerminationDate")?.Value ?? "-"
+                                                )
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма единовременного взыскания:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(
+                                                _debt.Attribute("One-timeCollectionSum")?.Value ?? "-"
+                                                ) @(
+                                              _debt.Attribute("DebtCollectionCurrency")?.Value ?? ""
+                                              )
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Взысканная сумма:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(
+                                                _debt.Attribute("CollectedSum")?.Value ?? "-"
+                                                ) @(
+                                              _debt.Attribute("DebtCollectionCurrency")?.Value ?? ""
+                                              )
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата расчета:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(
+                                                _debt.Attribute("CalculationDate")?.Value ?? "-"
+                                                )
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма периодического взыскания:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(
+                                                _debt.Attribute("PeriodicCollectionSum")?.Value ?? "-"
+                                                ) @(
+                                              _debt.Attribute("DebtCollectionCurrency")?.Value ?? ""
+                                              )
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" colspan="2">
+                                    <div class="document__column-title">Периодичность платежей:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(
+                                                _dictionary.FrequencyCode[_debt.Attribute("PaymentFrequencyCode")?.Value ?? "-"]
+                                                )
+                                        </li>
+                                    </ul>
+                                </td>
+                                
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>
+        }
+
+
+
+@code {
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+
+    private XElement _mainPart = new("MainPart");
+    private XElement _titlePart = new("TitlePart");
+    private XElement _ampQbch = new XElement("AMPQCB");
+
+    protected override void OnInitialized()
+    {
+        _mainPart = Response.Descendants("MainPart").FirstOrDefault() ?? new("MainPart");
+    }
+}

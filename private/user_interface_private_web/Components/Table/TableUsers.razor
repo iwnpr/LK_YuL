@@ -1,0 +1,60 @@
+﻿<table class="table">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>Добавлен</td>
+            @*<td>Логин</td>*@
+            <td>Фамилия</td>
+            <td>Имя</td>
+            <td>Отчество</td>
+            @*<td>Роль</td>*@
+            <td>Email</td>
+            <td>Телефон</td>
+            <td>Действия</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (DBUser _user in Users)
+        {
+            <tr style="color:@(_user.IsActive ? "" : "red")">
+                <td>@_user.Id</td>
+                <td>@DateTime.Now</td>
+                @*<td>@_user.Login</td>*@
+                <td>@_user.LastName</td>
+                <td>@_user.FirstName</td>
+                <td>@_user.MiddleName</td>
+                @*<td>@_user.Role</td>*@
+                <td>@_user.Email</td>
+                <td>@_user.Phone</td>
+                <td>
+                    <div class="table__icons">
+                        <div class="table__icon" @onclick=@(() => OnSelect(_user.Id))>
+                            <svg class="ico ico-mono-edit">
+                                <use xlink:href="img/sprite-mono.svg#ico-mono-edit"></use>
+                            </svg>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    /// <summary>
+    /// Коллекция пользователей
+    /// </summary>
+    [Parameter] public List<DBUser> Users { get; set; } = new();
+
+    /// <summary>
+    /// Событие при выборе пользователя
+    /// </summary>
+    [Parameter] public EventCallback<int> OnUserSelect { get; set; }
+
+    private async Task OnSelect(int _id)
+    {
+        await OnUserSelect.InvokeAsync(_id);    
+
+    }
+
+}

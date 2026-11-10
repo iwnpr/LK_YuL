@@ -1,0 +1,54 @@
+﻿@if (Response.Descendants("MIAServiceDocCheck").Any())
+{
+    <div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+        <div class="status-popup__item-arrow dropdown-arrow">
+            <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+                @*transition: 0.3s;*@
+                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+            </svg>
+        </div>
+        <div class="status-popup__item-title">Результат проверки паспорта в МВД</div>
+    </div>
+    <div class="@(!_show ? "hidden" : "")">
+        @{
+            _xElement = Response.Descendants("MIAServiceDocCheck").FirstOrDefault();
+        }
+        <div class="document__caption">
+            <span class="document__table-icon">
+                <img class="image_icon" src="img/inn-grey.svg" alt="">Результат проверки паспорта в МВД
+            </span>
+        </div>
+        <table class="status__table table">
+            <thead style="background: #eaedf3;">
+                <tr>
+                    <td>Наименование</td>
+                    <td>Значение</td>
+                </tr>
+            </thead>
+            <tbody style="background: #fff;">
+                <tr>
+                    <td>Идентификатор обмена</td>
+                    <td>
+                        @(_xElement?.Attribute("queryId")?.Value ?? "-")
+                    </td>
+                </tr>
+                <tr>
+                    <td>Результат проверки</td>
+                    <td>
+                        @(_dictionary.MIADocStatus[_xElement?.Value ?? "-"])
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+}
+
+
+@code {
+    [Parameter] public XDocument Request { get; set; } = new XDocument(new XElement("REQUEST"));
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+    private bool _show = false;
+    private XElement? _xElement;
+
+}

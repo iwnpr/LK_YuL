@@ -1,0 +1,213 @@
+﻿@{
+    //Parameters.GetVerificationService = false;
+    Parameters.PaymentHistory = false;
+    //Parameters.Fms = false;
+    //Parameters.Fns = false;
+    Parameters.GetFraudInfo = false;
+    Parameters.GetRating1 = false;
+    Parameters.GetRating2 = false;
+    Parameters.GetRating3 = false;
+}
+
+<AuthorizeView Roles="credit-report-for-user, credit-report-with-amp">
+    <Authorized>
+        <div class="caption">Кредитный отчет</div>
+        <div class="form__checkbox-list">
+            <div class="form__input form__checkbox check form__checkbox-parameters">
+                <input type="checkbox" id="CreditReport" @bind-value="Parameters.CreditReport" checked="@Parameters.CreditReport" @bind-value:event="onchange">
+                <label class="form__checkbox-label" for="1">Кредитный отчет для пользователя</label>
+            </div>
+            @if (Parameters.CreditReport)
+            {
+
+                <div class="form__checkbox-items">
+                    <div class="form__checkbox-item">
+                        <div class="form__radio">
+                            <input type="radio" name="CreditReportDetalization" id="CreditReportDetalizationTIM" Value="0" @onchange="@(() => Parameters.CreditReportDetalization = Parameters.CreditReport ? 0 : 3)" checked="@(Parameters.CreditReportDetalization.Equals(0))">
+                            <div class="form__radio-btn"></div>
+                            <label class="form__radio-label" for="parameters-1">Кредитный отчет для пользователя, содержащий титульную, основную и информационную части КИ</label>
+                        </div>
+                        <div class="form__radio">
+                            <input type="radio" name="CreditReportDetalization" id="CreditReportDetalizationTIM" Value="1" @onchange="@(() => Parameters.CreditReportDetalization = Parameters.CreditReport ? 1 : 3)" checked="@(Parameters.CreditReportDetalization.Equals(1))">
+                            <div class="form__radio-btn"></div>
+                            <label class="form__radio-label" for="parameters-1">Кредитный отчет для пользователя, содержащий только титульную и основную части КИ</label>
+                        </div>
+                        <div class="form__radio">
+                            <input type="radio" name="CreditReportDetalization" id="CreditReportDetalizationTIM" Value="2" @onchange="@(() => Parameters.CreditReportDetalization = Parameters.CreditReport ? 2 : 3)" checked="@(Parameters.CreditReportDetalization.Equals(2))">
+                            <div class="form__radio-btn"></div>
+                            <label class="form__radio-label" for="parameters-1">Кредитный отчет для пользователя, содержащий только титульную и информационную часть КИ</label>
+                        </div>
+                    </div>
+                    @if (context.User.IsInRole("credit-report-with-amp"))
+                    {
+                        <div class="form__input form__checkbox check form__checkbox-parameters">
+                            <input type="checkbox" id="CreditReport" @bind-value="Parameters.GetReportWithAMP" checked="@Parameters.GetReportWithAMP" @bind-value:event="onchange">
+                            <label class="form__checkbox-label" for="1">Сведения о среднемесячных платежах</label>
+                        </div>
+                    }
+                    else
+                    {
+                        Parameters.GetReportWithAMP = false;
+                    }
+                </div>
+            }
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            Parameters.CreditReportDetalization = 3;
+            Parameters.GetReportWithAMP = false;
+        }
+    </NotAuthorized>
+
+</AuthorizeView>
+
+<div class="caption">Дополнительные сервисы</div>
+
+<AuthorizeView Roles="prescoring-np-string-rating">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input type="checkbox" id="getRating1" @bind-value="@Parameters.PreviousRequests" checked="@Parameters.PreviousRequests" @bind-value:event="onchange">
+            <label class="form__checkbox-label" for="2">
+                Информация о предыдущих запросах &nbsp;
+                @if (Parameters.PreviousRequests)
+                {
+                    <span>(в ответе не более <input type="text" size="5" maxlength="5" @bind="@Parameters.PreviousRequestsCount"> последних)</span>
+                }
+            </label>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            Parameters.PreviousRequestsCount = 0;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+@* <div class="parameters__caption">Рейтинги:</div> *@
+@* <div class="form__input form__checkbox check">
+    <input @bind-value="@Parameters.GetRating1" checked="@Parameters.GetRating1" @bind-value:event="onchange" type="checkbox" id="getRating1">
+    <label class="form__checkbox-label" for="3"> Кредитный рейтинг</label>
+</div>
+<div class="form__input form__checkbox check">
+    <input @bind-value="@Parameters.GetRating2" checked="@Parameters.GetRating2" @bind-value:event="onchange" type="checkbox" id="getRating2">
+    <label class="form__checkbox-label" for="4">Рейтинг дефолтности работодателя</label>
+</div> *@
+@* <AuthorizeView Roles="prescoring-np-string-rating">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input @bind-value="@Parameters.GetRating3" checked="@Parameters.GetRating3" @bind-value:event="onchange" type="checkbox" id="getRating3">
+            <label class="form__checkbox-label" for="5">Рейтинг в строковом представлении</label>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        @{
+                Parameters.GetRating3 = false;
+        }
+    </NotAuthorized>
+</AuthorizeView> *@
+
+
+@* <div class="form__input form__checkbox disabled check">
+    <input type="checkbox">
+    <label class="form__checkbox-label" for="6">Информация ЕГРЮЛ ФНС</label>
+</div>
+<div class="form__input form__checkbox disabled check">
+    <input type="checkbox">
+    <label class="form__checkbox-label" for="7">Информация ЕГРИП ФНС</label>
+</div> *@
+<AuthorizeView Roles="verification">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input @bind-value="@Parameters.GetVerificationService" checked="@Parameters.GetVerificationService" @bind-value:event="onchange" type="checkbox" id="getVerificationService">
+            <label class="form__checkbox-label" for="8">Верификация</label>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            Parameters.GetVerificationService = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+@*
+<div class="form__checkbox-list">
+    <div class="form__input form__checkbox form__checkbox-parameters check">
+        <input @bind-value="Parameters.PaymentHistory" @bind-value:event="onchange" checked="@Parameters.PaymentHistory" type="checkbox" id="9">
+        <label class="form__checkbox-label" for="9">Платежная история</label>
+    </div>
+
+    <div class="form__checkbox-items" hidden="@(!Parameters.PaymentHistory)">
+        <div class="form__checkbox-item">
+            <div class="form__radio">
+                <input type="radio" name="PaymentHistory" id="PaymentHistory1" @onchange="@(() => Parameters.GetPaymentHistory = 1)" checked="@(Parameters.GetPaymentHistory.Equals(1))">
+                <div class="form__radio-btn"></div>
+                <label class="form__radio-label" for="parameters-2">Запрашивать операторов до первого результативного ответа, вычислять помесячную агрегацию</label>
+            </div>
+            <div class="form__radio">
+                <input type="radio" name="PaymentHistory" id="PaymentHistory2" @onchange="@(() => Parameters.GetPaymentHistory = 2)" checked="@(Parameters.GetPaymentHistory.Equals(2))">
+                <div class="form__radio-btn"></div>
+                <label class="form__radio-label" for="parameters-2">Запрашивать всех операторов</label>
+            </div>
+            <div class="form__radio">
+                <input type="radio" name="PaymentHistory" id="PaymentHistory3" @onchange="@(() => Parameters.GetPaymentHistory = 3)" checked="@(Parameters.GetPaymentHistory.Equals(3))">
+                <div class="form__radio-btn"></div>
+                <label class="form__radio-label" for="parameters-2">
+                    Запрашивать всех операторов, вычислять помесячную агрегацию
+                </label>
+            </div>
+        </div>
+    </div>
+
+</div>
+*@
+<AuthorizeView Roles="fms-document-check">
+    <Authorized>
+        <div class="form__checkbox-list">
+            <div class="form__input form__checkbox form__checkbox-parameters check">
+                <input @bind-value=@Parameters.Fms @bind-value:event="onchange" checked="@Parameters.Fms" type="checkbox" id="FMS">
+                <label class="form__checkbox-label" for="10">Запрос в ФМС (проверка паспорта)</label>
+            </div>
+            <div class="form__checkbox-items" hidden="@(!@Parameters.Fms)">
+                <div class="form__input form__checkbox check">
+                    <input @bind-value="Parameters.Fns" @bind-value:event="onchange" checked="@Parameters.Fns" type="checkbox" id="FNS">
+                    <label class="form__checkbox-label" for="10-1">Запрос в ФМС (проверка паспорта) и ФНС (проверка документ + ФИО и ДР)</label>
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            Parameters.Fms = false;
+            Parameters.Fns = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="fsspNP, fsspLP, historicalFssp, fsspCetelem, historicalFsspWithFines, fbs-debt-request">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input @bind-value="@Parameters.GetBailiffsServiceDebtInfo" checked="@Parameters.GetBailiffsServiceDebtInfo" @bind-value:event="onchange" type="checkbox" id="getBailiffsServiceDebtInfo">
+            <label class="form__checkbox-label" for="11">Запрос в ФССП (долги)</label>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            Parameters.GetBailiffsServiceDebtInfo = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+@* <div class="form__input form__checkbox check">
+    <input @bind-value="@Parameters.GetFraudInfo" checked="@Parameters.GetFraudInfo" @bind-value:event="onchange" type="checkbox" id="getFraudInfo">
+    <label class="form__checkbox-label" for="12">Запрос сведений о мошенничестве</label>
+</div> *@
+
+
+
+@code {
+
+    //TODO Вынести в отдельный класс
+    [Parameter] public ParametersBureau Parameters { get; set; } = new(new());
+    //[Parameter] public EventCallback Execute { get; set; }
+
+}

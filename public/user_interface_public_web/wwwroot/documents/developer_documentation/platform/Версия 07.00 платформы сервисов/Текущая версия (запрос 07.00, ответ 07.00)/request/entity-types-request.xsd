@@ -1,0 +1,1670 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.1">
+
+	<xs:complexType name="tREQUEST">
+		<xs:sequence>
+			<xs:element name="HEADER" type="tRequestHEADER"/>
+			<xs:element name="BODY" type="tRequestBODY"/>
+		</xs:sequence>
+		<xs:attribute name="version" type="tVersion" use="required"/>
+	</xs:complexType>
+
+	<xs:simpleType name="tVersion">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="5"/>
+			<xs:maxLength value="5"/>
+			<xs:pattern value="\d{2}[.]\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="tRequestHEADER">
+		<xs:sequence>
+			<!--<xs:element name="UserID" type="tUserID"/>
+			<xs:element name="UserDescription" type="tUserDescription"/>
+			<xs:element name="UserNaturalPerson" type="tUserNaturalPerson" minOccurs="0"/>-->
+			<xs:element name="user" type="tUser"/>
+			<!--<xs:element name="RequestDate" type="tDate" minOccurs="0"/>-->
+			<xs:element name="request_date" type="tDate"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tUser">
+		<xs:sequence>
+			<xs:element name="user_id" type="xs:integer"/>
+			<xs:element name="external_id" type="tStr255" minOccurs="0"/>
+			<xs:element name="user_code" type="tUserCode"/>
+			<xs:choice>
+				<xs:element name="user_legal_entity" type="tUserLegalEntity"/>
+				<xs:element name="user_natural_person" type="tUserNaturalPerson"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tUserLegalEntity">
+		<xs:sequence>
+			<xs:element name="registered_in_rf" type="tLogical"/>
+			<xs:element name="user_name" type="tName"/>
+			<xs:element name="user_psrn" type="tInfoSRN"/>	
+			<xs:element name="lei" type="tLEI" minOccurs="0"/>			
+			<xs:element name="user_itn" type="tInfoITN" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tName">
+		<xs:sequence>
+			<xs:element name="full_name" type="tStr2000"/>
+			<xs:element name="short_name" type="tStr2000" minOccurs="0"/>			
+			<xs:element name="other_name" type="tStr2000" minOccurs="0"/>			
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tInfoSRN">
+		<xs:sequence>
+			<xs:element name="psrn_code" type="tPSRNCode"/>
+			<xs:element name="psrn" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tInfoITN">
+		<xs:sequence>
+			<xs:element name="itn_code" type="tITNCode"/>
+			<xs:element name="itn" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!--<xs:complexType name="tUserID">
+		<xs:simpleContent>
+			<xs:extension base="xs:integer">
+				<xs:attribute name="ExternalID" type="tStr255"/>
+				<xs:attribute name="UserType" type="xs:integer" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>-->
+  
+	<!--<xs:complexType name="tUserDescription">
+		<xs:simpleContent>
+			<xs:extension base="tStr255">
+				<xs:attribute name="UserPSRN" type="tPSRN"/>
+				<xs:attribute name="UserRN" type="tStr20"/>
+				<xs:attribute name="UserITN" type="tITN"/>
+				<xs:attribute name="UserTN" type="tStr20"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>-->
+  
+	<xs:complexType name="tUserNaturalPerson">
+		<xs:sequence>
+			<xs:element name="user_name" type="tFullName"/>
+			<xs:element name="birth_date" type="tDate"/>
+			<xs:element name="birth_place" type="tStr2000"/>
+			<xs:element name="user_identity_doc" type="tUserIdentityDoc"/>
+			<xs:element name="user_psrn" type="tInfoSRN"/>		
+			<xs:element name="user_itn" type="tInfoITN" maxOccurs="unbounded"/>		
+			<xs:element name="user_snils" type="tSNILS"/>		
+		</xs:sequence>
+		<!--<xs:attribute name="LastName" type="tStr60" use="required"/>
+		<xs:attribute name="FirstName" type="tStr60" use="required"/>
+		<xs:attribute name="MiddleName" type="tStr60"/>
+		<xs:attribute name="DocTypeID" type="xs:decimal" use="required"/>
+		<xs:attribute name="DocSer" type="tStr20" use="required"/>
+		<xs:attribute name="DocNum" type="tStr30" use="required"/>
+		<xs:attribute name="DocDate" type="tDate" use="required"/>
+		<xs:attribute name="PSRNIP" type="tPSRN" use="required"/>-->
+	</xs:complexType>
+	
+	<xs:complexType name="tFullName">
+		<xs:sequence>
+			<xs:element name="surname" type="tStrUnlimName"/>
+			<xs:element name="name" type="tStrUnlimName"/>
+			<xs:element name="patronymic" type="tStrUnlimRusLat" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tUserIdentityDoc">
+		<xs:sequence>
+			<xs:group ref="gIdentityDocData"/>
+			<xs:element name="d_authority" type="tStr2000"/>
+			<xs:element name="d_department_code" type="tDepartmentCode" minOccurs="0" maxOccurs="1"/>		
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:group name="gIdentityDocData">
+		<xs:sequence>
+			<xs:element name="d_code" type="tDocCode"/>
+			<xs:element name="d_other_name" type="tStr2000" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="d_series" type="tStrUnlimHyphen" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="d_number" type="xs:string"/>
+			<xs:element name="d_issue_date" type="tDate"/>
+		</xs:sequence>
+	</xs:group>
+
+	<xs:complexType name="tRequestBODY">
+		<xs:sequence>
+			<xs:element name="RequestAttributes" type="tRequestAttributes"/>
+			<xs:group ref="gRequestEntities"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:group name="gRequestEntities">
+		<xs:choice>
+			<xs:element name="NaturalPersonSubject" type="tNaturalPersonSubject" />
+			<xs:element name="LegalPersonSubject" type="tLegalPerson"/>
+			<xs:element name="Document" type="tNaturalPersonIdentificationDocument"/>
+			<xs:element name="Address" type="tAddress"/>
+			<xs:element name="Phone" type="tPhone"/>
+			<xs:element name="Receipt" type="tReceipt"/>	<!--NEW-->
+		</xs:choice>
+	</xs:group>
+
+	<xs:complexType name="tRequestAttributes">
+		<xs:sequence>
+			<xs:element name="ResponseCapabilities" type="tResponseCapabilities" minOccurs="0"/>
+			<xs:element name="Reason" minOccurs="0">
+			<xs:complexType>
+				<xs:all>
+					<xs:element name="SalesChannel" minOccurs="0" maxOccurs="1">
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="tStr255">
+									<xs:attribute name="type" type="tSalesChannel" use="required"/>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="ApplicationType" minOccurs="0" maxOccurs="1">
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="tStr255">
+									<xs:attribute name="type" type="tApplication" use="required"/>
+								</xs:extension>
+							</xs:simpleContent>	
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="ApplicationOrigin" minOccurs="0" maxOccurs="1">
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="tStr255">
+									<xs:attribute name="type" type="tApplicationOrigin" use="required"/>
+								</xs:extension>
+							</xs:simpleContent>	
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="ApplicationCollateral" minOccurs="0" maxOccurs="1">
+						<xs:complexType>
+							<xs:all>
+								<xs:element name="Income" minOccurs="0">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="Period" maxOccurs="1">
+												<xs:complexType>
+													<xs:simpleContent>
+														<xs:extension base="tStr255">
+															<xs:attribute name="type" type="tPeriod" use="required"/>
+														</xs:extension>
+													</xs:simpleContent>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="ConfirmationDocument" minOccurs="0" maxOccurs="unbounded">
+												<xs:complexType>
+													<xs:simpleContent>
+														<xs:extension base="tStr255">
+															<xs:attribute name="type" type="tIncomeConfirmationDocument" use="required"/>
+														</xs:extension>
+													</xs:simpleContent>
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+										<xs:attribute name="Amount" type="xs:decimal" use="required"/>
+										<xs:attribute name="CurrencyID" type="xs:integer" use="required"/>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="Property" minOccurs="0" maxOccurs="1">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="Car" minOccurs="0" maxOccurs="unbounded">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="ConfirmationDocument" minOccurs="0" maxOccurs="unbounded">
+															<xs:complexType>
+																<xs:simpleContent>
+																	<xs:extension base="tStr255">
+																		<xs:attribute name="type" type="tCarConfirmationDocument" use="required"/>
+																	</xs:extension>
+																</xs:simpleContent>
+															</xs:complexType>
+														</xs:element>
+													</xs:sequence>
+													<xs:attribute name="BrandAndModel" type="tStr255"/>
+													<xs:attribute name="CreationYear" type="xs:integer"/>
+													<xs:attribute name="VIN" type="tStr50"/>
+													<xs:attribute name="RegistrationNumber" type="tStr15"/>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="Realty" minOccurs="0" maxOccurs="unbounded">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="ConfirmationDocument" minOccurs="0" maxOccurs="unbounded">
+															<xs:complexType>
+																<xs:simpleContent>
+																	<xs:extension base="tStr255">
+																		<xs:attribute name="type" type="tRealtyConfirmationDocument" use="required"/>
+																	</xs:extension>
+																</xs:simpleContent>
+															</xs:complexType>
+														</xs:element>
+													</xs:sequence>
+													<xs:attribute name="type" type="tRealty" use="required"/>
+													<xs:attribute name="description" type="tStr255"/>
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="WorkExperience" minOccurs="0" maxOccurs="1">
+									<xs:complexType>
+										<xs:attribute name="NumberOfYears" type="xs:integer" use="required"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:all>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+				<xs:attribute name="CustomerClaimCreditLimit" type="xs:decimal"/>
+				<xs:attribute name="MontlyPaymentAmount" type="xs:decimal"/>
+				<xs:attribute name="CurrencyID" type="xs:integer"/>
+				<xs:attribute name="CurrencyCaption" type="tStr5"/>
+				<!--<xs:attributeGroup ref="agTextID"/>-->
+				<xs:attribute name="ID" type="tCreditTypeCode" use="required"/>
+				<xs:attribute name="Text" type="tStr255"/>
+			</xs:complexType>
+			</xs:element>
+			<xs:element name="RequestPurpose" type="tReference0" maxOccurs="unbounded"/>
+			<xs:element name="Consent"  type="tConsent" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:integer"/>
+	</xs:complexType>
+
+	<xs:complexType name="tNaturalPersonSubject">
+		<xs:sequence>
+			<xs:element name="Title" type="tNaturalPersonTitle" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="IdentificationDocument" type="tNaturalPersonIdentificationDocument" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="IndividualEntrepreneur" type="tIndividualEntrepreneur" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Address" type="tAddressWithUseExtension" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Phone" type="tPhoneWithConfirmationExtension" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PersonalInternetPage" type="tUrl" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="EMail" type="tEMail" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Employer" type="tLegalPerson" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agNaturalPersonID"/>
+		<xs:attribute name="Gender" type="tGender"/>
+		<xs:attribute name="MaritalStatus" type="tMaritalStatus"/>
+		<xs:attribute name="Education" type="tEducation"/>
+		<xs:attribute name="Children" type="tChildren"/>
+		<xs:attribute name="CitizenshipCountryCode" type="tStr3" use="required"/>		
+	</xs:complexType>
+
+	<xs:attributeGroup name="agNaturalPersonID">
+		<xs:attribute name="BirthDate" type="tDate"/>
+		<xs:attribute name="BirthPlace" type="tStr1000"/>
+		<xs:attribute name="IndividualTaxpayerNumber" type="tITN"/>
+		<xs:attribute name="TaxpayerNumber" type="tStr20"/>
+		<xs:attribute name="PensionNumber" type="tStr15"/>
+	</xs:attributeGroup>
+
+	<xs:complexType name="tNaturalPersonTitle">
+		<xs:attribute name="LastName" type="tStr60" use="required"/>
+		<xs:attribute name="FirstName" type="tStr60" use="required"/>
+		<xs:attribute name="MiddleName" type="tStr60"/>
+		<xs:attribute name="isOldName" type="xs:boolean"/>
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+
+	<xs:complexType name="tNaturalPersonIdentificationDocument">
+		<xs:attribute name="DocTypeID" type="tDocCode" use="required"/>
+		<xs:attribute name="DocTypeText" type="tStr1000"/>
+		<xs:attribute name="DocSer" type="tStr20"/>
+		<xs:attribute name="DocNum" type="tStr30" use="required"/>
+		<xs:attribute name="DocDate" type="tDate" use="required"/>
+		<xs:attribute name="DocPlace">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="300"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="DocDelivInstName" type="tStr500"/>
+		<xs:attribute name="DocDelivInstCode" type="tStr50"/>
+		<xs:attribute name="isOldDocument" type="xs:boolean"/>
+	</xs:complexType>
+
+	<xs:complexType name="tIndividualEntrepreneur">
+		<xs:attribute name="PSRN" type="tPSRN" />
+		<xs:attribute name="RegDate" type="tDate" />
+		<xs:attribute name="RegData" type="tStr255"/>
+	</xs:complexType>
+
+	<xs:complexType name="tLegalPerson">
+		<xs:sequence>
+			<xs:element name="Title" type="tLegalTitle"/>
+			<xs:element name="eMail" type="tEMailAddress" minOccurs="0"/>
+			<xs:element name="www" type="tUrlAddress" minOccurs="0"/>
+			<xs:element name="RestructuredTitle" type="tLegalTitle" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Address" type="tAddress" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Phone" type="tPhone" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="CountryCode" type="tStr3" use="required"/>			
+	</xs:complexType>
+
+	<xs:complexType name="tLegalTitle">
+		<xs:sequence>
+			<xs:element name="Name" type="tLegalName" minOccurs="0"/>
+			<xs:group ref="tLegalItn"/>
+			<xs:element name="PrimaryStateRegistrationNumber" type="tPSRN" minOccurs="0"/>
+			<xs:element name="RegistrationNumber" type="tStr20" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:group name="tLegalItn">
+		<xs:choice>
+			<xs:element name="IndividualTaxpayerNumber" type="tITN"/>
+			<xs:element name="ForeignID" type="tStr50"/>
+		</xs:choice>
+	</xs:group>
+
+	<xs:complexType name="tLegalName">
+		<xs:attribute name="FullName" type="tStr1000" use="required"/>
+		<xs:attribute name="ShortName" type="tStr255"/>
+		<xs:attribute name="FirmName" type="tStr255"/>
+		<xs:attribute name="NationalName" type="tStr1000"/>
+		<xs:attribute name="EngName" type="tStr1000"/>
+	</xs:complexType>
+
+	<xs:complexType name="tAddress">
+		<xs:sequence>
+			<xs:element name="Caption" type="tCaption" minOccurs="0" maxOccurs="unbounded"/>
+			<!--<xs:element name="Region" type="tCaption"/>-->
+			<xs:element name="Region" type="tRegion"/>					
+			<!--<xs:element name="District" type="tAddressIdentity" minOccurs="0"/>-->
+			<xs:element name="District" type="tDistrict" minOccurs="0"/>
+			<!--<xs:element name="City" type="tAddressIdentity" minOccurs="0"/>-->
+			<xs:element name="City" type="tCity" minOccurs="0"/>
+			<!--<xs:element name="Village" type="tAddressIdentity" minOccurs="0"/>-->
+			<xs:element name="Village" type="tVillage" minOccurs="0"/>
+			<xs:element name="StreetAddress" type="tStreetAddress" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="tAddressEntity">
+		<xs:sequence>
+			<!--<xs:element name="Region" type="tCaption"/>-->
+			<xs:element name="Region" type="tRegion"/>
+			<!--<xs:element name="District" type="tAddressIdentity" minOccurs="0"/>-->
+			<xs:element name="District" type="tDistrict" minOccurs="0"/>
+			<!--<xs:element name="City" type="tAddressIdentity" minOccurs="0"/>-->
+			<xs:element name="City" type="tCity" minOccurs="0"/>
+			<!--<xs:element name="Village" type="tAddressIdentity" minOccurs="0"/>-->
+			<xs:element name="Village" type="tVillage" minOccurs="0"/>
+			<xs:element name="StreetAddress" type="tStreetAddress" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="tAddressWithUseExtension">
+		<xs:complexContent>
+			<xs:extension base="tAddress">
+				<xs:attribute name="UseDuration" type="tUseDuration"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="tCaption">
+		<!--<xs:attributeGroup ref="agTextID"/>-->
+		<xs:attribute name="ID" type="tAddressKind" use="required"/>
+		<xs:attribute name="Text" type="tStr255"/>
+	</xs:complexType>
+
+	<!--<xs:attributeGroup name="agTextID">
+		<xs:attribute name="ID" type="tAdressKind" use="required"/>
+		<xs:attribute name="Text" type="tStr255"/>
+	</xs:attributeGroup>-->
+	
+	<xs:complexType name="tRegion">							<!--NEW-->
+		<xs:attribute name="ID" type="tRegionID" use="required"/>
+		<xs:attribute name="Text" type="tStr255"/>
+	</xs:complexType>
+
+	<xs:complexType name="tStreetAddress">
+		<xs:sequence>
+			<!--<xs:element name="Street" type="tAddressIdentity" minOccurs="0"/>-->
+			<xs:element name="Street" type="tStreet" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="HouseNum" type="tStr20"/>
+		<xs:attribute name="BuildingNum" type="tStr20"/>
+		<xs:attribute name="BuildingSymbol" type="tStr20"/>
+		<xs:attribute name="FlatNum" type="tStr20"/>
+	</xs:complexType>
+
+	<!--<xs:complexType name="tAddressIdentity">
+		<xs:attribute name="Caption" type="tStr60" use="required"/>
+		<xs:attribute name="Ext" type="tStr10" use="required"/>
+	</xs:complexType>-->
+	
+	<xs:complexType name="tDistrict">				<!--NEW-->
+		<xs:attribute name="Caption" type="tStr60" use="required"/>
+		<xs:attribute name="Ext" type="tDistrictExt" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="tCity">				<!--NEW-->
+		<xs:attribute name="Caption" type="tStr60" use="required"/>
+		<xs:attribute name="Ext" type="tCityExt" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="tVillage">				<!--NEW-->
+		<xs:attribute name="Caption" type="tStr60" use="required"/>
+		<xs:attribute name="Ext" type="tVillageExt" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="tStreet">				<!--NEW-->
+		<xs:attribute name="Caption" type="tStr60" use="required"/>
+		<xs:attribute name="Ext" type="tStreetExt" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="tPhone">
+		<!--<xs:attributeGroup ref="agTextID"/>-->
+		<xs:attribute name="ID" type="tPhoneKind" use="required"/>
+		<xs:attribute name="Text" type="xs:string"/>
+		<xs:attribute name="Number" type="tPhoneNumber"/>
+	</xs:complexType>
+
+	<xs:complexType name="tPhoneWithConfirmationExtension">
+		<xs:complexContent>
+			<xs:extension base="tPhone">
+				<xs:attribute name="ConfirmationType" type="tPhoneConfirmation"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="tResponseCapabilities">
+		<xs:sequence>
+			<xs:element name="BailiffsServiceScores" type="tBailiffsServiceScores" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="CreditReportDetalization" type="tReportDetalization" use="required"/>
+		<xs:attribute name="getExternalCreditReport" type="tGetExternalCreditReport"/>
+		<xs:attribute name="getScoringParameters" type="xs:boolean"/>
+		<xs:attribute name="SelfRequestInResponse" type="xs:boolean"/>
+		<xs:attribute name="PreviousRequestsCountLimit" type="xs:integer"/>
+		<xs:attribute name="getRating1" type="xs:boolean"/>
+		<xs:attribute name="getRating2" type="xs:boolean"/>
+		<xs:attribute name="getRating3" type="xs:boolean"/>
+		<xs:attribute name="getRating4" type="xs:boolean"/>
+		<xs:attribute name="getTaxServiceLPInfo" type="tTaxServiceLPInfoRequestType"/>
+		<xs:attribute name="getTaxServiceIEInfo" type="tTaxServiceIEInfoRequestType"/>
+		<xs:attribute name="getVerificationService" type="xs:boolean"/>
+		<xs:attribute name="getPaymentHistory" type="tPaymentHistoryRequestSchema"/>
+		<xs:attribute name="getMigrationServiceDocumentCheck" type="tgetMigrationServiceDocumentCheck"/>
+		<xs:attribute name="getBailiffsServiceDebtInfo" type="xs:boolean"/>
+		<xs:attribute name="getBailiffsServiceDebtInfoDetailed" type="xs:boolean"/>
+		<xs:attribute name="getTaxServiceDebtInfo" type="xs:boolean"/>
+		<xs:attribute name="getFraudInfo" type="xs:boolean"/>
+		<xs:attribute name="getRating" type="tBureauRatingRequestSchema"/>
+		<xs:attribute name="dispatchBureauAccount" type="xs:boolean"/>
+		<xs:attribute name="buildScoring" type="tBuildScoring"/>
+		<xs:attribute name="getIdentification" type="tGetIdentification"/>
+		<xs:attribute name="getOldReport" type="tGetOldReport"/>
+		<xs:attribute name="getReportWithAmp" type="xs:boolean"/>
+		<xs:attribute name="getReportFormat" type="tReportFormat"/>
+		<xs:attribute name="getAmpFromAllQcb" type="tAmpFromAllQcb"/>				<!--New-->	
+	</xs:complexType>
+	
+	<xs:complexType name="tBailiffsServiceScores">
+		<xs:sequence>
+			<xs:element name="Score" type="tScore" maxOccurs="unbounded" />
+		</xs:sequence>	
+	</xs:complexType>
+	
+	<xs:complexType name="tScore">
+		<xs:attribute name="Id" type="tBailiffsServiceScoreId" use="required"/>
+	</xs:complexType>
+  
+	<xs:complexType name="tUrl">
+		<xs:attribute name="address" type="tUrlAddress"/>
+	</xs:complexType>
+
+	<xs:simpleType name="tUrlAddress">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="3"/>
+			<xs:pattern value="(([a-z0-9\-\.]+)?[a-z0-9\-]+(!?\.[a-z]{2,4}))"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="tReference">
+		<xs:simpleContent>
+			<xs:extension base="tStr255">
+				<xs:attribute name="type" type="xs:integer" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="tReference0">
+		<xs:simpleContent>
+			<xs:extension base="tStr300">
+				<xs:attribute name="type" type="tRequestPurpose" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="tLongReference">
+		<xs:simpleContent>
+			<xs:extension base="tStr1000">
+				<xs:attribute name="type" type="xs:integer" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+  
+    <!--Согласие-->
+	<xs:complexType name="tConsent">
+		<xs:sequence>
+			<xs:element name="Pdf" type="xs:base64Binary" minOccurs="0" maxOccurs="1"/>
+			<xs:choice>
+				<xs:element name="NaturalPersonSubject" type="tNaturalPersonSubjectForConcent"/>
+				<xs:element name="LegalPersonSubject" type="tLegalPersonSubjectForConcent"/>
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="UserIndividualEntrepreneur" type="tUserIndividualEntrepreneurForConcent"/>
+				<xs:element name="UserLegalEntity" type="tUserLegalEntityForConcent"/>
+			</xs:choice>
+			<!--<xs:complexType>
+			  <xs:simpleContent>
+				<xs:extension base="xs:base64Binary">
+				</xs:extension>
+			  </xs:simpleContent>
+			</xs:complexType>-->
+		</xs:sequence>
+		<!--<xs:attribute name="RequestorName" type="tStr1000"/>-->
+		<xs:attribute name="RequestorResponsibility" type="xs:boolean" use="required"/>
+		<!--<xs:attribute name="type" type="xs:integer" use="required"/>-->
+		<xs:attribute name="Purpose" type="tRequestPurpose" use="required"/>
+		<xs:attribute name="OtherPurposeAsText" type="tStr1000"/>
+		<xs:attribute name="IssueDate" type="tDate" use="required"/>
+		<xs:attribute name="ExpiryDate" type="tDate"/>
+		<xs:attribute name="DateOfContract" type="tDate"/>
+		<xs:attribute name="ReasonForConsentTransfer" type="tReasonForConsentTransfer"/>
+		<xs:attribute name="ConsentExpiration" type="tConsentExpiration" use="required"/>
+		<xs:attribute name="noPensionNumber" type="xs:boolean" />
+		<xs:attribute name="ConsentEForm" type="xs:boolean" use="required"/>
+		<xs:attribute name="HashCode" type="tStr100" />
+	</xs:complexType>
+		
+	<xs:complexType name="tNaturalPersonSubjectForConcent">
+		<xs:sequence>
+		  <xs:element name="Name" type="tNaturalPersonName" maxOccurs="unbounded"/>
+		  <xs:element name="IdentificationDocument" type="tNaturalPersonIdentificationDocument" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="agNaturalPersonID"/>
+	</xs:complexType>
+	  
+	<xs:complexType name="tNaturalPersonName">
+		<xs:attribute name="LastName" type="tStr60" use="required"/>
+		<xs:attribute name="FirstName" type="tStr60" use="required"/>
+		<xs:attribute name="MiddleName" type="tStr60"/>
+		<xs:attribute name="isOldName" type="xs:boolean"/>
+	</xs:complexType>
+		
+	<xs:complexType name="tLegalPersonSubjectForConcent">
+		<xs:sequence>
+			<xs:element name="Name" type="tLegalNameForConcent"/>
+			<xs:group ref="gPSRN"/>
+			<xs:element name="RestructuredTitle" type="tRestructuredTitleForConcent" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="Address" type="tStr1000" use="required"/>
+		<xs:attribute name="PhoneNumber" type="tPhoneNumber"/>
+		<xs:attribute name="eMail" type="tEMailAddress"/>
+		<xs:attributeGroup ref="agITN"/>
+	</xs:complexType>
+
+	<xs:complexType name="tLegalNameForConcent">
+		<xs:attribute name="FullName" type="tStr1000" use="required"/>
+		<xs:attribute name="ShortName" type="tStr255"/>
+		<xs:attribute name="FirmName" type="tStr255"/>
+	</xs:complexType>
+	
+	<xs:complexType name="tRestructuredTitleForConcent">
+		<xs:sequence>
+			<xs:element name="Name" type="tLegalNameForConcent"/>
+			<xs:group ref="gPSRN"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tUserIndividualEntrepreneurForConcent">
+		<xs:sequence>
+			<xs:group ref="gPSRN"/>
+		</xs:sequence>
+		<xs:attribute name="LastName" type="tStr60" use="required"/>
+		<xs:attribute name="FirstName" type="tStr60" use="required"/>
+		<xs:attribute name="MiddleName" type="tStr60"/>
+		<xs:attributeGroup ref="agITN"/>
+	</xs:complexType>
+	
+	<xs:complexType name="tUserLegalEntityForConcent">
+		<xs:sequence>
+			<xs:group ref="gPSRN"/>
+		</xs:sequence>
+		<xs:attribute name="FullName" type="tStr1000" use="required"/>
+		<xs:attributeGroup ref="agITN"/>
+	</xs:complexType>
+	
+	<xs:attributeGroup name="agITN">
+		<xs:attribute name="IndividualTaxpayerNumber" type="tITN"/>
+		<xs:attribute name="TaxpayerNumber" type="tStr20"/>
+	</xs:attributeGroup>
+	
+	<xs:group name="gPSRN">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="PrimaryStateRegistrationNumber" type="tPSRN"/>
+				<xs:element name="RegistrationNumber" type="tStr20"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:group>
+	
+	<xs:complexType name="tReceipt">		<!--NEW-->
+		<xs:sequence>
+			<xs:element name="AmpReceiptId" type="tAmpReceiptId"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Простые типы-->
+  
+	<xs:simpleType name="tPhoneNumber">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="10"/>
+			<xs:maxLength value="10"/>
+			<xs:pattern value="[0-9]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tITN">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="10"/>
+			<xs:maxLength value="12"/>
+			<xs:pattern value="[0-9]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tPSRN">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="13"/>
+			<xs:maxLength value="15"/>
+			<xs:pattern value="[0-9]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tDate">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{2}[.]\d{2}[.]\d{4}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tDateTime">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{2}[.]\d{2}[.]\d{4}[ ]\d{2}[:]\d{2}[:]\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tBailiffsServiceScoreId"> 	<!-- Запрашиваемые значения скоров -->
+		<xs:restriction base="xs:string" />
+	</xs:simpleType>
+	
+	<xs:simpleType name="tTaxServiceLPInfoRequestType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="36"/>
+			<xs:pattern value="[0-4]*"/>
+	  <!-- '0' - не выполнять запрос -->
+	  <!-- '1' - запрос информации по юридическому лицу - работодателю субъекта (физического лица), представленному в первом по порядку следования теге «Employer» -->
+	  <!-- '2' - запрос информации по всем юридическим лицам - работодателям субъекта (физического лица) -->
+	  <!-- '3' - запрос информации по субъекту - юридическиму лицу -->
+	  <!-- '4' - запрос информации по субъекту - юридическиму лицу или по юридическому лицу - работодателю субъекта (физического лица)-->
+		</xs:restriction>
+	<!-- Составляющие запроса информации по юридическим лицам в ФНС России -->
+	</xs:simpleType>
+
+	<xs:simpleType name="tTaxServiceIEInfoRequestType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="14"/>
+			<xs:pattern value="[0-2]*"/>
+	  <!-- '0' - не выполнять запрос -->
+	  <!-- '1' - выполнить запрос -->
+	  <!-- '2' - выполнить запрос для СБРФ-->
+		</xs:restriction>
+	<!-- Составляющие запроса информации по ИП в ФНС России -->
+	</xs:simpleType>
+
+	<xs:complexType name="tEMail">
+		<xs:attribute name="address" type="tEMailAddress"/>
+	</xs:complexType>
+
+	<xs:simpleType name="tEMailAddress">
+		<xs:restriction base="tStr500">
+			<xs:minLength value="5"/>
+			<xs:pattern value="[A-Za-z0-9_]+([\.-]?[A-Za-z0-9_]+)*@[A-Za-z0-9_]+([\.-]?[A-Za-z0-9_]+)*\.[A-Za-z0-9_]{2,6}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tNotEmptyString">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr255">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr60">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="60"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr1000">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="1000"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr500">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="500"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr20">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="20"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr30">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="30"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr100">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr300">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="300"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr50">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="50"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr15">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="15"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr10">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr6">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="6"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr5">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="5"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStr1">
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tSign">
+		<xs:restriction base="xs:int">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tBinaryFlag">
+		<xs:restriction base="xs:int">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tNCEO">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="8"/>
+			<xs:maxLength value="10"/>
+			<xs:pattern value="[0-9]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tStrNotEmpty">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tNEStr1000">
+		<xs:restriction base="tStrNotEmpty">
+			<xs:maxLength value="1000"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tNEStr100">
+		<xs:restriction base="tStrNotEmpty">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tAmount">
+		<xs:restriction base="xs:decimal">
+			<xs:totalDigits value="17"/>
+			<xs:fractionDigits value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tStr2000">				
+		<xs:restriction base="tNotEmptyString">
+			<xs:maxLength value="2000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tLEI">				
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z0-9]{20}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tStr3">								
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tLogical">							
+		<xs:restriction base="xs:integer">
+			<xs:pattern value="[0,1]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tITNCode">						
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tPSRNCode">						
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tStrUnlimName">						
+		<xs:restriction base="tStr2000">
+			<xs:pattern value="([\s-]{0,}[А-ЯЁ]{1,}[А-ЯЁ.*\s\-\(\)`']{0,})|([\s\-]{0,}[A-Z]{1,}[A-Z.*\s\-\(\)`']{0,})"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tStrUnlimRusLat">							
+		<xs:restriction base="tStr2000">
+			<xs:pattern value="([\s-]{0,}[А-ЯЁ]{1,}[А-ЯЁ\s-]{0,})|([\s-]{0,}[A-Z]{1,}[A-Z\s-]{0,})"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tDepartmentCode">							
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\d{3}[-]\d{3})|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tSNILS">							
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\d{3}[-]\d{3}[-]\d{3}[\s]\d{2})|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tStrUnlimHyphen">							
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-ZА-Я0-9\-]{1,}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tAmpReceiptId">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!-- Справочники -->
+	
+	<xs:simpleType name="tReportDetalization">	<!-- Запрашиваемая степень детализации отчета -->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>		 <!-- максимально детализированный отчет - все данные -->
+			<xs:enumeration value="1"/>		 <!-- статистические данные о кредитах и своевременность исполнения обязательств за периоды действия договоров -->
+			<xs:enumeration value="2"/>		 <!-- статистические данные о кредитах -->
+			<xs:enumeration value="3"/>		 <!-- пустой кредитный отчет - значение может быть использовано, например, для получения только рейтингов -->
+			<!--<xs:enumeration value="-1"/>	  <!{1}** кредитный отчёт для субъекта **{1}>
+			<xs:enumeration value="-10"/>	   <!{1}** кредитный отчёт для источника **{1}>
+			<xs:enumeration value="-100"/>		<!{1}** кредитный отчёт для субъекта через пользователя **{1}>
+			<xs:enumeration value="-101"/>		<!{1}** запрос от пользователя от наличии кредитного отчёт субъекта **{1}>
+			<xs:enumeration value="-102"/>		<!{1}** запрос от пользователя на предоставление кредитного отчета субъекту в ЛКФЛ**{1}>
+			<xs:enumeration value="-500"/>		<!{1}**Кредитный отчет для пользователя в формате pdf**{1}>
+			<xs:enumeration value="-1000"/>		 <!{1}** кредитный отчёт для финансового управляющего **{1}>
+			<xs:enumeration value="-1001"/>		 <!{1}** запрос от финансового управляющего о наличии кредитного отчёта субъекта **{1}>
+			<xs:enumeration value="-10001"/>	  <!{1}** запрос от пользователя на кредитный отчет для госорганов титульн. + осн. + инф. + закр. **{1}>
+			<xs:enumeration value="-10002"/>	  <!{1}** запрос от пользователя на кредитный отчет для госорганов титульн. + осн. + инф. **{1}>
+			<xs:enumeration value="-10003"/>	  <!{1}** запрос от пользователя на кредитный отчет для госорганов титульн. + осн. + закр. **{1}>
+			<xs:enumeration value="-10004"/>	  <!{1}** запрос от пользователя на кредитный отчет для госорганов титульн. + осн.**{1}>
+			<xs:enumeration value="-10005"/>	  <!{1}** запрос от пользователя на кредитный отчет для госорганов с закр. **{1}>
+			<xs:enumeration value="-10006"/>	  <!{1}** запрос от пользователя на кредитный отчет для госорганов с титульн. + закр. **{1}>-->
+			<xs:enumeration value="4"/>			
+			<xs:enumeration value="5"/>	        
+			<xs:enumeration value="6"/>	        
+			<xs:enumeration value="7"/>	        
+		<!--	<xs:enumeration value="8"/>	 -->       
+		</xs:restriction>
+	</xs:simpleType>
+  
+	<xs:simpleType name="tgetMigrationServiceDocumentCheck">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/> 			<!-- не запрашивать -->
+			<xs:enumeration value="1"/> 			<!-- запрашивать только часть ФМС -->
+			<!-- <xs:enumeration value="false"/> 			не запрашивать -->
+			<!-- <xs:enumeration value="true"/> 			запрашивать только часть ФМС -->
+			<xs:enumeration value="2"/> 			<!-- запрашивать часть ФМС и ФНС-->
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tReasonForConsentTransfer">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tConsentExpiration">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tGender"> 		<!-- Пол -->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/> 			<!-- нет данных -->
+			<xs:enumeration value="1"/> 			<!-- мужской -->
+			<xs:enumeration value="2"/> 			<!-- женский -->
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tMaritalStatus"> 		<!-- Семейное положение -->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/> 			<!-- нет данных -->
+			<xs:enumeration value="1"/> 			<!-- холост/не замужем -->
+			<xs:enumeration value="2"/> 			<!-- женат/замужем -->
+			<xs:enumeration value="3"/> 			<!-- гражданский брак -->
+			<xs:enumeration value="4"/> 			<!-- проживает отдельно -->
+			<xs:enumeration value="5"/> 			<!-- разведен (-а) -->
+			<xs:enumeration value="6"/> 			<!-- вдовец (-а) -->
+			<xs:enumeration value="7"/> 			<!-- помолвлен (-а) -->
+			<xs:enumeration value="8"/> 			<!-- другое -->
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tGetExternalCreditReport">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tPaymentHistoryRequestSchema">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tBureauRatingRequestSchema">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tBuildScoring">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="-100"/>
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="tGetIdentification">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+  
+	<xs:simpleType name="tGetOldReport">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+  
+	<xs:simpleType name="tReportFormat">			
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>				<!--New-->
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tDocCode">					
+		<xs:restriction base="xs:decimal">
+			<xs:enumeration value="21"/>
+			<xs:enumeration value="22.1"/>
+			<xs:enumeration value="22.2"/>
+			<xs:enumeration value="22.3"/>
+			<xs:enumeration value="23"/>
+			<xs:enumeration value="24"/>
+			<xs:enumeration value="25"/>
+			<xs:enumeration value="26"/>
+			<xs:enumeration value="27"/>
+			<xs:enumeration value="28"/>
+			<xs:enumeration value="31"/>
+			<xs:enumeration value="32"/>
+			<xs:enumeration value="35"/>
+			<xs:enumeration value="37"/>
+			<xs:enumeration value="38"/>
+			<xs:enumeration value="39"/>		
+<!--			<xs:enumeration value="40"/>-->		
+			<xs:enumeration value="999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tUserCode">					
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="99"/>
+			<xs:enumeration value="101"/>
+			<xs:enumeration value="102"/>
+			<xs:enumeration value="103"/>
+			<xs:enumeration value="104"/>
+			<xs:enumeration value="105"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tRegionID">		<!--NEW-->			
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="12"/>
+			<xs:enumeration value="13"/>
+			<xs:enumeration value="14"/>
+			<xs:enumeration value="15"/>
+			<xs:enumeration value="16"/>
+			<xs:enumeration value="17"/>
+			<xs:enumeration value="18"/>
+			<xs:enumeration value="19"/>
+			<xs:enumeration value="20"/>
+			<xs:enumeration value="21"/>
+			<xs:enumeration value="22"/>
+			<xs:enumeration value="23"/>
+			<xs:enumeration value="24"/>
+			<xs:enumeration value="25"/>
+			<xs:enumeration value="26"/>
+			<xs:enumeration value="27"/>
+			<xs:enumeration value="28"/>
+			<xs:enumeration value="29"/>
+			<xs:enumeration value="30"/>
+			<xs:enumeration value="31"/>
+			<xs:enumeration value="32"/>
+			<xs:enumeration value="33"/>
+			<xs:enumeration value="34"/>
+			<xs:enumeration value="35"/>
+			<xs:enumeration value="36"/>
+			<xs:enumeration value="37"/>
+			<xs:enumeration value="38"/>
+			<xs:enumeration value="39"/>
+			<xs:enumeration value="40"/>
+			<xs:enumeration value="41"/>
+			<xs:enumeration value="42"/>
+			<xs:enumeration value="43"/>
+			<xs:enumeration value="44"/>
+			<xs:enumeration value="45"/>
+			<xs:enumeration value="46"/>
+			<xs:enumeration value="47"/>
+			<xs:enumeration value="48"/>
+			<xs:enumeration value="49"/>
+			<xs:enumeration value="50"/>
+			<xs:enumeration value="51"/>
+			<xs:enumeration value="52"/>
+			<xs:enumeration value="53"/>
+			<xs:enumeration value="54"/>
+			<xs:enumeration value="55"/>
+			<xs:enumeration value="56"/>
+			<xs:enumeration value="57"/>
+			<xs:enumeration value="58"/>
+			<xs:enumeration value="59"/>
+			<xs:enumeration value="60"/>
+			<xs:enumeration value="61"/>
+			<xs:enumeration value="62"/>
+			<xs:enumeration value="63"/>
+			<xs:enumeration value="64"/>
+			<xs:enumeration value="65"/>
+			<xs:enumeration value="66"/>
+			<xs:enumeration value="67"/>
+			<xs:enumeration value="68"/>
+			<xs:enumeration value="69"/>
+			<xs:enumeration value="70"/>
+			<xs:enumeration value="71"/>
+			<xs:enumeration value="72"/>
+			<xs:enumeration value="73"/>
+			<xs:enumeration value="74"/>
+			<xs:enumeration value="75"/>
+			<xs:enumeration value="76"/>
+			<xs:enumeration value="77"/>
+			<xs:enumeration value="78"/>
+			<xs:enumeration value="79"/>
+			<xs:enumeration value="80"/>
+			<xs:enumeration value="83"/>
+			<xs:enumeration value="85"/>
+			<xs:enumeration value="86"/>
+			<xs:enumeration value="87"/>
+			<xs:enumeration value="89"/>
+			<xs:enumeration value="91"/>
+			<xs:enumeration value="92"/>
+			<xs:enumeration value="93"/>
+			<xs:enumeration value="94"/>
+			<xs:enumeration value="95"/>
+			<xs:enumeration value="96"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tDistrictExt">		<!--New-->				
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="АО"/>
+			<xs:enumeration value="г"/>
+			<xs:enumeration value="г.о."/>
+			<xs:enumeration value="п"/>
+			<xs:enumeration value="р-н"/>
+			<xs:enumeration value="у"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tCityExt">		<!--New-->				
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="волость"/>
+			<xs:enumeration value="г"/>
+			<xs:enumeration value="дп"/>
+			<xs:enumeration value="массив"/>
+			<xs:enumeration value="п"/>
+			<xs:enumeration value="п/о"/>
+			<xs:enumeration value="пгт"/>
+			<xs:enumeration value="рп"/>
+			<xs:enumeration value="с"/>
+			<xs:enumeration value="с/а"/>
+			<xs:enumeration value="с/мо"/>
+			<xs:enumeration value="с/о"/>
+			<xs:enumeration value="с/п"/>
+			<xs:enumeration value="с/с"/>
+			<xs:enumeration value="тер"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tVillageExt">		<!--New-->				
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="аал"/>
+			<xs:enumeration value="автодорога"/>
+			<xs:enumeration value="арбан"/>
+			<xs:enumeration value="аул"/>
+			<xs:enumeration value="в-ки"/>
+			<xs:enumeration value="высел"/>
+			<xs:enumeration value="г"/>
+			<xs:enumeration value="г-к"/>
+			<xs:enumeration value="гп"/>
+			<xs:enumeration value="д"/>
+			<xs:enumeration value="д."/>
+			<xs:enumeration value="дп"/>
+			<xs:enumeration value="ж/д бл-ст"/>
+			<xs:enumeration value="ж/д о.п."/>
+			<xs:enumeration value="ж/д п.п."/>
+			<xs:enumeration value="ж/д пл-ка"/>
+			<xs:enumeration value="ж/д рзд"/>
+			<xs:enumeration value="ж/д ст"/>
+			<xs:enumeration value="ж/д_будка"/>
+			<xs:enumeration value="ж/д_казарм"/>
+			<xs:enumeration value="ж/д_оп"/>
+			<xs:enumeration value="ж/д_платф"/>
+			<xs:enumeration value="ж/д_пост"/>
+			<xs:enumeration value="ж/д_рзд"/>
+			<xs:enumeration value="ж/д_ст"/>
+			<xs:enumeration value="жилзона"/>
+			<xs:enumeration value="жилрайон"/>
+			<xs:enumeration value="заимка"/>
+			<xs:enumeration value="казарма"/>
+			<xs:enumeration value="кв-л"/>
+			<xs:enumeration value="кордон"/>
+			<xs:enumeration value="кп"/>
+			<xs:enumeration value="лпх"/>
+			<xs:enumeration value="м"/>
+			<xs:enumeration value="массив"/>
+			<xs:enumeration value="мкр"/>
+			<xs:enumeration value="нп"/>
+			<xs:enumeration value="нп."/>
+			<xs:enumeration value="остров"/>
+			<xs:enumeration value="п"/>
+			<xs:enumeration value="п."/>
+			<xs:enumeration value="п.ж/д ст."/>
+			<xs:enumeration value="п.ст."/>
+			<xs:enumeration value="п/о"/>
+			<xs:enumeration value="п/ст"/>
+			<xs:enumeration value="пгт"/>
+			<xs:enumeration value="п-к"/>
+			<xs:enumeration value="пл.р-н"/>
+			<xs:enumeration value="погост"/>
+			<xs:enumeration value="пос.рзд"/>
+			<xs:enumeration value="пос.рзд."/>
+			<xs:enumeration value="починок"/>
+			<xs:enumeration value="промзона"/>
+			<xs:enumeration value="рзд"/>
+			<xs:enumeration value="рзд."/>
+			<xs:enumeration value="р-н"/>
+			<xs:enumeration value="рп"/>
+			<xs:enumeration value="рп."/>
+			<xs:enumeration value="с"/>
+			<xs:enumeration value="с."/>
+			<xs:enumeration value="сл"/>
+			<xs:enumeration value="снт"/>
+			<xs:enumeration value="сп"/>
+			<xs:enumeration value="сп."/>
+			<xs:enumeration value="ст"/>
+			<xs:enumeration value="ст."/>
+			<xs:enumeration value="ст-ца"/>
+			<xs:enumeration value="тер"/>
+			<xs:enumeration value="тер. СНТ"/>
+			<xs:enumeration value="у"/>
+			<xs:enumeration value="х"/>
+			<xs:enumeration value="х."/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tStreetExt">		<!--New-->				
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="а/я"/>
+			<xs:enumeration value="аал"/>
+			<xs:enumeration value="аллея"/>
+			<xs:enumeration value="берег"/>
+			<xs:enumeration value="б-р"/>
+			<xs:enumeration value="вал"/>
+			<xs:enumeration value="въезд"/>
+			<xs:enumeration value="городок"/>
+			<xs:enumeration value="гск"/>
+			<xs:enumeration value="д"/>
+			<xs:enumeration value="днп"/>
+			<xs:enumeration value="дор"/>
+			<xs:enumeration value="ж/д_будка"/>
+			<xs:enumeration value="ж/д_казарм"/>
+			<xs:enumeration value="ж/д_оп"/>
+			<xs:enumeration value="ж/д_пост"/>
+			<xs:enumeration value="ж/д_рзд"/>
+			<xs:enumeration value="ж/д_ст"/>
+			<xs:enumeration value="ж/р"/>
+			<xs:enumeration value="жт"/>
+			<xs:enumeration value="заезд"/>
+			<xs:enumeration value="зона"/>
+			<xs:enumeration value="казарма"/>
+			<xs:enumeration value="кв-л"/>
+			<xs:enumeration value="км"/>
+			<xs:enumeration value="кольцо"/>
+			<xs:enumeration value="линия"/>
+			<xs:enumeration value="м"/>
+			<xs:enumeration value="мгстр."/>
+			<xs:enumeration value="местность"/>
+			<xs:enumeration value="месторожд."/>
+			<xs:enumeration value="мкр"/>
+			<xs:enumeration value="мост"/>
+			<xs:enumeration value="н/п"/>
+			<xs:enumeration value="наб"/>
+			<xs:enumeration value="нп"/>
+			<xs:enumeration value="остров"/>
+			<xs:enumeration value="п"/>
+			<xs:enumeration value="п/о"/>
+			<xs:enumeration value="п/р"/>
+			<xs:enumeration value="п/ст"/>
+			<xs:enumeration value="парк"/>
+			<xs:enumeration value="пер"/>
+			<xs:enumeration value="переезд"/>
+			<xs:enumeration value="пл"/>
+			<xs:enumeration value="платф"/>
+			<xs:enumeration value="пл-ка"/>
+			<xs:enumeration value="порт"/>
+			<xs:enumeration value="пр-кт"/>
+			<xs:enumeration value="проезд"/>
+			<xs:enumeration value="промзона"/>
+			<xs:enumeration value="просек"/>
+			<xs:enumeration value="проселок"/>
+			<xs:enumeration value="проулок"/>
+			<xs:enumeration value="рзд"/>
+			<xs:enumeration value="р-н"/>
+			<xs:enumeration value="ряд"/>
+			<xs:enumeration value="ряды"/>
+			<xs:enumeration value="c"/>
+			<xs:enumeration value="с/т"/>
+			<xs:enumeration value="сад"/>
+			<xs:enumeration value="сзд."/>
+			<xs:enumeration value="сквер"/>
+			<xs:enumeration value="сл"/>
+			<xs:enumeration value="снт"/>
+			<xs:enumeration value="спуск"/>
+			<xs:enumeration value="ст"/>
+			<xs:enumeration value="стр"/>
+			<xs:enumeration value="тер"/>
+			<xs:enumeration value="км"/>
+			<xs:enumeration value="тер. ГСК"/>
+			<xs:enumeration value="тер. ДНО"/>
+			<xs:enumeration value="тер. ДНП"/>
+			<xs:enumeration value="тер. ДНТ"/>
+			<xs:enumeration value="тер. ДПК"/>
+			<xs:enumeration value="тер. ОНО"/>
+			<xs:enumeration value="тер. ОНП"/>
+			<xs:enumeration value="тер. ОНТ"/>
+			<xs:enumeration value="тер. ОПК"/>
+			<xs:enumeration value="тер. ПК"/>
+			<xs:enumeration value="тер. СНО"/>
+			<xs:enumeration value="тер. СНП"/>
+			<xs:enumeration value="тер. СНТ"/>
+			<xs:enumeration value="тер. СПК"/>
+			<xs:enumeration value="тер. ТСЖ"/>
+			<xs:enumeration value="тер. ТСН"/>
+			<xs:enumeration value="тер. СОСН"/>
+			<xs:enumeration value="тер.ф.х."/>
+			<xs:enumeration value="тракт"/>
+			<xs:enumeration value="туп"/>
+			<xs:enumeration value="ул"/>
+			<xs:enumeration value="ус."/>
+			<xs:enumeration value="уч-к"/>
+			<xs:enumeration value="ф/х"/>
+			<xs:enumeration value="ферма"/>
+			<xs:enumeration value="х"/>
+			<xs:enumeration value="ш"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tAmpFromAllQcb">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tRequestPurpose">					
+		<xs:restriction base="xs:decimal">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="1.1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="12"/>
+			<xs:enumeration value="13"/>
+			<xs:enumeration value="13.1"/>
+			<xs:enumeration value="14"/>
+			<xs:enumeration value="14.1"/>
+			<xs:enumeration value="15"/>
+			<xs:enumeration value="16"/>
+			<xs:enumeration value="17"/>
+			<xs:enumeration value="18"/>
+			<xs:enumeration value="19"/>
+			<xs:enumeration value="20"/>
+			<xs:enumeration value="21"/>
+			<xs:enumeration value="22"/>
+			<xs:enumeration value="23"/>
+			<xs:enumeration value="24"/>
+			<xs:enumeration value="25"/>
+			<xs:enumeration value="26"/>
+			<xs:enumeration value="27"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tSalesChannel">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="102"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tApplicationOrigin">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="102"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tPeriod">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="102"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tIncomeConfirmationDocument">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="102"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tCarConfirmationDocument">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="102"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tRealty">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="102"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tRealtyConfirmationDocument">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="102"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tEducation">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="100"/>
+			<xs:enumeration value="101"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tChildren">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="100"/>
+			<xs:enumeration value="101"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tUseDuration">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="100"/>
+			<xs:enumeration value="101"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tAddressKind">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tPhoneKind">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tPhoneConfirmation">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="102"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tApplication">							<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="102"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tCreditTypeCode">						<!--NEW-->
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>		
+			<xs:enumeration value="10"/>    
+			<xs:enumeration value="11"/>    
+			<xs:enumeration value="12"/>    
+			<xs:enumeration value="13"/>    
+			<xs:enumeration value="14"/>    
+			<xs:enumeration value="15"/>    
+			<xs:enumeration value="16"/>    
+			<xs:enumeration value="17"/>    
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

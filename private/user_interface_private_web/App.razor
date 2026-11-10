@@ -1,0 +1,42 @@
+﻿<CascadingAuthenticationState>
+    <CascadingValue Value="User" Name="User">
+        <CascadingValue Value="IsLoaded" Name="IsLoaded">
+            <Router AppAssembly="@typeof(App).Assembly">
+                <Found Context="routeData">
+                    <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                        <NotAuthorized>
+                            @{
+                            _navMngr.NavigateTo(_configuration.GetSection("Links:Public").Value);
+                            }
+                        </NotAuthorized>
+                        <Authorizing>
+                            Авторизация...
+                        </Authorizing>
+                    </AuthorizeRouteView>
+                    <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+                </Found>
+                <NotFound>
+                    <PageTitle>Not found</PageTitle>
+                    <LayoutView Layout="@typeof(MainLayout)">
+                        <p role="alert">Данная страница не существует</p>
+                    </LayoutView>
+                </NotFound>
+            </Router>
+        </CascadingValue>
+    </CascadingValue>
+</CascadingAuthenticationState>
+
+
+@code {
+
+[Parameter] public ConnectionParameters User { get; set; } = new();
+[Parameter] public bool IsLoaded { get; set; } = false;
+
+private string? _error = string.Empty;
+
+protected override async Task OnInitializedAsync()
+{
+    await _session.SetAsync("Connection", JsonSerializer.Serialize(User));
+}
+
+}

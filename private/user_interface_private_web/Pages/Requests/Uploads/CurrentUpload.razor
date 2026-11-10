@@ -1,0 +1,949 @@
+﻿@page "/private/current-upload/{Id}"
+@using System.Net.Http.Headers
+@layout ResponseLayout
+@attribute [Authorize(Roles = "data-upload")]
+
+<PageTitle>Статус обработки</PageTitle>
+
+<CommentWindow InfoComment="_window" />
+
+@if (_show)
+{
+    <div class="fancybox-container fancybox-is-open fancybox-can-swipe" role="dialog" tabindex="-1" id="fancybox-container-3" style="transition-duration: 366ms;">
+        <div class="fancybox-bg"></div><div class="fancybox-inner">
+            <div class="fancybox-infobar"><span data-fancybox-index="">1</span>&nbsp;/&nbsp;<span data-fancybox-count="">1</span></div><div class="fancybox-toolbar compensate-for-scrollbar"><button data-fancybox-zoom="" class="fancybox-button fancybox-button--zoom" title="Zoom" disabled=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.7 17.3l-3-3a5.9 5.9 0 0 0-.6-7.6 5.9 5.9 0 0 0-8.4 0 5.9 5.9 0 0 0 0 8.4 5.9 5.9 0 0 0 7.7.7l3 3a1 1 0 0 0 1.3 0c.4-.5.4-1 0-1.5zM8.1 13.8a4 4 0 0 1 0-5.7 4 4 0 0 1 5.7 0 4 4 0 0 1 0 5.7 4 4 0 0 1-5.7 0z"></path></svg></button><button data-fancybox-play="" class="fancybox-button fancybox-button--play" title="Start slideshow" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 5.4v13.2l11-6.6z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.33 5.75h2.2v12.5h-2.2V5.75zm5.15 0h2.2v12.5h-2.2V5.75z"></path></svg></button><button data-fancybox-thumbs="" class="fancybox-button fancybox-button--thumbs" title="Thumbnails" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.59 14.59h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76H5.65V5.65z"></path></svg></button><button data-fancybox-close="" class="fancybox-button fancybox-button--close" title="Close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 10.6L6.6 5.2 5.2 6.6l5.4 5.4-5.4 5.4 1.4 1.4 5.4-5.4 5.4 5.4 1.4-1.4-5.4-5.4 5.4-5.4-1.4-1.4-5.4 5.4z"></path></svg></button></div><div class="fancybox-navigation"><button data-fancybox-prev="" class="fancybox-button fancybox-button--arrow_left" title="Previous" disabled=""><div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.28 15.7l-1.34 1.37L5 12l4.94-5.07 1.34 1.38-2.68 2.72H19v1.94H8.6z"></path></svg></div></button><button data-fancybox-next="" class="fancybox-button fancybox-button--arrow_right compensate-for-scrollbar" title="Next" disabled=""><div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.4 12.97l-2.68 2.72 1.34 1.38L19 12l-4.94-5.07-1.34 1.38 2.68 2.72H5v1.94z"></path></svg></div></button></div><div class="fancybox-stage">
+                <div class="fancybox-slide fancybox-slide--html fancybox-slide--current fancybox-slide--complete" style="">
+                    <div class="status-popup status-popup-comment fancybox-content" id="status-popup-comment" style="display: inline-block;">
+                        <div class="l-content">
+                            <h1 class="status-popup__title title title--h1">Добавить комментарий</h1>
+                            <div class="status-popup-comment__form form">
+                                <div class="form__inputs">
+                                    <div class="form__input">
+                                        <div class="form__input-label">Текст комментария:</div>
+                                        <textarea @bind=_uploadComment.Text></textarea>
+                                    </div>
+                                    <div class="form__input-upload">
+                                        <div class="form__input">
+                                            <div class="form__input-label">Загрузить файл</div>
+                                            <div class="form__input-file">
+                                                <InputFile OnChange="OnInputFileChange" id="uploadFile" />
+                                                <div class="form__input-file--info">@((_uploadComment.BrowserFile is null) ? "Файл не выбран" : _uploadComment.BrowserFile.Name)</div>
+                                                <div class="form__input-btn btn btn--green">Выбрать файл</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form__checkboxes">
+                                        @foreach (var _email in _uploadComment.Recipients)
+                                        {
+                                            <div class="form__input form__checkbox">
+                                                <input type="checkbox" id="0" @bind=_email.Checked disabled="@(_email.Added)">
+                                                @if (!_email.Added)
+                                                {
+                                                    <label class="form__checkbox-label" for="0">@($"{_email.UserName} [{_email.Email}]")</label>
+                                                }
+                                                else
+                                                {
+                                                    <label class="form__checkbox-label" for="4">
+                                                        <input type="text" style="margin-right:0; width: 150px; height: 30px;" placeholder="Имя адресата" @bind=_email.UserName />&nbsp;[<input type="text" placeholder="Адрес" @bind=_email.Email style="margin-right:0; width: 150px; height:30px" />]&nbsp;
+                                                        @* <a class="comment__btn btn btn--green" @onclick="@(() => _email.Added = false)">Добавить</a> *@&nbsp;
+                                                        <a class="result__item-icon" @onclick="@(() => _email.Added = false)">
+                                                            <svg class="ico ico-mono-add">
+                                                                <use xlink:href="img/sprite-mono.svg#ico-mono-add"></use>
+                                                            </svg>
+                                                        </a>&nbsp;
+                                                        @* <a class="comment__btn btn" @onclick="@(() => _uploadComment.Recipients.Remove(_email))">Отмена</a> *@
+                                                        <a class="result__item-icon" @onclick="@(() => _uploadComment.Recipients.Remove(_email))">
+                                                            <svg class="ico ico-mono-add">
+                                                                <use xlink:href="img/sprite-mono.svg#ico-mono-delete"></use>
+                                                            </svg>
+                                                        </a>
+                                                    </label>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="form__address--add" @onclick="@(() => _uploadComment.Recipients.Add(new () { Added = true }))">Добавить адресата</div>
+                                </div>
+                                <button class="form__input-btn btn btn--green" disabled="@_disabled" @onclick="CreateCommentAsync">
+                                    @if (_disabled)
+                                    {
+                                        <img src="/img/loading.gif" width="20" />
+
+                                        @(_uploaded / 1024) <span>KB / </span>  @(_uploadComment?.BrowserFile?.Size)
+
+                                        <span>KB</span>
+                                    }Добавить
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" data-fancybox-close="" class="fancybox-button fancybox-close-small" title="Close" @onclick="@(() => _show = false)">
+                            <svg xmlns="http://www.w3.org/2000/svg" version="1" viewBox="0 0 24 24">
+                                <path d="M13 12l5-5-1-1-5 5-5-5-1 1 5 5-5 5 1 1 5-5 5 5 1-1z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div><div class="fancybox-caption fancybox-caption--separate"><div class="fancybox-caption__body"></div></div>
+        </div>
+    </div>
+
+}
+
+
+@if (_upload is not null)
+{
+    <div class="status-popup">
+        <div class="l-content">
+            <h1 class="status-popup__title title title--h1">Статус обработки</h1>
+            <div class="status-popup__item">
+                <div class="status-popup__item-top" @onclick="@(() => _fileInfoShow = !_fileInfoShow)">
+                    <div class="status-popup__item-arrow dropdown-arrow">
+                        <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_fileInfoShow ? "180" : "360")deg);">
+                            <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                        </svg>
+                    </div>
+                    <div class="status-popup__item-title">Информация о загруженом файле</div>
+                </div>
+                @if (_fileInfoShow)
+                {
+                    <div class="status-popup__item-wrapper dropdown-content">
+                        <div class="status-popup__item-content">
+                            <table class="table table-status">
+                                <tbody>
+                                    <tr>
+                                        <td>Организация</td>
+                                        <td>@(_uploadXML.Descendants("user-info")?.FirstOrDefault()?.Attribute("client-name")?.Value ?? $"ID: {_uploadXML.Descendants("user-info")?.FirstOrDefault()?.Attribute("client-id")?.Value ?? string.Empty}")</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Пользователь</td>
+                                        <td>@(_uploadXML.Descendants("user-info")?.FirstOrDefault()?.Attribute("user-name")?.Value ?? string.Empty)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Файл</td>
+                                        @* <td class="red underline" @onclick="@(() => _jsr.InvokeVoidAsync("open", $"{_configuration.GetSection("Links:UploadUtils").Value}/utils.ashx?action=query-uploaded-file&upload-id={_upload.UploadId}&user-folder-id={_upload.OrganizationId.ToString()!.PadLeft(5, '0')}&date-folder-id={DateTime.Parse(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("upload-finish-datetime")?.Value ?? DateTime.Now.ToString()).ToString("yyyy-MM-dd")}", "_blank"))">@(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("source-file-name")?.Value ?? string.Empty)</td> *@
+                                        <td class="red underline" @onclick="@(() => DownloadFileAsync())">
+                                            @if (_disabled)
+                                            {
+                                                <img src="/img/loading.gif" width="10" />
+                                            }
+                                            @(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("source-file-name")?.Value ?? string.Empty)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Дата / время начала загрузки</td>
+                                        <td>@(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("upload-start-datetime")?.Value ?? string.Empty)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Дата / время окончания загрузки</td>
+                                        <td>@(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("upload-finish-datetime")?.Value ?? string.Empty)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Количество документов в пакете</td>
+                                        <td>@(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("package-document-count")?.Value ?? string.Empty)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Дата / время начала обработки</td>
+                                        <td>@(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("processing-start-datetime")?.Value ?? string.Empty)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Дата / время окончания обработки</td>
+                                        <td>@(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("processing-finish-datetime")?.Value ?? string.Empty)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Отчет о получении / отклонении документа</td>
+                                        @if (_upload.RegResultXml is not null)
+                                        {
+                                            <td class="underline"><span @onclick="@(() => DownloadAsync(true, false))">reg_result.xml</span> | <span @onclick="@(() => DownloadAsync(true, true))">reg_result.sig</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td>-</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <td>Отчет о принятии / непринятии КИ</td>
+                                        @if (_upload.UploadResultXml is not null)
+                                        {
+                                            <td class="underline"><span @onclick="@(() => DownloadAsync(false, false))">upload_result.xml</span> | <span @onclick="@(() => DownloadAsync(false, true))">upload_result.sig</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td>-</td>
+                                        }
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="status-popup__item-comments comments">
+                            <div class="comments__title">Комментарии:</div>
+                            <div class="comment">
+                                <div class="comment__top">
+                                    <div class="comment__name">@(_uploadXML.Descendants("user-info")?.FirstOrDefault()?.Attribute("user-name")?.Value ?? $"#{_uploadXML.Descendants("user-info")?.FirstOrDefault()?.Attribute("client-id")?.Value ?? string.Empty}")</div>
+                                    <div class="comment__date">@(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("upload-start-datetime")?.Value ?? string.Empty) </div>
+                                </div>
+                                <div class="comment__body">
+                                    <div class="comment__body-text">Загружен файл: @(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("source-file-name")?.Value ?? string.Empty)</div>
+                                </div>
+                            </div>
+                            @foreach (var _comment in _uploadXML.Descendants("user"))
+                            {
+                                <div class="comment">
+                                    <div class="comment__top">
+                                        <div class="comment__name comment__name--red">@(_comment.Attribute("name")?.Value ?? $"#{_comment.Element("user")?.Attribute("organization-id")?.Value ?? string.Empty}")</div>
+                                        <div class="comment__date">@(_comment.Attribute("created")?.Value ?? string.Empty)</div>
+                                    </div>
+
+                                    <div class="comment__body">
+                                        <div class="comment__body-text">@(_comment.Element("text")?.Value ?? string.Empty) </div>
+                                        @if (_comment.Element("file") is not null)
+                                        {
+                                            <div class="comment__push">
+                                                <span class="comment__push-title">Загружен файл: </span>
+                                                <span class="comment__push-text" style="cursor:pointer" @onclick="@(() => DownloadCommentFileAsync(_comment.Element("file")!))">@_comment.Element("file")!.Attribute("name")?.Value</span>
+                                                <span>
+                                                    @if (_guid.Equals(_comment.Element("file")?.Attribute("id")?.Value))
+                                                    {
+                                                        <img src="/img/loading.gif" width="10" />
+
+                                                        <span> @downloadProgress %</span>
+                                                    }
+                                                </span>
+
+                                            </div>
+                                        }
+                                        @foreach (var _alert in _comment.Descendants("notification-to"))
+                                        {
+                                            <div class="comment__push"><span class="comment__push-title">Уведомление отправлено: </span><span class="comment__push-text">@($"{_alert?.Attribute("name")?.Value} [{_alert?.Attribute("email")?.Value}]")</span></div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            <a class="comment__btn btn btn--green" @onclick="@(() =>
+                            {
+                                _uploadComment = new()
+                                {
+                                    Recipients = new()
+                                };
+
+                                _uploadComment.Recipients.AddRange(_configuration.GetSection("Support").Get<List<NotificationTo>>());
+
+                                _uploadComment.Recipients.Add(
+                                    new()
+                                        {
+                                            UserId = _user.Id.ToString(),
+                                            Email = _user.Email,
+                                            UserName = $"{_user.LastName} {_user.FirstName}",
+                                            OrganizationId = _user.OrganizationId.ToString(),
+                                            Checked = true
+                                        });
+
+                                _show = true;})">Добавить</a>
+                        </div>
+                    </div>
+                }
+            </div>
+            @foreach (var _document in _uploadXML.Descendants("document"))
+            {
+                <div class="status-popup__item">
+                    <div class="status-popup__item-top" @onclick="@(() => _documentInfoShow = !_documentInfoShow)">
+                        <div class="status-popup__item-arrow dropdown-arrow" style="transform:rotate(@(!_documentInfoShow ? "180" : "360")deg);">
+                            <svg class="ico ico-mono-arrow-dropdown">
+                                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                            </svg>
+                        </div>
+                        <div class="status-popup__item-title">Документ</div>
+                    </div>
+                    @if (_documentInfoShow && _uploadXML.Descendants("processing-stage").Any())
+                    {
+                        <div class="dropdown-content">
+                            <div class="status-popup__item-wrapper">
+                                <div class="status-popup__item-content">
+                                    <table class="table table-status">
+                                        <tbody>
+                                            <tr>
+                                                <td>Файл</td>
+                                                @* <td class="red underline" @onclick="(() => DownloadDocumentAsync(_document!))">@_document?.Attribute("file-name")?.Value</td> *@
+                                                <td>@_document?.Attribute("file-name")?.Value</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Размер файла, байт</td>
+                                                <td>@(_document?.Attribute("file-size")?.Value ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Номер исходящего документа</td>
+                                                <td>@(_document?.Attribute("outgoing-reg-num")?.Value ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Дата исходящего документа</td>
+                                                <td>@(_document?.Attribute("outgoing-date-time")?.Value ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Номер входящего документа</td>
+                                                <td>@(_document?.Attribute("incoming-reg-num")?.Value ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Дата входящего документа</td>
+                                                <td>@(_document?.Attribute("incoming-date-time")?.Value ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Тип содержимого</td>
+                                                @switch (@_document?.Attribute("format-type")?.Value ?? "-")
+                                                {
+                                                    case ("rsb-batch-ext"):
+                                                        <td>Выгрузка КИ в формате КБРС</td>
+                                                        ; break;
+                                                    case ("rsb-batch"):
+                                                        <td>Выгрузка расширенных сведений КИ в формате КБРС</td>
+                                                        ; break;
+                                                    case ("rsb-batch-ext-4"):
+                                                        <td>Выгрузка КИ в формате КБРС 4.00</td>
+                                                        ; break;
+                                                    case ("manual"):
+                                                        <td>Файл для ручной обработки</td>
+                                                        ; break;
+                                                    case ("unknown"):
+                                                        <td>Неизвестный тип содержимого</td>
+                                                        ; break;
+                                                    case ("rsb-batch-ext-5"):
+                                                        <td>Выгрузка КИ в формате КБРС 5.00</td>
+                                                        ; break;
+                                                    case ("ocb-batch-2-6300"):
+                                                        <td>Выгрузка КИ в формате ОКБ в соотв. с 6300-У</td>
+                                                        ; break;
+                                                    case ("equ-batch-4-6300"):
+                                                        <td>Выгрузка КИ в формате иного бюро 2 в соотв. с 6300-У</td>
+                                                        ; break;
+                                                    case ("rsb-batch-uni"):
+                                                        <td>Выгрузка КИ в универсальном формате ЦБ 2.2</td>
+                                                        ; break;
+                                                    case ("rsb-batch-uf30"):
+                                                        <td>Выгрузка КИ в универсальном формате ЦБ 3.0</td>
+                                                        ; break;
+                                                    case ("rsb-batch-uf41"):
+                                                        <td>Выгрузка КИ в универсальном формате ЦБ 4.1</td>
+                                                        ; break;
+                                                    case ("rsb-batch-uf50"):
+                                                        <td>Выгрузка КИ в универсальном формате ЦБ 5.0</td>
+                                                        ; break;
+                                                    case ("rsb-batch-uf51"):
+                                                        <td>Выгрузка КИ в универсальном формате ЦБ 5.1</td>
+                                                        ; break;
+                                                    default:
+                                                        <td>-</td>
+                                                        ; break;
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Состояние загрузки
+                                                </td>
+                                                @switch (_upload.Status)
+                                                {
+                                                    case 0:
+                                                        <td>
+                                                            Ожидается конвертация или предварительная загрузка
+                                                        </td>
+                                                        ; break;
+                                                    case -1:
+                                                        <td>
+                                                            Обработка прервана(Техническая ошибка при предварительной загрузке)
+                                                        </td>
+                                                        ; break;
+                                                    case -2:
+                                                        <td>
+                                                            Обработка прервана (Техническая ошибка при конвертации)
+                                                        </td>
+                                                        ; break;
+                                                    case 2:
+                                                        <td>
+                                                            Конвертация завершена, ожидается предварительная загрузка
+                                                        </td>
+                                                        ; break;
+                                                    case 1:
+                                                        <td>
+                                                            Ожидается конвертация или предварительная загрузка
+                                                        </td>
+                                                        ; break;
+                                                    case 3:
+                                                        <td>
+                                                            Предварительная загрузка завершена
+                                                        </td>
+                                                        ; break;
+                                                    case 4:
+                                                        <td>
+                                                            Загрузка завершена
+                                                        </td>
+                                                        ; break;
+                                                }
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="status-popup__scheme scheme">
+                                <div class="scheme__wrapper">
+                                    <div class="scheme__first">
+                                        <div class="scheme__item">
+                                            <div class="scheme__text">Обработка</div>
+                                        </div>
+                                        @foreach (var _stage in _document!.Descendants("processing-stage").Where(x => (x.Attribute("id")?.Value?.Equals("2010100") ?? false)))
+                                        {
+
+                                            <div class="scheme__second">
+                                                <div class="scheme__subitem">
+                                                    <div class="scheme__item">
+                                                        <div class="scheme__text">Предварительная загрузка</div>
+                                                    </div>
+                                                    <div class="scheme__item">
+                                                        <div class="scheme__text">Обработка завершена</div>
+                                                    </div>
+                                                </div>
+                                                <div class="scheme__third">
+                                                    <div class="scheme__subitem">
+                                                        <div class="scheme__item">
+                                                            <div class="scheme__text">Всего элементов</div>
+                                                        </div>
+                                                        <div class="scheme__item">
+                                                            <div class="scheme__text">@(_stage?.Element("summary")?.Attribute("total-elements-count")?.Value ?? "?")</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="scheme__subitem">
+                                                        <div class="scheme__item">
+                                                            <div class="scheme__text">Обработано</div>
+                                                        </div>
+                                                        <div class="scheme__item">
+                                                            <div class="scheme__text">@(_stage?.Element("summary")?.Attribute("processed-elements-count")?.Value ?? "?")</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="scheme__subitem">
+                                                        <div class="scheme__item">
+                                                            <div class="scheme__text">Ошибки</div>
+                                                        </div>
+                                                        <div class="scheme__item scheme__item-number">
+                                                            <div class="scheme__text" style="border-color: red; background:red; color:white;">@(_stage?.Descendants("error-count")?.Sum(x => new(int.Parse(x.Attribute("count")?.Value ?? "0"))) ?? 0)</div>
+                                                        </div>
+                                                    </div>
+                                                    @foreach (var _error in _stage?.Descendants("error-count") ?? Enumerable.Empty<XElement>())
+                                                    {
+                                                        <div class="scheme__subitem">
+                                                            <div class="scheme__item">
+                                                                <div class="scheme__text" style="color: red; border-color: red;">@($"{_error?.Attribute("code")?.Value ?? "0"} {_dictionary.UploadErrors[(_error?.Attribute("code")?.Value ?? "0")]}")</div>
+                                                            </div>
+                                                            <div class="scheme__item scheme__item-number">
+                                                                <div class="scheme__text" style="border-color: red; background:white; color:red;">@(_error?.Attribute("count")?.Value ?? "0")</div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    <div class="scheme__subitem">
+                                                        <div class="scheme__item">
+                                                            <div class="scheme__text">Предупреждения</div>
+                                                        </div>
+                                                        <div class="scheme__item scheme__item-number">
+                                                            <div class="scheme__text">0</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    @foreach (var _stage in _document.Descendants("processing-stage").Where(x => (x.Attribute("id")?.Value?.Equals("2020100") ?? false)))
+                                    {
+                                        <div class="scheme__first">
+                                            <div class="scheme__subitem">
+                                                <div class="scheme__item">
+                                                    <div class="scheme__text">Обработка</div>
+                                                </div>
+                                                <div class="scheme__item">
+                                                    <div class="scheme__text">Обработка завершена</div>
+                                                </div>
+                                            </div>
+                                            <div class="scheme__third">
+                                                <div class="scheme__subitem">
+                                                    <div class="scheme__item">
+                                                        <div class="scheme__text">Всего элементов</div>
+                                                    </div>
+                                                    <div class="scheme__item">
+                                                        <div class="scheme__text">@(_stage?.Element("summary")?.Attribute("total-elements-count")?.Value ?? "?")</div>
+                                                    </div>
+                                                </div>
+                                                <div class="scheme__subitem">
+                                                    <div class="scheme__item">
+                                                        <div class="scheme__text">Обработано</div>
+                                                    </div>
+                                                    <div class="scheme__item">
+                                                        <div class="scheme__text">@(_stage?.Element("summary")?.Attribute("processed-elements-count")?.Value ?? "?")</div>
+                                                    </div>
+                                                </div>
+                                                <div class="scheme__subitem">
+                                                    <div class="scheme__item">
+                                                        <div class="scheme__text">Ошибки</div>
+                                                    </div>
+                                                    <div class="scheme__item scheme__item-number">
+                                                        <div class="scheme__text" style="border-color: red; background:red; color:white;">@(_stage?.Descendants("error-count")?.Sum(x => new(int.Parse(x.Attribute("count")?.Value ?? "0"))) ?? 0)</div>
+                                                    </div>
+                                                </div>
+                                                @foreach (var _error in _stage?.Descendants("error-count") ?? Enumerable.Empty<XElement>())
+                                                {
+                                                    <div class="scheme__subitem">
+                                                        <div class="scheme__item">
+                                                            <div class="scheme__text" style="color: red; border-color: red;">@($"{_error?.Attribute("code")?.Value ?? "0"} {_dictionary.UploadErrors[(_error?.Attribute("code")?.Value ?? "0")]}")</div>
+                                                        </div>
+                                                        <div class="scheme__item scheme__item-number">
+                                                            <div class="scheme__text" style="border-color: red; background:white; color:red;">@(_error?.Attribute("count")?.Value ?? "0")</div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                <div class="scheme__subitem">
+                                                    <div class="scheme__item">
+                                                        <div class="scheme__text">Предупреждения</div>
+                                                    </div>
+                                                    <div class="scheme__item scheme__item-number">
+                                                        <div class="scheme__text">0</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+
+}
+
+
+@code {
+    private bool _fileInfoShow = true;
+    private bool _documentInfoShow = true;
+    private bool _show = false;
+    private bool _disabled = false;
+    private string _guid = string.Empty;
+
+    Answer _error = new(300, "Error");
+
+    [Parameter] public string? Id { get; set; }
+
+    // <summary>
+    /// Комментарий для информационного модального окна
+    /// </summary>
+    private Comment _window = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+    private UploadComment _uploadComment = new()
+        {
+            Recipients = new()
+        };
+
+    private DBUser _user = new();
+
+    private DBUpload? _upload = new();
+
+    private XDocument _uploadXML = new(new XElement("upload"));
+
+    private long _uploaded = 0;
+    private double _percentage = 0;
+
+    int downloadProgress = 0;
+
+    [Inject]
+    private HttpClient? Client { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _user = (await _session.GetAsync<DBUser>("UserDB")).Value!;
+
+        if (_user is null)
+        {
+            _navMngr.NavigateTo("error");
+            return;
+        }
+
+        if (!int.TryParse(Id, out _))
+        {
+            _navMngr.NavigateTo("404");
+            return;
+        }
+
+        _uploadComment.Recipients.AddRange(_configuration.GetSection("Support").Get<List<NotificationTo>>());
+
+        _uploadComment.Recipients.Add(
+            new()
+                {
+                    UserId = _user.Id.ToString(),
+                    Email = _user.Email,
+                    UserName = $"{_user.LastName} {_user.FirstName}",
+                    OrganizationId = _user.OrganizationId.ToString(),
+                    Checked = true
+                });
+
+        _upload = await _uploadMngr.GetAsync(int.Parse(Id ?? "-1"), _user.Organization.LegalPersonId);
+
+
+        if (_upload is null)
+        {
+            _navMngr.NavigateTo("404");
+
+        }
+
+        _uploadXML = XDocument.Parse(_upload?.UploadXML ?? "<upload />");
+
+        await _jsr.InvokeVoidAsync("AddStyle");
+    }
+
+    private async Task DownloadAsync(bool _isRegResult, bool sign)
+    {
+
+        if (!_disabled)
+        {
+            _disabled = true;
+
+            var _answer = await _fetcher.FetchAsync($"{_configuration.GetSection("Links:Upload").Value}?id={_upload?.UploadId}&mode=get-{(_isRegResult ? "reg" : "upload")}-result&sign={(sign ? "1" : "0")}", new byte[0], "GET");
+
+            if (_answer.Message.Length > 0)
+            {
+                string name = $"{(_isRegResult ? "reg" : "upload")}_result";
+                await _jsr.InvokeVoidAsync("SaveByteArrayToFile", _answer.Message, sign ? $"{name}.sig" : $"{name}.xml");
+            }
+
+            _disabled = false;
+        }
+        return;
+    }
+
+    /// <summary>
+    /// Добавление нового комментария
+    /// </summary>
+    /// <returns></returns>
+    private async Task CreateCommentAsync()
+    {
+        _disabled = true;
+
+        if (string.IsNullOrEmpty(_uploadComment.Text))
+        {
+            _disabled = false;
+            _window = new(true, "error", "Добавление комментария", "Текст комментария не должен быть пустым");
+            return;
+        }
+
+        XElement _comment =
+            new XElement("user",
+                new XAttribute("user-id", _user.NaturalPersonId),
+                new XAttribute("organization-id", _user.Organization.LegalPersonId),
+                new XAttribute("email", _user.Email),
+                new XAttribute("name", $"{_user.LastName} {_user.FirstName}"),
+                new XAttribute("created", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")),
+                new XElement("text", _uploadComment.Text));
+
+        var _notifications = _uploadComment.Recipients.Where(r => r.Checked).Select(r =>
+             new XElement("notification-to",
+                  new XAttribute("email", r.Email),
+                  new XAttribute("name", r.UserName)));
+
+        if (_uploadComment.BrowserFile is not null)
+        {
+            //TODO добавить проверку объема файла
+            var fileContent = new StreamContent(_uploadComment.BrowserFile.OpenReadStream(1024 * 1024 * 1024));
+            var buffer = await fileContent.ReadAsByteArrayAsync();
+
+            //Загружаем файл
+            _error = await _sender.SendByteArrayAsync($"{_configuration.GetSection("Links:UploadUtils").Value}/utils.ashx?action=put-file&upload-id={_upload?.UploadId}", "POST", buffer);
+
+
+
+
+            // var content = new MultipartFormDataContent();
+
+            // using (var stream = _uploadComment.BrowserFile.OpenReadStream(1024 * 1024 * 1024))
+            // {
+            //     var streamContent = new UploadFile(stream, 40096, (u, p) =>
+            //     {
+            //         // Set the values of the _uploaded & _percentage fields to the value provided from the event
+            //         _uploaded = u;
+            //         _percentage = p;
+
+            //         // Call StateHasChanged() to notify the component about this change to re-render the UI
+            //         InvokeAsync(() => StateHasChanged());
+            //     });
+
+            //     // Add the streamContent with the name to the FormContent variable
+            //     content.Add(streamContent, "file", _uploadComment.BrowserFile.Name);
+
+            //     _error = await _sender.SendStreamAsync($"{_configuration.GetSection("Links:UploadUtils").Value}/utils.ashx?action=put-file&upload-id={_upload?.UploadId}", content);
+            // }
+
+
+
+
+
+
+
+            if (!_error.Code.Equals(200))
+            {
+                _window = new(true, "error", "Добавление комментария", "При загрузке файла произошла ошибка. Попробуйте загрузить комментарий позже.");
+                _disabled = false;
+                return;
+            }
+
+            _comment.Add(
+                new XElement("file",
+                    new XAttribute("name", _uploadComment.BrowserFile.Name),
+                    new XAttribute("id", XDocument.Parse(_error.Message).Root?.Attribute("id")?.Value ?? string.Empty)));
+
+        }
+
+        if (_notifications.Any())
+        {
+            _comment.Add(_notifications);
+        }
+
+        _uploadXML = XDocument.Parse(_upload?.UploadXML ?? "<upload />");
+
+        if (!_uploadXML.Descendants("comments").Any())
+        {
+            _uploadXML.Root?.Add(new XElement("comments", _comment));
+        }
+        else
+        {
+            _uploadXML.Root?.Element("comments")?.Add(new XElement(_comment));
+        }
+
+        _upload!.UploadXML = _uploadXML.ToString();
+
+        if (!await (_uploadMngr.UpdateUploadAsync(_upload)))
+        {
+            _window = new(true, "error", "Добавление комментария", "При добавлении произошла ошибка. Попробуйте загрузить комментарий позже.");
+
+            _upload = await _uploadMngr.GetAsync(_upload!.Id, _user.Organization.LegalPersonId);
+
+            _disabled = false;
+            return;
+        }
+
+        _show = false;
+
+        _upload = await _uploadMngr.GetAsync(_upload!.Id, _user.Organization.LegalPersonId);
+
+        List<EmailCorrespondent> _recipients = _uploadComment.Recipients.Where(r => r.Checked).Select(r => new EmailCorrespondent() { CorrespondentName = r.UserName, Email = r.Email, SendingType = "to" }).ToList();
+
+        EmailMessage _message = new()
+            {
+                Body = $"В личном кабинете ООО \"БКИ КредитИнфо\" пользователь {_user.FirstName} {_user.LastName} направил Вам уведомление о новом комментарии к обсуждению <div style=\"width:100%;text-align:center\"><a href=\"{_navMngr.BaseUri}private/current-upload/{Id}\" style=\"color:rgb(44, 181, 67);font-size:14px;text-decoration: underline;align:center\">файла (пакета)</a></div>",
+                Subject = "Комментарий к выгрузке",
+                BodySubject = "Комментарий к выгрузке",
+                Sender = "noreply@bki-ci.ru",
+                Correspondents = _recipients,
+                TemplateName = "MailSimpleTpl"
+            };
+
+        await _sender.SendEmailAsync(_message);
+
+        _disabled = false;
+
+    }
+
+    private async Task DownloadFileAsync()
+    {
+        //TODO добавить проверку на принадлежность файла организации
+        //TODO добавить скачивание из шары
+        if (!_disabled)
+        {
+            _disabled = true;
+            Stream? streamToReadFrom = null;
+
+            string fileName = _uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("source-file-name")?.Value ?? "untitled.bin";
+
+            if (File.Exists($"{_configuration.GetSection("Directories:Upload").Value}/{_upload!.UploadId}.bin"))
+            {
+                streamToReadFrom = new FileStream($"{_configuration.GetSection("Directories:Upload").Value}/{_upload!.UploadId}.bin", FileMode.Open);
+            }
+
+            else
+            {
+                string url = $"{_configuration.GetSection("Links:UploadUtils").Value}/utils.ashx?action=query-uploaded-file&upload-id={_upload!.UploadId}&user-folder-id={_upload.OrganizationId.ToString()!.PadLeft(5, '0')}&date-folder-id={DateTime.Parse(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("upload-finish-datetime")?.Value ?? DateTime.Now.ToString()).ToString("yyyy-MM-dd")}";
+
+                try
+                {
+                    streamToReadFrom = await _http.GetStreamAsync(url);
+                }
+                catch
+                {
+                    _window = new(true, "error", "Ошибка", "При скачивании файла произошла ошибка. Попробуйте позднее");
+                    _disabled = false;
+                    return;
+                }
+            }
+
+
+            using var streamRef = new DotNetStreamReference(stream: streamToReadFrom);
+
+            await _jsr.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+            _disabled = false;
+        }
+    }
+
+    private async Task DownloadDocumentAsync(XElement _document)
+    {
+        string url = $"{_configuration.GetSection("Links:UploadUtils").Value}/utils.ashx?action=query-uploaded-file&upload-id={_upload!.UploadId}&user-folder-id={_upload.OrganizationId.ToString()!.PadLeft(5, '0')}&date-folder-id={DateTime.Parse(_uploadXML.Descendants("package-info")?.FirstOrDefault()?.Attribute("upload-finish-datetime")?.Value ?? DateTime.Now.ToString()).ToString("yyyy-MM-dd")}";
+
+        string fileName = _document.Attribute("file-name")?.Value ?? "untitled.bin";
+
+        Stream? streamToReadFrom = null;
+
+        try
+        {
+            var _answer = await _http.PostAsync(url, new StringContent(_document.ToString()));
+
+            if (!_answer.IsSuccessStatusCode)
+            {
+                _window = new(true, "error", "Ошибка", "При скачивании файла произошла ошибка. Попробуйте позднее");
+                return;
+            }
+
+            streamToReadFrom = await (_answer).Content.ReadAsStreamAsync();
+        }
+        catch
+        {
+            _window = new(true, "error", "Ошибка", "При скачивании файла произошла ошибка. Попробуйте позднее");
+
+            return;
+        }
+
+        using var streamRef = new DotNetStreamReference(stream: streamToReadFrom);
+
+        await _jsr.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+
+
+    }
+
+    private async Task DownloadCommentFileAsync(XElement _document)
+    {
+        if (string.IsNullOrEmpty(_guid))
+        {
+            _guid = _document?.Attribute("id")?.Value;
+            string url = $"{_configuration.GetSection("Links:UploadUtils").Value}/utils.ashx?action=get-file&upload-id={_upload!.UploadId}&id={_document?.Attribute("id")?.Value}";
+
+            string fileName = _document?.Attribute("name")?.Value ?? "untitled.bin";
+
+            Stream? streamToReadFrom = null;
+
+            byte attempt = 0;
+
+            try
+            {
+                HttpResponseMessage? _answer = default;
+
+                while (!(_answer?.IsSuccessStatusCode ?? false) && attempt <= 4)
+                {
+                    _answer = await _http.GetAsync(url);
+                    //var resp = await _sender.GetFileAsync(url);
+                    attempt++;
+                }
+
+                if (!_answer.IsSuccessStatusCode)
+                {
+                    _window = new(true, "error", "Ошибка", "При скачивании файла произошла ошибка. Попробуйте позднее");
+                    _guid = string.Empty;
+                    return;
+                }
+
+
+                streamToReadFrom = await (_answer).Content.ReadAsStreamAsync();
+
+            }
+            catch
+            {
+                _window = new(true, "error", "Ошибка", "При скачивании файла произошла ошибка. Попробуйте позднее");
+                _guid = string.Empty;
+                return;
+            }
+
+            using var streamRef = new DotNetStreamReference(stream: streamToReadFrom);
+
+            await _jsr.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+
+
+            // downloadInProgress = true;
+            // downloadProgress = 0;
+            // StateHasChanged();
+
+            // try
+            // {
+            //     HttpClient httpClient = new() { Timeout = TimeSpan.FromMinutes(30) };
+
+            //     // 1. Сначала выполняем HEAD-запрос для получения размера файла
+            //     long contentLength;
+            //     using (var headRequest = new HttpRequestMessage(HttpMethod.Head, url))
+            //     {
+            //         var headResponse = await httpClient.SendAsync(headRequest);
+            //         headResponse.EnsureSuccessStatusCode();
+
+            //         contentLength = headResponse.Content.Headers.ContentLength ??
+            //                       throw new Exception("Не удалось определить размер файла");
+            //     }
+
+            //     // 2. Теперь загружаем файл чанками
+            //     const int chunkSize = 1024 * 1024; // 10MB чанки
+            //     long totalDownloaded = 0;
+
+            //     using var memoryStream = new MemoryStream();
+
+            //     while (totalDownloaded < contentLength)
+            //     {
+            //         var rangeEnd = Math.Min(totalDownloaded + chunkSize - 1, contentLength - 1);
+            //         var request = new HttpRequestMessage(HttpMethod.Get, url);
+            //         request.Headers.Range = new RangeHeaderValue(totalDownloaded, rangeEnd);
+
+            //         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            //         response.EnsureSuccessStatusCode();
+
+            //         await using var stream = await response.Content.ReadAsStreamAsync();
+            //         await stream.CopyToAsync(memoryStream);
+
+            //         totalDownloaded = memoryStream.Length;
+            //         downloadProgress = (int)((double)totalDownloaded / contentLength * 100);
+            //         await InvokeAsync(StateHasChanged);
+            //     }
+
+            //     memoryStream.Position = 0;
+            //     await _jsr.InvokeVoidAsync("downloadFileFromStream", fileName, new DotNetStreamReference(memoryStream));
+            // }
+            // catch (Exception ex)
+            // {
+            //     _window = new(true, "error", "Ошибка", $"Ошибка при скачивании: {ex.Message}");
+            //     _guid = string.Empty;
+            // }
+            // finally
+            // {
+            //     downloadInProgress = false;
+            //     StateHasChanged();
+            // }
+
+
+
+            _guid = string.Empty;
+        }
+    }
+
+
+
+
+
+
+
+
+    /// <summary>
+    /// Установка файл для загрузки
+    /// </summary>
+    /// <param name="e"></param>
+    private void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        _uploadComment.BrowserFile = e?.File;
+
+        StateHasChanged();
+    }
+}

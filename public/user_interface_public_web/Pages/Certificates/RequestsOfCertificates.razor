@@ -1,0 +1,171 @@
+﻿@page "/requests-of-certificates"
+@attribute [Authorize(Roles = "certificates")]
+
+<PageTitle>Запросы сертификатов пользователей</PageTitle>
+
+<CommentWindow InfoComment=@_comment />
+<CascadingValue Name="Disabled" Value="_disabled">
+    <QuestionWindow Question=_question OnAccept=AcceptCertificateAsync />
+</CascadingValue>
+
+<section class="certificates">
+    <div class="l-content">
+        <h1 class="certificates__title title title--h1">Запросы сертификатов</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Дата запроса</td>
+                    <td>Организация</td>
+                    <td>Владелец</td>
+                    <td>Действия</td>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_certificates.Any())
+                    {
+                @foreach (var _cert in _certificates)
+                    {
+                <tr>
+                    <td>@_cert.Id</td>
+                    <td>@_cert.Inserted</td>
+                    <td>@_cert.OrgShortName</td>
+                    <td>@_cert.Owner</td>
+                    <td>
+                        @* <div class="table__icons">
+                            <div class="table__icon" @onclick="@(() => IssueCertificateAsync(_cert.Id))">
+                                <svg class="ico ico-mono-upload">
+                                    <use xlink:href="img/sprite-mono.svg#ico-mono-upload"></use>
+                                    <title>Одобрить сертификат</title>
+                                </svg>
+                            </div>
+                            <div class="table__icon" @onclick="@(() => CancelCertificateAsync(_cert.Id))">
+                                <svg class="ico ico-mono-setup">
+                                    <use xlink:href="img/sprite-mono.svg#ico-mono-setup"></use>
+                                    <title>Отменить сертификат</title>
+                                </svg>
+                            </div>
+                        </div> *@
+                        <div class="table__icons">
+                            <div class="table__icon">
+                                <img src="img/svg/checked.svg" title="Одобрить сертификат" @onclick="@(() => IssueCertificateAsync(_cert.Id))" alt="">
+                            </div>
+                            <div class="table__icon" title="Отменить сертификат" @onclick="@(() => CancelCertificateAsync(_cert.Id))">
+                                <img src="img/svg/cancel.svg" alt="">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+}
+}
+                else
+                {
+                    <tr>
+                        <td colspan="5">Заявки на выпуск сертификатов отсутствуют</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@code {
+    [CascadingParameter(Name = "Disabled")] public bool _disabled { get; set; } = false;
+
+
+/// <summary>
+/// Пользователь, осуществивший вход
+/// </summary>
+private DBUser? _user = new();
+
+private List<DBCertificate> _certificates = new();
+private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+private Comment _question = new Comment(false, string.Empty, string.Empty, string.Empty);
+private Answer? _error;
+
+//Одобрение (true)|отмена запроса сертификата (cancel)
+private bool _isAprove = false;
+
+private int _certId;
+
+/// <summary>
+/// Инициализация компонента
+/// </summary>
+/// <returns></returns>
+protected override async Task OnInitializedAsync()
+{
+    //Получаем данные пользователя
+    try
+    {
+    ProtectedBrowserStorageResult<string> _userJson = await _session.GetAsync<string>("User");
+
+    if (!_userJson.Success)
+    {
+        _user = null;
+    }
+    else
+    {
+        _user = JsonSerializer.Deserialize<DBUser>(_userJson.Value!);
+    }
+    }
+    catch
+    {
+    _user = null;
+    }
+
+    if (_user is null)
+    {
+    _navigator.NavigateTo("/");
+    return;
+    }
+
+    //Получаем данные о сертификатах
+    _certificates = await _crtMngr.GetNotIssuedRequestsListAsync() ?? new List<DBCertificate>();
+}
+
+/// <summary>
+/// Отображение окна запроса на подтверждение сертификата
+/// </summary>
+/// <param name="id">Идентификатор запроса</param>
+/// <returns></returns>
+private void IssueCertificateAsync(int id)
+{
+    _question = new Comment(true, "warning", "Одобрение запроса сертификата", $"Одобрить сертификат № {id}");
+
+    _isAprove = true;
+
+    _certId = id;
+}
+
+private void CancelCertificateAsync(int id)
+{
+    _question = new Comment(true, "warning", "Отмена запроса сертификата", $"Отменить сертификат № {id}");
+
+    _isAprove = false;
+
+    _certId = id;
+}
+
+private async Task AcceptCertificateAsync()
+{
+    _disabled = true;
+
+    //Одобряем|отменяем запрос на сертификат
+    _error = _isAprove
+    ? await _crtMngr.IssueCertificateRequestAsync(_certId, _user?.Id ?? -1)
+    : await _crtMngr.CancelCertificateRequestAsync(_certId, _user?.Id ?? -1);
+
+    _question.Show = false;
+
+    _comment = _error.Code.Equals(200)
+    ? new Comment(true, "ok", _isAprove ? "Одобрение запроса сертификата"
+    : "Отмена запроса сертификата", _error.Message) : new Comment(true, "error", "Ошибка!", _error.Message);
+
+    //Получаем данные о сертификатах
+    _certificates = await _crtMngr.GetNotIssuedRequestsListAsync() ?? new List<DBCertificate>();
+
+    _disabled = false;
+}
+
+
+}

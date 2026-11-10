@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.1">
+	<xs:include schemaLocation="entity-types-request.xsd"/>
+
+	<xs:element name="REQUEST" type="tREQUEST">
+		<xs:annotation>
+			<xs:documentation>
+				<version>08.00</version>
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+
+</xs:schema>

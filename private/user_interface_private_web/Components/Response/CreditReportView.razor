@@ -1,0 +1,74 @@
+﻿@using System.Xml.Serialization
+@using System.Xml.XPath
+@using CreditReport.RazorComponents.Models
+@using CreditReport.RazorComponents.Models.Render
+@using CreditReport.RazorComponents.Views.Default.Report
+@using CreditReport.XmlModels.XMLClasses.CreditReportLast
+@using Microsoft.Extensions.Options
+@inject IOptions<LightOptions> LightOptions
+@inject IOptions<CreditworthinessOptions> CreditworthinessOptions
+@inject ILogger<CreditReportView> Logger
+
+@if (_hasReport || _notFound)
+{
+    <div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+        <div class="status-popup__item-arrow dropdown-arrow">
+            <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+            </svg>
+        </div>
+        <div class="status-popup__item-title">Кредитный отчет</div>
+    </div>
+
+    @if (_show)
+    {
+        @if (_notFound)
+        {
+            <ReferenceView Response="Response" />
+        }
+        else
+        {
+            @if (_model != null)
+            {
+                <DefaultCreditReportDocument Model="@_model"/>
+            }
+            else
+            {
+                <div>Не удалось отобразить кредитный отчет</div>
+            }
+        }
+    }
+}
+
+@code {
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+
+    private bool _show = false;
+    private bool _notFound = false;
+    private bool _hasReport = false;
+    
+    private RenderModel<ReportViewModel>? _model = null;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            _notFound = Response.Descendants("Warning").Any(_item => _item.Value.Equals("Субъект кредитной истории по указанным реквизитам не найден"));
+            _hasReport = Response.Descendants("Report").Any();
+            if(!_hasReport)
+                return;
+            
+            var element = Response.XPathSelectElement("//Report")!;
+            var serializer = new XmlSerializer(typeof(ReportLast));
+            using var reader = element.CreateReader();
+            var report = (ReportLast)serializer.Deserialize(reader)!;
+
+            var data = ReportViewModel.Create(report, LightOptions.Value, CreditworthinessOptions.Value);
+            _model = new RenderModel<ReportViewModel>(data, RenderOptions.Web);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Ошибка при отрисовке кредитного отчета");
+        }
+    }
+}

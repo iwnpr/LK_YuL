@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<!-- edited with XMLSpy v2022 (x64) (http://www.altova.com) by Dmitry (RSCB) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="registration_result">
+		<xs:annotation>
+			<xs:documentation>Извещение о регистрации/отклонении документа выгрузки</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="document_registration" type="tDocReg" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="upload_file_name" type="xs:string" use="required"/>
+			<xs:attribute name="number_of_files" type="xs:integer" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="tDocReg">
+		<xs:sequence>
+			<xs:element name="out_doc_data" type="tDocData" minOccurs="0"/>
+			<xs:element name="in_doc_data" type="tDocData" minOccurs="0"/>
+			<xs:element name="refuse_reg_reason" type="tRefuseRegReason" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="schema_version" type="tVersion" use="required"/>
+		<xs:attribute name="registered" type="xs:boolean" use="required"/>
+		<xs:attribute name="date_time" type="tDateTime" use="required"/>
+		<xs:attribute name="file_name" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="tDocData">
+		<xs:sequence>
+			<xs:element name="reg_num" type="xs:string"/>
+			<xs:element name="date_time" type="tDateTime"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:simpleType name="tRefuseRegReason">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="100"/>	<!--Документ с таким регистрационным номером и датой от этого источника уже существует -->
+			<xs:enumeration value="101"/>	<!--Для документа отсутствует электронная подпись-->
+			<xs:enumeration value="102"/>
+			<xs:enumeration value="103"/>
+			<xs:enumeration value="104"/>
+			<xs:enumeration value="105"/>
+			<xs:enumeration value="106"/>
+			<xs:enumeration value="107"/>
+			<xs:enumeration value="108"/>
+			<xs:enumeration value="109"/>
+			<xs:enumeration value="110"/>
+			<xs:enumeration value="111"/>
+			<xs:enumeration value="112"/>
+			<xs:enumeration value="113"/>
+			<xs:enumeration value="114"/>
+			<xs:enumeration value="115"/>
+			<xs:enumeration value="116"/>	
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tDateTime">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{2}[.]\d{2}[.]\d{4}[ ]\d{2}[:]\d{2}[:]\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tVersion">
+		<xs:restriction base="xs:decimal">
+			<xs:pattern value="\d{2}[.]\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

@@ -1,0 +1,296 @@
+﻿@if (Response?.Root?.Element("TitlePart") is not null)
+{
+    <div class="document__caption"><span class="document__table-icon"><img class="image_icon" src="img/user.svg" alt="" /> Сведения о субъекте  </span></div>
+    <table class="status__table table">
+        @if (Response?.Root?.Element("TitlePart")?.Element("NaturalPersonSubject") is not null || Response?.Root?.Element("TitlePart")?.Element("FL_TitlePart") is not null)
+        {
+            <thead style="background: #eaedf3">
+
+                <tr>
+                    <td>ФИО субъекта</td>
+                    <td>Дата рождения</td>
+                    <td>Документ</td>
+                </tr>
+            </thead>
+            <tbody style="background: #fff;">
+                <tr>
+                    <td>
+                        @(Response.Root?.Element("TitlePart")?.Element("NaturalPersonSubject")?.Element("Title")?.Attribute("LastName")?.Value ?? "")
+                        @(Response.Root?.Element("TitlePart")?.Element("FL_TitlePart")?.Element("FL_Name")?.Element("lastName")?.Value ?? "")
+                        @(Response.Root?.Element("TitlePart")?.Element("NaturalPersonSubject")?.Element("Title")?.Attribute("FirstName")?.Value ?? "")
+                        @(Response.Root?.Element("TitlePart")?.Element("FL_TitlePart")?.Element("FL_Name")?.Element("firstName")?.Value ?? "")
+                        @(Response.Root?.Element("TitlePart")?.Element("NaturalPersonSubject")?.Element("Title")?.Attribute("MiddleName")?.Value ?? "")
+                        @(Response.Root?.Element("TitlePart")?.Element("FL_TitlePart")?.Element("FL_Name")?.Element("middleName")?.Value ?? "")
+                    </td>
+                    <td>
+                        @(Response.Root?.Element("TitlePart")?.Element("NaturalPersonSubject")?.Element("Title")?.Attribute("BirthDate")?.Value ?? "")
+                        @(Response.Root?.Element("TitlePart")?.Element("FL_TitlePart")?.Element("FL_Birth")?.Element("birthDate")?.Value?.ToRussianDate() ?? "")
+                    </td>
+                    <td>
+                        @(Response.Root?.Element("TitlePart")?.Element("NaturalPersonSubject")?.Element("IdentificationDocument")?.Attribute("DocSer")?.Value ?? "")
+                        @(Response.Root?.Element("TitlePart")?.Element("FL_TitlePart")?.Element("FL_Doc")?.Element("docSeries")?.Value ?? "")
+                        @(Response.Root?.Element("TitlePart")?.Element("NaturalPersonSubject")?.Element("IdentificationDocument")?.Attribute("DocNum")?.Value ?? "")
+                        @(Response.Root?.Element("TitlePart")?.Element("FL_TitlePart")?.Element("FL_Doc")?.Element("docNum")?.Value ?? "")
+                    </td>
+                </tr>
+            </tbody>
+        }
+        else
+        {
+            <thead style="background: #eaedf3">
+                <tr>
+                    <td>Наименование организации</td>
+                    <td>ИНН</td>
+                    <td>ОГРН</td>
+                </tr>
+            </thead>
+            <tbody style="background: #fff;">
+                <tr>
+                    <td>
+                        @(Response?.Root?.Element("TitlePart")?.Element("LegalPersonSubject")?.Element("Title")?.Element("Name")?.Attribute("FullName")?.Value ?? 
+                        Response?.Root?.Element("TitlePart")?.Element("UL_TitlePart")?.Element("UL_Name")?.Element("shortName")?.Value ?? "-")
+                    </td>
+                    <td>
+                        @(Response?.Root?.Element("TitlePart")?.Element("LegalPersonSubject")?.Element("IndividualTaxpayerNumber")?.Value ??
+                        Response?.Root?.Element("TitlePart")?.Element("UL_TitlePart")?.Element("UL_Tax")?.Element("TaxNum_group")?.Element("taxNum")?.Value ?? "-")
+                    </td>
+                    <td>
+                        @(Response?.Root?.Element("TitlePart")?.Element("LegalPersonSubject")?.Element("PrimaryStateRegistrationNumber")?.Value ??
+                        Response?.Root?.Element("TitlePart")?.Element("UL_TitlePart")?.Element("UL_Reg")?.Element("regNum")?.Value ?? "-")
+                    </td>
+                </tr>
+            </tbody>
+        }
+    </table>
+}
+
+<div class="document__caption">
+    <span class="document__table-icon">
+        <img class="image_icon" src="img/doc-id.svg" alt="">Кредитные договора
+    </span>
+</div>
+
+@foreach (XElement _credit in Response?.Root?.Element("unique-contr-etc")?.Elements("credit-contract") ?? (Response?.Root?.Elements("CreditContractRecord")?.Any() ?? false ? Response?.Root?.Elements("CreditContractRecord") : Response?.Root?.Elements("CreditRecord")) ?? Enumerable.Empty<XElement>())
+{
+    var _hasAMP = (_credit.Elements("AMP")?.Any() ?? false) || (_credit.Elements("MonthlyPayment")?.Any() ?? false);
+
+    <div class="document__list">
+        <div class="document__list-item">
+            <table class="document__list-content">
+                <tr style="border: 1px;">
+                    <td class="document__list-icon"><img src="img/CreditDeal.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Уникальный идентификатор договора (сделки) / Номер</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(_credit.Attribute("external-intstitute-contract-uid")?.Value ?? _credit.Attribute("CreditContractUID")?.Value ?? _credit.Element("DealUid")?.Element("uid")?.Value ?? "-") / @(_credit.Attribute("CreditContractNum")?.Value ?? _credit.Element("DealUid")?.Element("num")?.Value ?? "-")
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата совершения сделки</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(_credit.Attribute("open-date")?.Value ??
+                                              _credit.Element("CreditDeal")?.Attribute("OpenDate")?.Value ??
+                                              _credit.Element("DealUid")?.Element("openDate")?.Value?.ToRussianDate() ??
+                                              "-")
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата последнего обновления информации по договору</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(_credit.Attribute("actuality-date")?.Value ??
+                                                _credit.Attribute("LastUpdateInfoDate")?.Value ??
+                                                _credit.Attribute("lastUpdateInfoDate")?.Value?.ToRussianDate() ??
+                                                "-")
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                <div class="document__column-title">@(Response?.Root?.Element("TitlePart") is null ? "" : "Дата первого внесения информации о сделке / ")ID источника</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                        @(Response?.Root?.Element("TitlePart") is null ? "" : $"{(_credit.Attribute("creditInsertedDate")?.Value ?? "-")} / ")
+                                        @(_credit.Attribute("owner")?.Value ??
+                                                _credit.Attribute("OwnerID")?.Value ??
+                                                _credit.Attribute("ownerId")?.Value ?? "-")
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Статус договора</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_dictionary.CreditStatus[_credit.Attribute("credit-status-id")?.Value ?? GetStatusId(_credit) ?? "-"])</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Основание прекращения обязательства / Дата</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(_dictionary.OtReasonCode[_credit.Attribute("termination-code")?.Value ?? _credit.Element("ObligationTerm")?.Attribute("TerminationReasonCode")?.Value ?? _credit.Element("ContractEnd")?.Element("code")?.Value ?? "-"])
+                                            @(_credit.Attribute("termination-date")?.Value.Equals("-") ?? true && _credit.Element("ObligationTerm") is null && _credit.Element("ContractEnd") is null ? "" : $" / {_credit.Attribute("termination-date")?.Value ?? _credit.Element("ObligationTerm")?.Attribute("TerminationDate")?.Value ?? _credit.Element("ContractEnd")?.Element("date")?.Value?.ToRussianDate()}")
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Причина прекращения передачи информации / Дата</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(_dictionary.ProcessTermination[_credit.Attribute("processing-code")?.Value ?? _credit.Element("ProcessingTermination")?.Attribute("Type")?.Value ?? _credit.Element("StopSend")?.Element("code")?.Value ?? "-"])
+                                            @(_credit.Attribute("processing-date")?.Value?.Equals("-") ?? true && _credit.Element("ProcessingTermination") is null && _credit.Element("StopSend") is null ? "" : $" / {_credit.Attribute("processing-date")?.Value ?? _credit.Element("ProcessingTermination")?.Attribute("Date")?.Value ?? _credit.Element("StopSend")?.Element("date")?.Value?.ToRussianDate()}")
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма и валюта обязательства</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Attribute("credit-sum")?.Value ?? _credit.Element("CreditSum")?.Attribute("ContractTotal")?.Value ?? _credit.Element("Amount")?.Element("sum")?.Value ?? "-") @(GetCurrency(_credit.Attribute("credit-currency")?.Value ?? _credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? _credit.Element("Amount")?.Element("currency")?.Value ?? "-"))</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма срочной задолженности</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Element("debts")?.Element("urgent-debt")?.Attribute("sum")?.Value ?? _credit.Element("CreditUrgentDebt")?.Attribute("UrgentDebtSum")?.Value ?? _credit.Element("Debt_group")?.Element("DebtDue")?.Element("debtDueSum")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма по основному долгу</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Element("debts")?.Element("urgent-debt")?.Attribute("principal")?.Value ?? _credit.Element("CreditUrgentDebt")?.Attribute("UrgentDebtSumPrincipal")?.Value ?? _credit.Element("Debt_group")?.Element("DebtDue")?.Element("debtDueMainSum")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма по процентам</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Element("debts")?.Element("urgent-debt")?.Attribute("interest")?.Value ?? _credit.Element("CreditUrgentDebt")?.Attribute("UrgentDebtSumInterest")?.Value ?? _credit.Element("Debt_group")?.Element("DebtDue")?.Element("debtDuePercentSum")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Сумма по иным требованиям</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Element("debts")?.Element("urgent-debt")?.Attribute("other")?.Value ?? _credit.Element("CreditUrgentDebt")?.Attribute("UrgentDebtSumOther")?.Value ?? _credit.Element("Debt_group")?.Element("DebtDue")?.Element("debtDueOtherSum")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column" style="border-bottom: @(_hasAMP ? "1px" : "0px") solid #EAEDF3;">
+                                    <div class="document__column-title">Сумма просроченной задолженности</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Element("debts")?.Element("overdue-debt")?.Attribute("sum")?.Value ?? _credit.Element("CreditOverdueDebt")?.Attribute("OverdueDebtSum")?.Value ?? _credit.Element("Debt_group")?.Element("DebtOverdue")?.Element("debtOverdueSum")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" style="border-bottom: @(_hasAMP ? "1px" : "0px") solid #EAEDF3;">
+                                    <div class="document__column-title">Сумма по основному долгу</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Element("debts")?.Element("overdue-debt")?.Attribute("principal")?.Value ?? _credit.Element("CreditOverdueDebt")?.Attribute("OverdueDebtSumPrincipal")?.Value ?? _credit.Element("Debt_group")?.Element("DebtOverdue")?.Element("debtOverdueMainSum")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" style="border-bottom: @(_hasAMP ? "1px" : "0px") solid #EAEDF3;">
+                                    <div class="document__column-title">Сумма по процентам</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Element("debts")?.Element("overdue-debt")?.Attribute("interest")?.Value ?? _credit.Element("CreditOverdueDebt")?.Attribute("OverdueDebtSumInterest")?.Value ?? _credit.Element("Debt_group")?.Element("DebtOverdue")?.Element("debtOverduePercentSum")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" style="border-bottom: @(_hasAMP ? "1px" : "0px") solid #EAEDF3;">
+                                    <div class="document__column-title">Сумма по иным требованиям</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_credit.Element("debts")?.Element("overdue-debt")?.Attribute("other")?.Value ?? _credit.Element("CreditOverdueDebt")?.Attribute("OverdueDebtSumOther")?.Value ?? _credit.Element("Debt_group")?.Element("DebtOverdue")?.Element("debtOverdueOtherSum")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                @if (_credit.Elements("AMP").Any() || _credit.Elements("MonthlyPayment").Any())
+                {
+                    <tr>
+                        <td class="document__list-icon"><img src="img/ContractPayment.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Величина среднемесячного платежа</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_credit.Elements("AMP")?.FirstOrDefault()?.Attribute("AMPSum")?.Value ?? _credit.Element("MonthlyPayment")?.Element("sum")?.Value ?? "-") @(GetCurrency(_credit.Element("CreditSum")?.Attribute("Currency")?.Value ?? _credit.Element("Amount")?.Element("currency")?.Value ?? "-"))</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата расчета величины среднемесячного платежа</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_credit.Elements("AMP")?.FirstOrDefault()?.Attribute("AMPCalculationDate")?.Value ?? _credit.Element("MonthlyPayment")?.Element("calcDate")?.Value?.ToRussianDate() ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            </table>
+
+            <hr style="border-top: 1px dashed red;" />
+
+        </div>
+    </div>
+}
+
+@if ((Response?.Root?.Element("unique-contr-etc")?.Element("credit-contract") ?? Response?.Root?.Element("CreditContractRecord") ?? Response?.Root?.Element("CreditRecord")) is null)
+{
+    <span style="margin: 10px;">
+        Информация о договорах по запросу не найдена
+    </span>
+}
+
+
+
+
+
+@code {
+    [Parameter] public XDocument Response { get; set; } = new XDocument(new XElement("response"));
+
+        private string GetStatusId(XElement _contract) =>
+        _contract switch
+        {
+            var _ when _contract.Descendants("ProcessingTermination")?.FirstOrDefault()?.Attribute("Type")?.Value?.Equals("3") ?? _contract.Element("StopSend")?.Attribute("code")?.Value?.Equals("3") ?? false => "14",
+            var _ when _contract.Descendants("ObligationTerm")?.FirstOrDefault()?.Attribute("TerminationReasonCode")?.Value?.Equals("16") ?? _contract.Element("ContractEnd")?.Attribute("code")?.Value?.Equals("16") ?? false => "95",
+            var _ when _contract.Descendants("ObligationTerm")?.FirstOrDefault()?.Attribute("TerminationReasonCode")?.Value?.Equals("4") ?? _contract.Element("ContractEnd")?.Attribute("code")?.Value?.Equals("4") ?? false => "12",
+            var _ when _contract.Descendants("ObligationTerm").Any() || _contract.Descendants("ProcessingTermination").Any() || _contract.Elements("ContractEnd").Any() => "13",
+            var _ when _contract.Elements("StopSend").Any() => "100",
+            _ => "0"
+        };
+
+        // {
+        //     if (_contract.Descendants("ProcessingTermination")?.FirstOrDefault()?.Attribute("Type")?.Value?.Equals("3") ?? _contract.Element("StopSend")?.Attribute("code")?.Value?.Equals("3") ?? false)
+        //         return "14";
+        //     else if (_contract.Descendants("ObligationTerm")?.FirstOrDefault()?.Attribute("TerminationReasonCode")?.Value?.Equals("16") ?? _contract.Element("ContractEnd")?.Attribute("code")?.Value?.Equals("16") ?? false)
+        //         return "95";
+        //     else if (_contract.Descendants("ObligationTerm")?.FirstOrDefault()?.Attribute("TerminationReasonCode")?.Value?.Equals("4") ?? _contract.Element("ContractEnd")?.Attribute("code")?.Value?.Equals("4") ?? false)
+        //         return "12";
+        //     else if (_contract.Descendants("ObligationTerm").Any() || _contract.Descendants("ProcessingTermination").Any() || _contract.Elements("ContractEnd").Any())
+        //         return "13";
+        //     else if ( _contract.Elements("StopSend").Any())
+        //         return "100";
+        //     return "0";
+        // }
+
+    private string GetCurrency(string currency) =>
+    currency switch
+    {
+        "RUB" => "₽",
+        "RUR" => "₽",
+        "USD" => "$",
+        _ => currency
+    };
+
+}

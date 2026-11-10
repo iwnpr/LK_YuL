@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2024 (x64) (http://www.altova.com) by  () -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="entity-types-triggers.xsd"/>
+	<xs:element name="TriggersRequest">
+		<xs:annotation>
+			<xs:documentation>Корневой тег</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="User" type="UserType">
+					<xs:annotation>
+						<xs:documentation>Сведения о пользвателе</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Trigger" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Описание триггера</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="TriggerType">
+								<xs:attribute name="requestOrderId" type="xs:integer" use="required">
+									<xs:annotation>
+										<xs:documentation>Порядковый номер записи в файле</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="startDate" type="xs:date">
+									<xs:annotation>
+										<xs:documentation>Дата начала действия триггера</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="endDate" type="xs:date">
+									<xs:annotation>
+										<xs:documentation>Дата окончания действия триггера</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="unsubscribe" type="xs:boolean">
+									<xs:annotation>
+										<xs:documentation>Признак отписки от триггера</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="version" type="versionType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="TriggerType">
+		<xs:sequence>
+			<xs:element name="Subject" type="SubjectType">
+				<xs:annotation>
+					<xs:documentation>Сведения о субъете</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Consent" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Информация о согласии субъекта кредитной истории</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="pdf" type="xs:base64Binary" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Заявление в виде PDF, кодированное в формате base64, субъекта кредитной истории</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Subject" type="SubjectType">
+							<xs:annotation>
+								<xs:documentation>Сведения о субъете</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:choice>
+							<xs:element name="OrgUser" type="OrgUserType">
+								<xs:annotation>
+									<xs:documentation>Сведения о пользователе - юридическом лице</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="PersonUser" type="PersonUserType">
+								<xs:annotation>
+									<xs:documentation>Сведения о пользователе - индивидуальном предпринимателе</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:choice>
+					</xs:sequence>
+					<xs:attribute name="requestorResponsibility" type="xs:boolean" use="required">
+						<xs:annotation>
+							<xs:documentation>Запрашивающий ознакомлен с административной ответственностью, устанавливаемой статьями 5.53 и 14.29 КоАП</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="purpose" type="refPurposeRequestType" use="required">
+						<xs:annotation>
+							<xs:documentation>Цель (цели) выдачи согласия</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="otherPurposeAsText" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>Иная цель (цели) выдачи согласия</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="issueDate" type="xs:date" use="required">
+						<xs:annotation>
+							<xs:documentation>Дата выдачи согласия</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="expiryDate" type="xs:date">
+						<xs:annotation>
+							<xs:documentation>Дата окончания действия согласия</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="dateOfContract" type="xs:date">
+						<xs:annotation>
+							<xs:documentation>Дата заключения договора</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="reasonForConsentTransfer" type="refReasonForConsentTransferType">
+						<xs:annotation>
+							<xs:documentation>Основание передачи согласия</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="consentExpiration" type="refConsentExpirationType" use="required">
+						<xs:annotation>
+							<xs:documentation>Срок действия согласия</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="noPensionNumber" type="xs:boolean">
+						<xs:annotation>
+							<xs:documentation>Субъект запроса относится к категории лиц, у которых нет СНИЛС</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="consentEForm" type="xs:boolean" use="required">
+						<xs:annotation>
+							<xs:documentation>Признак получения согласия субъекта в электронной форме</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="hashCode" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>Хэш-код согласия субъекта, полученный пользователем кредитной истории</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DataSources">
+				<xs:annotation>
+					<xs:documentation>Групповой блок для данных</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DataSource" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="triggerValue" minOccurs="0" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Данные</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:string">
+													<xs:attribute name="dataCode" type="refDataCodeType" use="required">
+														<xs:annotation>
+															<xs:documentation>Тип предоставляемых данных</xs:documentation>
+														</xs:annotation>
+													</xs:attribute>
+												</xs:extension>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="sourceCode" type="refSourceCodeType" use="required">
+									<xs:annotation>
+										<xs:documentation>Тип источника данных</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubjectType">
+		<xs:sequence>
+			<xs:element name="Name" type="NameType">
+				<xs:annotation>
+					<xs:documentation>Имя</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Doc" type="DocType">
+				<xs:annotation>
+					<xs:documentation>Документ, удостоверяющий личность</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="birthDate">
+				<xs:annotation>
+					<xs:documentation>Дата рождения</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="regNum" type="ogrnType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Регистрационный номер</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TaxNum_group" type="TaxNum_groupType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Сведения о номере налогоплательщика (ИНН)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="socialNum" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>СНИЛС</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType snilsType"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Name_groupType">
+		<xs:sequence>
+			<xs:element name="PrevName" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Предыдущее имя</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="lastName">
+							<xs:annotation>
+								<xs:documentation>Фамилия предыдущая</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:union memberTypes="emptyValueType nameType"/>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="firstName">
+							<xs:annotation>
+								<xs:documentation>Имя предыдущее</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:union memberTypes="emptyValueType nameType"/>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="middleName" type="nameType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Отчество предыдущее</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Doc_groupType">
+		<xs:sequence>
+			<xs:element name="PrevDoc" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Документ, ранее удостоверявший личность</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="docCode" type="refIdentifyDocType">
+							<xs:annotation>
+								<xs:documentation>Код документа</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="docSeries" type="docSeriesType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Серия документа</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="docNum">
+							<xs:annotation>
+								<xs:documentation>Номер документа</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:union memberTypes="emptyValueType string2000Type"/>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="issueDate">
+							<xs:annotation>
+								<xs:documentation>Дата выдачи документа</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:union memberTypes="emptyValueType xs:date"/>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="foreignerCode" type="refForeignerCodeType">
+							<xs:annotation>
+								<xs:documentation>Признак иностранного гражданина</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UserType">
+		<xs:sequence>
+			<xs:element name="userId" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>Идентификатор пользователя, присвоенный администратором Бюро</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OrgUserType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="regRusExist_0">
+					<xs:annotation>
+						<xs:documentation>Признак отсутствия регистрации в РФ</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="regRusExist_1">
+					<xs:annotation>
+						<xs:documentation>Признак наличия регистрации в РФ</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="fullName">
+				<xs:annotation>
+					<xs:documentation>Полное наименование</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType string2000Type"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="shortName" type="string2000Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Сокращенное наименование</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="otherName" type="string2000Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Иное наименование</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="regNum">
+				<xs:annotation>
+					<xs:documentation>Регистрационный номер</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType ogrnType"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="lei" type="leiType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор LEI юридического лица</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TaxNum_group" type="TaxNum_groupType">
+				<xs:annotation>
+					<xs:documentation>Сведения о номере налогоплательщика (ИНН)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonUserType">
+		<xs:sequence>
+			<xs:element name="lastName">
+				<xs:annotation>
+					<xs:documentation>Фамилия</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType nameType"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="firstName">
+				<xs:annotation>
+					<xs:documentation>Имя</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType nameType"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="middleName" type="nameType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Отчество</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="birthDate">
+				<xs:annotation>
+					<xs:documentation>Дата рождения</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="birthPlace" type="string2000Type">
+				<xs:annotation>
+					<xs:documentation>Место рождения</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="regNum">
+				<xs:annotation>
+					<xs:documentation>Регистрационный номер</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType ogrnType"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TaxNum_group" type="TaxNum_groupType">
+				<xs:annotation>
+					<xs:documentation>Сведения о номере налогоплательщика (ИНН)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="socialNum">
+				<xs:annotation>
+					<xs:documentation>СНИЛС</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType snilsType"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="docCode">
+				<xs:annotation>
+					<xs:documentation>Код документа, удостоверяющего личность</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType refIdentifyDocType"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="docOtherName" type="wordsType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Наименование иного документа, удостоверяющего личность</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="docSeries" type="docSeriesType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Серия документа, удостоверяющего личность</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="docNum">
+				<xs:annotation>
+					<xs:documentation>Номер документа, удостоверяющего личность</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType string2000Type"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="issueDate">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа, удостоверяющего личность</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="docIssuer" type="string2000Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Наименование государственного учреждения, выдавшего документ, удостоверяющего личность</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="deptCode" type="departmentCodeType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Код подразделения, выдавшего документ, удостоверяющий личность</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="NameType">
+		<xs:sequence>
+			<xs:element name="lastName">
+				<xs:annotation>
+					<xs:documentation>Фамилия</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType nameType"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="firstName">
+				<xs:annotation>
+					<xs:documentation>Имя</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType nameType"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="middleName" type="nameType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Отчество</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DocType">
+		<xs:sequence>
+			<xs:element name="docCode" type="refIdentifyDocType">
+				<xs:annotation>
+					<xs:documentation>Код документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="docSeries" type="docSeriesType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Серия документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="docNum">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType string2000Type"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="issueDate">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:union memberTypes="emptyValueType xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="foreignerCode" type="refForeignerCodeType">
+				<xs:annotation>
+					<xs:documentation>Признак иностранного гражданина</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TaxNum_groupType">
+		<xs:sequence>
+			<xs:element name="taxCode" type="refTaxpayerType">
+				<xs:annotation>
+					<xs:documentation>Код номера налогоплательщика</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="taxNum" type="innType">
+				<xs:annotation>
+					<xs:documentation>Номер налогоплательщика</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

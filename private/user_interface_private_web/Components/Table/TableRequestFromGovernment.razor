@@ -1,0 +1,46 @@
+﻿<div class="document__caption"><span class="document__table-icon"><img class="image_icon" src="img/doc-id.svg" alt="">Информация о запросе в бюро от госоргана</span></div>
+@*<div class="document__table-content document__table--general">*@
+<table class="status__table table">
+    <thead>
+        <tr>
+            <td>Наименование учреждения</td>
+            <td>№ вх., присвоенный Бюро</td>
+            <td>Дата регистрации вх.</td>
+            <td>№ исходящего запроса</td>
+            <td>Дата составления запроса</td>
+            <td>Действия</td>
+        </tr>
+    </thead>
+    <tbody style="background: #fff;">
+        <tr>
+            <td>@(Request.GovernmentName)</td>
+            <td>@(Request.IncomingRequestId)</td>
+            <td>@(Request.RequestDate)</td>
+            <td>@(Request.OutgoingResponseId)</td>
+            <td>@(Request.ResponseDate)</td>
+            <td>
+                @if (Request.Response is not null && Request.Response.Contains("Pdf"))
+                {
+                    <div class="table__icons">
+                        <div class="table__icon" @onclick="@(() => Download())">
+                            <svg class="ico ico-mono-download-action">
+                                <use xlink:href="img/sprite-mono.svg#ico-mono-download-action"></use>
+                            </svg>
+                        </div>
+                    </div>
+                }
+            </td>
+        </tr>
+    </tbody>
+</table>
+@*</div>*@
+
+@code {
+    [Parameter] public DBRequestForGovernmentByUser Request { get; set; } = new();
+
+    private void Download()
+    {
+        _jsr.InvokeVoidAsync("SavePDFToFile", XDocument.Parse(Request.Response ?? "<RESPONSE />")?.Descendants("Pdf")?.FirstOrDefault()?.Value ?? string.Empty, "response.pdf");
+
+    }
+}

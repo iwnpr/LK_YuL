@@ -1,0 +1,411 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns:xs="http://www.w3.org/2001/XMLSchema"><head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE10"><style id="styles" type="text/css">
+          * {
+          font-family: Arial;
+          vertical-align: middle;
+          }
+          strong {
+          vertical-align: baseline;
+          }
+          ul {
+          list-style-type: disc;
+          padding: 0;
+          margin: 0;
+          }
+          ul, li {
+          padding-left: 0;
+          }
+          li {
+          font-weight: bold;
+          margin-left: 1em;
+          }
+          table, tr, td, p {
+          margin: 0px;
+          padding: 0px;
+          }
+          p {
+          display: block;
+          }
+          body, html {
+          font-size: 11px;
+          margin: 10px;
+          min-width: 600px;
+          }
+          table, td , th {
+          border-collapse: collapse;
+          border: 0px none transparent;
+          vertical-align: top;
+          }
+
+          table {
+          margin-left: 20px;
+          }
+          table.e, table.list, tr, caption {
+          page-break-inside: avoid;
+          }
+
+          table.e > tbody > tr > td {
+          min-width: 15px;
+          border-left: 1px solid transparent;
+          }
+
+          table.e > tbody > tr.space > td {
+          border-bottom: 1px solid transparent;
+          }
+
+
+          table.e > tbody > tr > td.no-width {
+          min-width: 0px;
+          }
+
+
+          table.e > tbody > tr.space-tr {
+          height: 15px;
+          }
+
+          .elem {
+          padding: 1px 5px 1px 5px;
+          margin-left: -8px;
+          margin-top: -10px;
+          margin-bottom: 2px;
+          border: solid 2px #6688AA;
+          background-color: window;
+          border-radius: 4px;
+          }
+
+          table.e > tbody > tr > td.line {
+          border-left-color: #ddd;
+          }
+
+          table.e > tbody > tr > td.line.choice-vert {
+          /*border-left-style: dotted;
+          border-left-color: red;*/
+          border-left-color: #c88;
+          }
+
+          table.e > tbody > tr > td.hor-line {
+          border-bottom: solid 1px #ddd;
+          }
+
+          table.e > tbody > tr > td.hor-line.choice {
+          /*border-bottom-style: dotted;
+          border-bottom-color: red;*/
+          border-bottom-color: #c88;
+          }
+
+          .hide {
+          visibility: hidden;
+          }
+          .choice {
+          border-color: #c88;
+          border-style: solid;
+          }
+          .abs-pos {
+          position: absolute;
+          visibility: visible;
+          }
+          .txt, .type {
+          margin-top: -9px;
+          margin-bottom: 2px;
+          padding: 1px 5px 1px 5px;
+          border: solid 1px gray;
+          background-color: window;
+          border-radius: 4px;
+          }
+          .type {
+          color: #006600;
+          border-color: #006600;
+          white-space: nowrap;
+          }
+          .value {
+          font-weight: bold;
+          }
+          .descr-ref {
+          color: gray;
+          cursor: pointer;
+          text-decoration: underline;
+          }
+          .descr-ref:hover {
+          color: blue;
+          }
+
+          .node-ctrl {
+          position: absolute;
+          display: block;
+          font-size: 0px;
+          width: 7px;
+          height: 7px;
+          border: solid 1px black;
+          margin-left: -21px;
+          margin-top: -5px;
+          background-color: window;
+          cursor: pointer;
+          border-radius: 2px;
+          }
+
+          .list-ctrl {
+          position: absolute;
+          display: block;
+          font-size: 0px;
+          width: 7px;
+          height: 7px;
+          border: solid 1px black;
+          margin-left: -14px;
+          margin-top: 2px;
+          background-color: window;
+          cursor: pointer;
+          border-radius: 2px;
+          }
+
+          .node-collapse-space {
+          position: absolute;
+          width: 5px;
+          height: 5px;
+          border: 1px solid Window;
+          z-index: 1;
+          }
+
+          table.node-collapse-ctrl {
+          margin-left: 0px;
+          margin-top: 0px;
+          width: 7px;
+          height: 7px;
+          cursor: pointer;
+          border: 1px solid Window;
+          }
+
+          table.node-collapse-ctrl td{
+          height: 2px;
+          width: 2px;
+          }
+          table.node-collapse-ctrl td.td-left-top {
+          border-bottom: 1px solid black;
+          border-right: 1px solid black;
+          }
+          table.node-collapse-ctrl td.td-bottom-right {
+          border-top: 1px solid black;
+          border-left: 1px solid black;
+          }
+          table.node-collapse-ctrl td.expanded {
+          border-right-color: Window;
+          border-left-color: Window;
+          }
+
+          .doc-title {
+          margin: 10px 10px 20px 5px;
+          border-bottom: solid 1px #446688;
+          }
+
+          .title-txt p {
+          padding: 0px 5px 2px 5px;
+          font-size: 18px;
+          color: #446688;
+          vertical-align: bottom;
+          }
+
+          .lang {
+          text-align: right;
+          vertical-align: bottom;
+          padding-right: 10px;
+          }
+
+          .lang-caption {
+          padding: 3px 15px 3px 3px;
+          cursor: pointer;
+          display: inline-block;
+          }
+
+          .lang-caption:hover {
+          color: blue;
+          }
+          .lang-caption-text {
+          text-decoration: underline;
+          }
+
+          .add {
+          margin-top: 1px;
+          border-top: 1px solid #CCCCCC;
+          }
+
+          .info {
+          /*
+          border-color: #0088FF;
+          */
+          color: #003366;
+          border: 1px dotted Black;
+          }
+
+          .not-used, .not-found {
+          color: red;
+          }
+          .no-info {
+          color: #AAAAAA;
+          }
+          
+          
+            .ru {
+              
+            }
+          
+            .en {
+              display: none;
+            }
+          
+          
+          table.list {
+            /*margin-bottom: 16px;*/
+          }
+
+          div.list-caption {
+            text-align: left;
+            padding-left: 4px;
+            padding-top: 0;
+            padding-bottom: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #446688;
+          }
+          
+          .list-caption {
+            text-align: left;
+            padding-bottom: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #446688;
+          }
+          
+          table.list th {
+            vertical-align: middle;
+            background-color: #DDEEFF;
+            height: 18px;
+          }
+          table.list td {
+            vertical-align: middle;
+          }
+          .list {
+            border-collapse: collapse;
+          }
+          .list > tbody > tr > td, .list > tbody > tr > th {
+            border: solid 1px #ddd;
+            padding-left: 5px;
+            padding-right: 5px;
+          }
+          sub {
+            font-size: 9px;
+          }
+          b.l {
+            padding-left: 15px;
+          }
+        </style><script id="scripts" type="text/javascript">
+          var LangNames = ['ru', 'en'];
+          
+
+          
+
+          function switchLanguage(lang) {
+            //var elems = document.getElementsByTagName('P').concat(document.getElementsByTagName('DIV'));
+            var elems = document.querySelectorAll("P,DIV");
+            for (var i=0;i<elems.length;i++) {
+              for (var j=0;j<LangNames.length;j++) {
+                if (elems[i].className.substr(0, 2) == LangNames[j]) {
+                  if (elems[i].className.substr(0, 2) == lang) {
+                    elems[i].style.display = 'block';
+                  } else {
+                    elems[i].style.display = 'none';
+                  }
+                  break;
+                }
+              }
+            }
+            for (var j=0;j<LangNames.length;j++) {
+              var elem = document.getElementById('lang-'+LangNames[j]);
+              if (elem) {
+                if (LangNames[j] == lang) {
+                  elem.style.fontWeight = 'bold';
+                } else {
+                  elem.style.fontWeight = 'normal';
+                }
+              }
+            }
+          }
+
+          function showList(listName) {
+            var w = window.open('about:blank', '_blank', 'width=800, height=800, status=no, toolbar=yes, menubar=no, location=no, resizable=yes, scrollbars=yes');
+            w.title = listName;
+            var HTML = '<!DOCTYPE html>';
+            var DataObj = document.getElementById(listName);
+            var DataText = '';
+            var CaptObj;
+            var Capt = '';
+            if (DataObj) {
+              DataText = DataObj.outerHTML;
+              if (DataObj.length > 0) CaptObj = DataObj.getElementsByTagName('CAPTION')[0];
+            }
+            if (CaptObj) {
+              var CaptText = CaptObj.getElementsByTagName('P');
+              for (var i=0;i<CaptText.length;i++) {
+                if (CaptText[i].style.display != 'none') {
+                  Capt = CaptText[i].innerText;
+                  break;
+                }
+              }
+            }
+            
+            HTML += 
+              '<html><head><title>' +
+              Capt + 
+              '</title>' +
+              document.getElementById('styles').outerHTML + 
+              '</head><body>' + 
+              DataText + 
+              '</body></html>';
+            w.document.write(HTML);
+            
+            var listCtrl = w.document.getElementById(listName).firstChild.firstChild.firstChild.firstChild;
+            if (listCtrl.className == 'list-ctrl') listCtrl.style.display = 'none';
+          }
+          
+          function nodeCtrlChange(elem, expand) {
+            var tds = elem.getElementsByTagName('TD');
+            if (expand) {
+              tds[0].setAttribute('colspan', '2');
+              tds[0].className = 'td-left-top expanded';
+              tds[2].className = 'td-bottom-right expanded';
+            } else {
+              tds[0].removeAttribute('colspan');
+              tds[0].className = 'td-left-top';
+              tds[2].className = 'td-bottom-right';
+            }            
+          }
+          
+          function ShowChildren(elemCtrl, isList) {
+            if (!isList) {
+              var ChirdrenDiv = document.getElementById('ch-'+elemCtrl.id);
+              if (ChirdrenDiv) {
+                var childrenLine = elemCtrl.parentElement;
+                if (ChirdrenDiv.style.display == 'none') {
+                  ChirdrenDiv.style.display = '';
+                  nodeCtrlChange(elemCtrl.lastChild, true);
+                  if (childrenLine) childrenLine.style.borderLeftColor = '#ddd';
+                } else {
+                  ChirdrenDiv.style.display = 'none';
+                  nodeCtrlChange(elemCtrl.lastChild, false);
+                  if (childrenLine) childrenLine.style.borderLeftColor = 'transparent';
+                }
+              }
+            } else {
+              var listTable = elemCtrl.parentElement.parentElement.nextSibling;
+              if (listTable.style.display == 'none') {
+                listTable.style.display = '';
+                nodeCtrlChange(elemCtrl.lastChild, true);
+              } else {
+                listTable.style.display = 'none';
+                nodeCtrlChange(elemCtrl.lastChild, false);
+              }
+            }
+          }
+          
+          
+
+        </script></head><body><div class="doc-title"><table style="width: 100%;"><tr><td class="title-txt"><p class="ru">Описание извещения о получении / отклонении XML-документа выгрузки (версия 5.1)</p><p class="en">Description of data and structure of XML-document of request (version)</p></td><td class="lang"><span class="lang-caption"><span id="lang-ru" class="lang-caption-text" onclick="switchLanguage('ru');" style="font-weight: bold;">Русский</span></span><span class="lang-caption"><span id="lang-en" class="lang-caption-text" onclick="switchLanguage('en');">English</span></span></td></tr></table></div><div id="data-marker"><table class="e"><tbody><tr class="space-tr"><td class="hor-line "></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=" "></td><td class="line"><div id="NotificationOfReceipt" class="node-ctrl" onmousedown="ShowChildren(this);"><div class="node-collapse-space"></div><table class="node-collapse-ctrl"><tbody><tr><td colspan="2" class="td-left-top expanded"></td></tr><tr><td></td><td class="td-bottom-right expanded"></td></tr></tbody></table></div><div class="elem abs-pos "><b>NotificationOfReceipt</b></div><p class="hide"><b>NotificationOfReceipt</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt"><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line "></td><td><div class="elem abs-pos "><b>schemaVersion</b></div><p class="hide"><b>schemaVersion</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">string</span><span>(</span><span class="value">5.1</span><span>)</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-schemaVersion"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line  choice"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line  choice"></td><td><div class="elem abs-pos  choice"><b>inn</b></div><p class="hide"><b>inn</b></p></td><td></td><td><div class="txt"><p class="ru"><nobr><b>выбор</b> (<b>обязательный</b>)</nobr></p><p class="en"><nobr><b>choice</b> (<b>required</b>)</nobr></p></div></td><td></td><td><div class="type"><span class="value">string</span><span>[1..100]"[^ \p{Cc} ­a-zа-яё]([ ]?[^ \p{Cc} ­a-zа-яё])*"</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-inn"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line  choice"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line  choice"></td><td><div class="elem abs-pos  choice"><b>ogrn</b></div><p class="hide"><b>ogrn</b></p></td><td></td><td><div class="txt"><p class="ru"><nobr><b>выбор</b> (<b>обязательный</b>)</nobr></p><p class="en"><nobr><b>choice</b> (<b>required</b>)</nobr></p></div></td><td></td><td><div class="type"><span class="value">string</span><span>[1..100]"[^ \p{Cc} ­a-zа-яё]([ ]?[^ \p{Cc} ­a-zа-яё])*"</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-ogrn"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line  choice choice-vert"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line  choice"></td><td><div class="elem abs-pos  choice"><b>sourceId</b></div><p class="hide"><b>sourceId</b></p></td><td></td><td><div class="txt"><p class="ru"><nobr><b>выбор</b> (<b>обязательный</b>)</nobr></p><p class="en"><nobr><b>choice</b> (<b>required</b>)</nobr></p></div></td><td></td><td><div class="type"><span class="value">string</span><span>"[а-яёА-ЯЁ0-9A-Za-z\s\-\.,«»"№`'()\[\]*:;?{}!%_+~@#$^=|/\\&lt;&gt;&amp;]{1,256}"</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-sourceId"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line "></td><td><div class="elem abs-pos "><b>outgoingDocDateTime</b></div><p class="hide"><b>outgoingDocDateTime</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-outgoingDocDateTime"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line "></td><td><div class="elem abs-pos "><b>outgoingDocNumber</b></div><p class="hide"><b>outgoingDocNumber</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-outgoingDocNumber"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line  choice"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line  choice"></td><td><div class="elem abs-pos  choice"><b>acceptanceStatusFail</b></div><p class="hide"><b>acceptanceStatusFail</b></p></td><td></td><td><div class="txt"><p class="ru"><nobr><b>выбор</b> (<b>обязательный</b>)</nobr></p><p class="en"><nobr><b>choice</b> (<b>required</b>)</nobr></p></div></td><td></td><td><div class="type"><span class="value">string</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-acceptanceStatusFail"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line  choice"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line  choice"></td><td class="line"><div id="NotificationOfReceipt-Errors" class="node-ctrl" onmousedown="ShowChildren(this);"><div class="node-collapse-space"></div><table class="node-collapse-ctrl"><tbody><tr><td colspan="2" class="td-left-top expanded"></td></tr><tr><td></td><td class="td-bottom-right expanded"></td></tr></tbody></table></div><div class="elem abs-pos  choice"><b>Errors</b></div><p class="hide"><b>Errors</b></p></td><td></td><td><div class="txt"><p class="ru"><nobr><b>выбор</b> (<b>обязательный, количество повторений не ограничено</b>)</nobr></p><p class="en"><nobr><b>choice</b> (<b>required, iteration unbounded</b>)</nobr></p></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-Errors"><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="line"></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class="line"></td><td class=" line "></td><td><div class="elem abs-pos "><b>errorCode</b></div><p class="hide"><b>errorCode</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">string</span><span>(</span><span class="value">1</span><span>,</span><span class="value">2</span><span>,</span><span class="value">3</span><span>,</span><span class="value">4</span><span>,</span><span class="value">5</span><span>,</span><span class="value">6</span><span>,</span><span class="value">7</span><span>,</span><span class="value">99</span><span>)</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-Errors-errorCode"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="line"></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class="line"></td><td class=" "></td><td><div class="elem abs-pos "><b>errorMessage</b></div><p class="hide"><b>errorMessage</b></p></td><td></td><td><div class="txt"><p class="ru">необязательный</p><p class="en">unrequired</p></div></td><td></td><td><div class="type"><span class="value">string</span><span>[1..2000]</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-Errors-errorMessage"></div></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line  choice"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line  choice"></td><td><div class="elem abs-pos  choice"><b>acceptanceStatusOK</b></div><p class="hide"><b>acceptanceStatusOK</b></p></td><td></td><td><div class="txt"><p class="ru"><nobr><b>выбор</b> (<b>обязательный</b>)</nobr></p><p class="en"><nobr><b>choice</b> (<b>required</b>)</nobr></p></div></td><td></td><td><div class="type"><span class="value">string</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-acceptanceStatusOK"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line  choice"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line  choice"></td><td><div class="elem abs-pos  choice"><b>incomingDocDateTime</b></div><p class="hide"><b>incomingDocDateTime</b></p></td><td></td><td><div class="txt"><p class="ru"><nobr><b>выбор</b> (<b>обязательный</b>)</nobr></p><p class="en"><nobr><b>choice</b> (<b>required</b>)</nobr></p></div></td><td></td><td><div class="type"><span class="value">dateTime</span><span>"(19|20)\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}"</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-incomingDocDateTime"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line  choice"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line  choice"></td><td><div class="elem abs-pos  choice"><b>incomingDocNumber</b></div><p class="hide"><b>incomingDocNumber</b></p></td><td></td><td><div class="txt"><p class="ru"><nobr><b>выбор</b> (<b>обязательный</b>)</nobr></p><p class="en"><nobr><b>choice</b> (<b>required</b>)</nobr></p></div></td><td></td><td><div class="type"><span class="value">string</span><span>[1..256]"[^ \p{Cc} ­a-zа-яё]([ ]?[^ \p{Cc} ­a-zа-яё])*"</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-incomingDocNumber"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line "></td><td><div class="elem abs-pos "><b>fileName</b></div><p class="hide"><b>fileName</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">string</span><span>[1..256]</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-fileName"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line "></td><td><div class="elem abs-pos "><b>fileHash</b></div><p class="hide"><b>fileHash</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">string</span><span>"([0-9a-f]{64}|[0-9A-F]{64})"</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-fileHash"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line "></td><td><div class="elem abs-pos "><b>docDateTime</b></div><p class="hide"><b>docDateTime</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">dateTime</span><span>"(19|20)\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}"</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-docDateTime"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" "></td><td><div class="elem abs-pos "><b>sendingDateTime</b></div><p class="hide"><b>sendingDateTime</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">dateTime</span><span>"(19|20)\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}"</span></div></td></tr></tbody></table><div class="children" id="ch-NotificationOfReceipt-sendingDateTime"></div></div></div></body></html>

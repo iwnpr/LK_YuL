@@ -1,0 +1,22 @@
+﻿@inherits LayoutComponentBase
+
+<main class="main">
+    <div class="document__content">
+
+        <div class="document__item">
+            <div class="document__item-top">
+                <div class="document__item-logo"><img src="img/logo_3.svg" alt=""></div>
+            </div>
+            @Body
+        </div>
+
+    </div>
+</main>
+
+
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        await _jsr.InvokeVoidAsync("AddStyle");
+    }
+}

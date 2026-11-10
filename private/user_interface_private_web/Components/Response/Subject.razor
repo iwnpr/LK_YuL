@@ -1,0 +1,144 @@
+﻿<div class="document__caption">
+    <span class="document_table-icon"><img class="image_icon" src="img/Loans.svg" alt="">Параметры запроса </span>
+</div>
+
+<table class="status__table table">
+    <thead style="background: #eaedf3;">
+        <tr>
+            @if (ShowServices)
+            {
+                <td style="width: 300px;">Сервисы</td>
+            }
+            @if (Request.Descendants("NaturalPersonSubject").Any())
+            {
+                <td>Фамилия, имя, отчество</td>
+                <td>Дата рождения</td>
+                <td>Документ</td>
+                <td>ИНН</td>
+                <td>СНИЛС</td>
+            }
+            else if (Request.Descendants("LegalPersonSubject").Any())
+            {
+                <td>Наименование юридического лица</td>
+                <td>ИНН</td>
+                <td>ОГРН</td>
+            }
+            else
+            {
+                <td>УИд договора</td>
+                <td>ID организации</td>
+            }
+        </tr>
+    </thead>
+    <tbody style="background: #fff;">
+        <tr>
+            @if (ShowServices)
+            {
+                <td>
+                    @if (!Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("CreditReportDetalization")?.Value.Equals("3") ?? false)
+                    {
+                        <span> Кредитный отчет@(Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getReportWithAmp")?.Value?.Equals("true") ?? false ? " с ССП" : "")</span>
+                        <br />
+                    }
+                    @if (!Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("PreviousRequestsCountLimit")?.Value.StartsWith("-") ?? false)
+                    {
+                        <span>Информация о предыдущих запросах</span>
+                        <br />
+                    }
+                    @if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getRating3")?.Value.ToLower().Equals("true") ?? false)
+                    {
+                        <span>Совокупный рейтинг в строковом представлении</span>
+                        <br />
+                    }
+                    @if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getBailiffsServiceDebtInfo")?.Value.Equals("true") ?? false)
+                    {
+                        <span>ФССП (долги)</span>
+                        <br />
+                    }
+                    @if (!Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getMigrationServiceDocumentCheck")?.Value.Equals("0") ?? false)
+                    {
+                        <span>ФМС</span>
+                        <br />
+                    }
+                    @if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getVerificationService")?.Value?.ToLower().Equals("true") ?? false)
+                    {
+                        <span>Верификация</span>
+                        <br />
+                    }
+                    @if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getTaxServiceTaxNum")?.Value?.ToLower().Equals("true") ?? false)
+                    {
+                        <span>Запрос ИНН в ФНС</span>
+                        <br />
+                    }
+                    @if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getTaxServiceTaxNumCheck")?.Value?.ToLower().Equals("true") ?? false)
+                    {
+                        <span>Запрос проверки ИНН в ФНС</span>
+                        <br />
+                    }
+                    @if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getMIAServiceDocCheck")?.Value?.ToLower().Equals("true") ?? false)
+                    {
+                        <span>Запрос проверки паспорта в МВД</span>
+                        <br />
+                    }
+                    @if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getMIAServiceRegCheck")?.Value?.ToLower().Equals("true") ?? false)
+                    {
+                        <span>Запрос проверки регистрации в МВД</span>
+                        <br />
+                    }
+                    @if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getActivityNavigator")?.Value?.ToLower().Equals("true") ?? false)
+                    {
+                        <span>Запрос навигатора активности</span>
+                        <br />
+                    }
+                    @if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getPFRServiceSocialNumCheck")?.Value?.ToLower().Equals("true") ?? false)
+                    {
+                        <span>Запрос проверки СНИЛС в ПФР</span>
+                        <br />
+                    }
+                    @if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getReportWithBailiffsDebtInfo")?.Value?.ToLower().Equals("true") ?? false)
+                    {
+                        <span>Запрос кредитного отчета и сервиса ФССП</span>
+                        <br />
+                    }
+                </td>
+            }
+            @if (Request?.Root?.Element("BODY")?.Element("NaturalPersonSubject") is not null)
+            {
+
+                <td>@(_subject?.Element("Title")?.Attribute("LastName")?.Value ?? "-") @(_subject?.Element("Title")?.Attribute("FirstName")?.Value ?? "-") @(_subject?.Element("Title")?.Attribute("MiddleName")?.Value ?? "")</td>
+                <td style="text-align:center !important;">@(_subject?.Attribute("BirthDate")?.Value ?? "-")</td>
+                <td style="text-align:center !important;">@(_subject?.Descendants("IdentificationDocument")?.FirstOrDefault()?.Attribute("DocSer")?.Value ?? "") @(_subject?.Descendants("IdentificationDocument")?.FirstOrDefault()?.Attribute("DocNum")?.Value ?? "")</td>
+                <td style="text-align:center !important;">@(_subject?.Attribute("IndividualTaxpayerNumber")?.Value ?? "-")</td>
+                <td style="text-align:center !important;">@(_subject?.Attribute("PensionNumber")?.Value ?? "-")</td>
+            }
+            else if (Request?.Root?.Element("BODY")?.Element("LegalPersonSubject") is not null)
+            {
+                <td>@(_subject?.Element("Title")?.Element("Name")?.Attribute("FullName")?.Value ?? "-")</td>
+                <td style="text-align:center !important;">@(_subject?.Element("Title")?.Element("IndividualTaxpayerNumber")?.Value ?? "-")</td>
+                <td style="text-align:center !important;">@(_subject?.Element("Title")?.Element("PrimaryStateRegistrationNumber")?.Value ?? "-")</td>
+            }
+            else
+            {
+                <td>@(_subject?.Element("Uid")?.Value ?? "-")</td>
+                <td style="text-align:center !important;">@(_subject?.Element("LegalPersonId")?.Value ?? "-")</td>
+            }
+        </tr>
+    </tbody>
+</table>
+
+
+@code {
+    [Parameter] public XDocument Request { get; set; } = new XDocument(new XElement("REQUEST"));
+    [Parameter] public bool ShowServices { get; set; } = false;
+
+    private XElement? _subject = new XElement("NaturalPersonSubject");
+
+    protected override void OnInitialized()
+    {
+        _subject =
+            Request?.Root?.Element("BODY")?.Element("NaturalPersonSubject") ??
+            Request?.Root?.Element("BODY")?.Element("LegalPersonSubject") ??
+            Request?.Root?.Element("BODY")?.Element("Contract");
+
+    }
+}

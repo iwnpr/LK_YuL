@@ -1,0 +1,58 @@
+﻿@page "/requests-parameters"
+@attribute [Authorize]
+
+<PageTitle>Параметры запросов БКИ</PageTitle>
+<CommentWindow InfoComment=@_comment />
+
+<section class="parameters">
+    <div class="l-content">
+        <h1 class="parameters__title title title--h1">Параметры запроса в Бюро</h1>
+        <form class="form">
+            <BureauRequestParametersForm Parameters="@_parameters" />
+            <div class="form__bottom">
+                <button class="form__submit btn btn--green" type="button" @onclick="SaveChagesAsync">Сохранить изменения</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+@code {
+    Answer? _error;
+    private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+    private DBUser? _user = null!;
+    private ParametersBureau _parameters = new(new());
+
+    /// <summary>
+    /// Инициализация компонента
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+        //Получаем данные пользователя
+        ProtectedBrowserStorageResult<string> _userJson = await _session.GetAsync<string>("User");
+
+        if (!_userJson.Success)
+        {
+            _navigator.NavigateTo("/");
+            return;
+        }
+
+        _user = JsonSerializer.Deserialize<DBUser>(_userJson.Value!)!;
+
+        var qwe = await _userMngr.GetRequestParametersAsync(_user!.Id);
+
+        _parameters = new((await _userMngr.GetRequestParametersAsync(_user!.Id)).RequestParameters.Deserialize<RequestResponseCapabilities>());
+    }
+
+    private async Task SaveChagesAsync()
+    {
+        var _currentParameters = await _userMngr.GetRequestParametersAsync(_user!.Id);
+
+        _currentParameters.RequestParameters = _parameters.ToBureauRequestParameters().Serialize();
+        _currentParameters.Inserted = DateTime.UtcNow;
+
+        _error = await _userMngr.UpdateParametersAsync(_currentParameters);
+
+        _comment = _error.Code.Equals(200) ? new Comment(true, "ok", "Обновление параметров", _error.Message) : new Comment(true, "error", "Ошибка!", _error.Message);
+    }
+}

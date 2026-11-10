@@ -1,0 +1,462 @@
+﻿@page "/private/uploads"
+@attribute [Authorize(Roles = "data-upload")]
+@inject HttpClient _http
+@inject ILogger<Uploads> _logger
+
+<PageTitle>Файлы выгрузки</PageTitle>
+
+<Preloader IsLoading="@_loader.IsLoading" />
+
+<CommentWindow InfoComment="_comment" />
+
+@if (_show)
+        {
+<div class="fancybox-container fancybox-is-open fancybox-can-swipe" role="dialog" tabindex="-1" id="fancybox-container-1" style="transition-duration: 366ms;">
+    <div class="fancybox-bg"></div><div class="fancybox-inner">
+        <div class="fancybox-infobar"><span data-fancybox-index="">1</span>&nbsp;/&nbsp;<span data-fancybox-count="">1</span></div><div class="fancybox-toolbar"><button data-fancybox-zoom="" class="fancybox-button fancybox-button--zoom" title="Zoom" disabled=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.7 17.3l-3-3a5.9 5.9 0 0 0-.6-7.6 5.9 5.9 0 0 0-8.4 0 5.9 5.9 0 0 0 0 8.4 5.9 5.9 0 0 0 7.7.7l3 3a1 1 0 0 0 1.3 0c.4-.5.4-1 0-1.5zM8.1 13.8a4 4 0 0 1 0-5.7 4 4 0 0 1 5.7 0 4 4 0 0 1 0 5.7 4 4 0 0 1-5.7 0z"></path></svg></button><button data-fancybox-play="" class="fancybox-button fancybox-button--play" title="Start slideshow" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 5.4v13.2l11-6.6z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.33 5.75h2.2v12.5h-2.2V5.75zm5.15 0h2.2v12.5h-2.2V5.75z"></path></svg></button><button data-fancybox-thumbs="" class="fancybox-button fancybox-button--thumbs" title="Thumbnails" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.59 14.59h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76H5.65V5.65z"></path></svg></button><button data-fancybox-close="" class="fancybox-button fancybox-button--close" title="Close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 10.6L6.6 5.2 5.2 6.6l5.4 5.4-5.4 5.4 1.4 1.4 5.4-5.4 5.4 5.4 1.4-1.4-5.4-5.4 5.4-5.4-1.4-1.4-5.4 5.4z"></path></svg></button></div><div class="fancybox-navigation"><button data-fancybox-prev="" class="fancybox-button fancybox-button--arrow_left" title="Previous" disabled=""><div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.28 15.7l-1.34 1.37L5 12l4.94-5.07 1.34 1.38-2.68 2.72H19v1.94H8.6z"></path></svg></div></button><button data-fancybox-next="" class="fancybox-button fancybox-button--arrow_right" title="Next" disabled=""><div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.4 12.97l-2.68 2.72 1.34 1.38L19 12l-4.94-5.07-1.34 1.38 2.68 2.72H5v1.94z"></path></svg></div></button></div><div class="fancybox-stage">
+            <div class="fancybox-slide fancybox-slide--html fancybox-slide--current fancybox-slide--complete" style="">
+                <div class="status-popup status-popup-comment fancybox-content" id="status-popup-comment" style="display: inline-block;">
+                    <div class="l-content">
+                        <h1 class="status-popup__title title title--h1" tabindex="-1">Загрузка файла</h1>
+                        <div class="status-popup-comment__form form">
+                            <div class="form__inputs">
+                                <div class="form__input-upload">
+                                    <div class="form__input">
+                                        @* <div class="form__input-label">Загрузить файл</div> *@
+                                        <div class="form__input-file">
+                                            <InputFile OnChange="OnInputFileChange" id="uploadFile" />
+                                            <div class="form__input-file--info">@(string.IsNullOrWhiteSpace(uploadFile) ? "Файл не выбран" : uploadFile)</div>
+                                            <div class="form__input-btn btn btn--green">Выбрать файл</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="form__input-btn btn btn--green" style="width: 400px;" @onclick=UploadFileAsync disabled="@_disabled">
+                                @if (_disabled)
+                                {
+                                    <img src="/img/loading.gif" width="20" />
+                                }Загрузить
+                            </button>
+                        </div>
+                    </div>
+                    <button @onclick="@(() => _show = false)" type="button" data-fancybox-close="" class="fancybox-button fancybox-close-small" title="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1" viewBox="0 0 24 24">
+                            <path d="M13 12l5-5-1-1-5 5-5-5-1 1 5 5-5 5 1 1 5-5 5 5 1-1z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div><div class="fancybox-caption fancybox-caption--separate"><div class="fancybox-caption__body"></div></div>
+    </div>
+</div>
+        }
+
+
+<section class="status">
+    <div class="l-content">
+        <h1 class="status__title title title--h1">Файлы выгрузки</h1>
+        <div class="status__items">
+            <a class="status__item" @onclick="@ShowUploadWindow">
+                <div class="status__item-icon">
+                    <svg class="ico ico-mono-add-doc">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-add-doc"></use>
+                    </svg>
+                </div>
+                <div class="status__item-title">Добавить</div>
+            </a>
+            @* <a class="status__item" href="">
+            <div class="status__item-icon">
+            <svg class="ico ico-mono-print">
+            <use xlink:href="img/sprite-mono.svg#ico-mono-print"></use>
+            </svg>
+            </div>
+            <div class="status__item-title">Печать</div>
+            </a> *@
+        </div>
+        <div class="organizations__filters filters">
+            <div class="filters__top" @onclick="OnFilterShow">
+                <div class="filters__top-icon">
+                    <svg class="ico ico-mono-arrow-dropdown">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                    </svg>
+                </div>
+                <div class="filters__top-title">Фильтр</div>
+            </div>
+            <div class="filters__content  @_filter">
+                <form class="form">
+                    <div class="form__inputs">
+                        <div class="form__input">
+                            <div class="form__input-label">Дата выгрузки:</div>
+                            <input type="text" @bind=_date data-format="00.00.0000">
+                        </div>
+                        @if (_user?.Organization?.LegalPersonId.Equals(0) ?? false)
+        {
+                        <div class="form__input">
+                            <div class="form__input-label">Id организации:</div>
+                            <input type="text" @bind=_orgId>
+                        </div>
+        }
+                    </div>
+                    <div class="form__btns">
+                        <button class="form__btn btn" type="button" @onclick=@(() => { _orgId = -1; _date = DateOnly.FromDateTime(DateTime.MinValue);})>Очистить</button>
+                        <button class="form__btn btn btn--green" type="button" @onclick=@(async () => {_loader.IsLoading = true; _uploads = await _uploadMngr.GetListAsync(_user.Organization.LegalPersonId, 0, _orgId, _date); _loader.IsLoading = false;})>Применить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <table class="status__table table">
+            <thead>
+                <tr>
+                    <td>Статус</td>
+                    <td>Файл</td>
+                    <td>Дата/время загрузки</td>
+                    <td>Загружено</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var _upload in _uploads)
+        {
+                <tr @onclick="@(() => _jsr.InvokeVoidAsync("open", $"{_navMngr.BaseUri}private/current-upload/{_upload.Id}", "_blank"))">
+                    <td>
+                        @switch (_upload.Status)
+                        {
+                            case 0:
+                                <div class="status__icon inprocess"></div>
+                                ; break;
+                            case -1 or -2:
+                                <div class="status__icon cancel"></div>
+                                ; break;
+                            case 2:
+                                <div class="status__icon attention"></div>
+                                ; break;
+                            case 1:
+                                <div class="status__icon attention-checked"></div>
+                                ; break;
+                            case 3:
+                                <div class="status__icon inprocess"></div>
+                                ; break;
+                            case 4:
+                                <div class="status__icon checked"></div>
+                                ; break;
+                            case 5:
+                                <div class="status__icon checked-false"></div>
+                                ; break;
+                            default:
+                                <div class="status__icon inprocess"></div>
+                                ; break;
+                        }
+                    </td>
+                    <td><a href="">@_upload.FileName</a></td>
+                    <td>@_upload.Inserted</td>
+                    <td>@_upload.Organization</td>
+                </tr>
+        }
+                <tr>
+                    <td colspan="5">
+                        <div style="display:flex;flex-direction: row;flex-wrap: wrap;align-content: stretch;justify-content: space-evenly;align-items: stretch;">
+                            <div class="table__icons">
+                                <div class="table__icon" @onclick="@(() => PreviousPage())">
+                                    <svg class="ico ico-mono-edit" style="width: 0.8em !important;">
+                                        <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                                        <title>Назад</title>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="table__icons">
+                                <div class="table__icon">
+                                    <svg class="ico ico-mono-registration" @onclick="@(() => NextPage())" style="transform: rotate(180deg);width: 0.8em !important;">
+                                        <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                                        <title>Вперед</title>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@code {
+    /// <summary>
+    /// Параметры подключения пользователя
+    /// </summary>
+    [CascadingParameter(Name = "User")] private ConnectionParameters UserConnectionParameters { get; set; } = new();
+
+    int _orgId = -1;
+    DateOnly _date = DateOnly.FromDateTime(DateTime.MinValue);
+
+    /// <summary>
+    /// Отображение параметров фильтрации
+    /// </summary>
+    private string _filter = "close";
+
+    /// <summary>
+    /// Максимальный размер файла
+    /// </summary>
+    const long _maxAllowedSize = 2048000000L;
+
+    /// <summary>
+    /// Текущая страница
+    /// </summary>
+    private int _page = 0;
+
+    /// <summary>
+    /// Пользователь, осуществивший вход
+    /// </summary>
+    private DBUser _user = new();
+
+    /// <summary>
+    /// Комментарий для информационного модального окна
+    /// </summary>
+    private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+    /// <summary>
+    /// Признак отображения модального окна
+    /// </summary>
+    private bool _show = false;
+
+    /// <summary>
+    /// Загрузки организации
+    /// </summary>
+    private List<Upload> _uploads = new();
+
+    private string uploadFile = string.Empty;
+
+    IBrowserFile? selectedFile = null;
+
+    /// <summary>
+    /// Результат метода сервисов
+    /// </summary>
+    private Answer _error = new(300, "Ошибка");
+
+    private bool _disabled = false;
+
+    /// <summary>
+    /// Инициализация страницы
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+    _loader.IsLoading = true;
+
+    ProtectedBrowserStorageResult<DBUser> _result = await _session.GetAsync<DBUser>("UserDB");
+
+    if (!_result.Success)
+    {
+        _navMngr.NavigateTo("error");
+        return;
+    }
+
+    _user = (await _session.GetAsync<DBUser>("UserDB")).Value!; ;
+
+    _uploads = await _uploadMngr.GetListAsync(_user.Organization.LegalPersonId, 0, _orgId, _date);
+
+    _loader.IsLoading = false;
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+    await _jsr.InvokeVoidAsync("mask");
+    }
+
+    // Получение результата подписания файла
+    private async void UpdateSign(Answer error)
+    {
+    StateHasChanged();
+
+    await _jsr.InvokeVoidAsync("ShowModalWindow", "infoLink");
+
+    /*
+    if (_error.Code.Equals(200))
+    {
+    UploadFile fileForUpload = new()
+    {
+    FileName = uploadFile,
+    FileContent = Convert.FromBase64String(_error.Message)
+    };
+    }
+    else
+    {
+
+
+    }
+    */
+
+    //TODO отправить файл на сервер
+
+    }
+
+    /// <summary>
+    /// Модальное окно с загрузкой файла
+    /// </summary>
+    private void ShowUploadWindow()
+    {
+    uploadFile = string.Empty;
+    _show = true;
+    }
+
+    /// <summary>
+    /// Выбор файла из input
+    /// </summary>
+    /// <param name="e"></param>
+    private void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+    uploadFile = e?.File.Name ?? string.Empty;
+    selectedFile = e?.File;
+    }
+
+    /// <summary>
+    /// Загрузка файла на сервер
+    /// </summary>
+    /// <returns></returns>
+    private async Task UploadFileAsync()
+    {
+    _disabled = true;
+
+
+    if (selectedFile != null)
+    {
+        //TODO проверить размер файла
+        try
+        {
+            _error = await _jsr.InvokeAsync<Answer>("PostFileUploadAsync", $"{_configuration.GetSection("Links:Upload").Value}?file-name={selectedFile!.Name}");
+        }
+        catch
+        {
+            _error = new(300, "Ошибка вызова js метода отправки файла");
+            _logger.LogError($"Ошибка при отправке файла {selectedFile!.Name}");
+            return;
+        }
+
+        if (!_error.Code.Equals(200))
+        {
+            _comment = _comment = new Comment(true, "error", "Загрузка файла на сервер", $"При загрузке файла произошла ошибка: {_error.Message}");
+            _disabled = false;
+            return;
+        }
+
+        DBUpload? _upload = await _uploadMngr.GetSingleAsync(XDocument.Parse(_error.Message).Descendants("package-info").First().Attribute("upload-id")!.Value, _user.Organization.LegalPersonId);
+
+        _upload.UserId = _user.NaturalPersonId;
+
+        XDocument _uploadXML = XDocument.Parse(_upload.UploadXML);
+
+        try
+        {
+            _uploadXML.Root?.Element("user-info")?.Add(
+                new XAttribute("user-id", _user.NaturalPersonId),
+                new XAttribute("user-name", $"{_user.LastName} {_user.FirstName}"));
+        }
+        catch
+        {
+            _logger.LogError($"Ошибка при добавлении атрибутов в {_upload.UploadXML}");
+        }
+
+        _upload.UploadXML = _uploadXML.ToString();
+
+        await _uploadMngr.UpdateUploadAsync(_upload);
+
+        _uploads = await _uploadMngr.GetListAsync(_user.Organization.LegalPersonId, 0, _orgId, _date);
+
+        _show = false;
+    }
+    else
+    {
+        _comment = new(true, "error", "Загрузка файла на сервер", "Необходимо выбрать файл!");
+    }
+
+    _disabled = false;
+    }
+
+    /// <summary>
+    /// Формирование id загрузки
+    /// </summary>
+    /// <param name="_length">Длина строки</param>
+    /// <returns>Новый id загрузки</returns>
+    public string CreateRandomString(byte _length)
+    {
+
+    string code = string.Empty;
+    Random rnd = new Random();
+    byte i = 0;
+    while (i < _length)
+    {
+        double key = rnd.NextDouble();
+        code += Convert.ToChar((byte)(key > 0.667 ? (97 + Math.Round(rnd.NextDouble() * 25, 0)) : key > 0.333 ? (48 + Math.Round(rnd.NextDouble() * 9, 0)) : (65 + Math.Round(rnd.NextDouble() * 25, 0))));
+        i++;
+    }
+
+    return code;
+
+    }
+
+    /// <summary>
+    /// Переход на предыдущую страницу
+    /// </summary>
+    /// <returns></returns>
+    private async Task PreviousPage()
+    {
+    _loader.IsLoading = true;
+
+    if (_page.Equals(0))
+    {
+        _loader.IsLoading = false;
+        return;
+    }
+
+    _page--;
+    _uploads = await _uploadMngr.GetListAsync(_user.Organization.LegalPersonId, _page, _orgId, _date) ?? new List<Upload>();
+
+    _loader.IsLoading = false;
+    }
+
+    /// <summary>
+    /// Переход на следующую страницу
+    /// </summary>
+    /// <returns></returns>
+    private async Task NextPage()
+    {
+    _loader.IsLoading = true;
+
+    if (!_uploads.Count.Equals(20))
+    {
+        _loader.IsLoading = false;
+        return;
+    }
+
+    _page++;
+    _uploads = await _uploadMngr.GetListAsync(_user.Organization.LegalPersonId, _page, _orgId, _date) ?? new List<Upload>();
+
+    _loader.IsLoading = false;
+    }
+
+    /// <summary>
+    /// Формирование идентификатора файла
+    /// </summary>
+    /// <param name="_user"></param>
+    /// <returns></returns>
+    public XDocument CreateNewUploadXml(DBUser _user)
+    {
+    return
+        new XDocument(
+            new XElement("upload",
+                new XElement("user-info",
+                    new XAttribute("client-id", _user.Id),
+                    new XAttribute("remote-address", UserConnectionParameters.IpAddress),
+                    new XAttribute("client-name", _user.Organization.ShortName),
+                new XElement("package-info",
+                    new XAttribute("upload-id", $"{DateTime.Now:yyyy-MM-dd_hh-mm-ss}_{CreateRandomString(30)}"),
+                    //new XAttribute("source-file-name", uploadedFile.FileName),
+                    //new XAttribute("package-file-size", uploadedFile.FileContent.Length),
+                    //new XAttribute("upload-finish-datetime", DateTime.Now.ToString("dd.MM.yyyy hh:mm:ss")),
+                    new XAttribute("package-document-count", 1)))));
+    }
+
+    /// <summary>
+    /// Отображение|сокрытие параметров фильтра
+    /// </summary>
+    private void OnFilterShow() => _filter = _filter.Equals("close") ? "" : "close";
+}
+

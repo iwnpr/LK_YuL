@@ -1,0 +1,326 @@
+﻿@page "/abonents"
+@attribute [Authorize(Roles = "abonents")]
+
+<PageTitle>Абоненты КБКИ</PageTitle>
+
+<CommentWindow InfoComment="@_comment" />
+
+<CascadingValue Name="Disabled" Value="_disabled">
+    <AbonentWindow Abonent=_abonent
+                   Show=_popupShow
+                   OnGetTaxData=GetTaxData
+                   Save=SaveAsync
+                   Types="_types"
+                   Accesses="_accesses"
+                   MethodsList="_services"
+                   OnClose="@(() => _popupShow = false)" />
+</CascadingValue>
+
+<section class="organizations">
+    <div class="l-content">
+        <div class="organizations__top">
+            <h1 class="organizations__title title title--h1">Абоненты КБКИ</h1>
+            <a class="organizations__btn btn btn--green" @onclick="CreateNewAbonent">Новый абонент</a>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Создан</td>
+                    <td>ИНН</td>
+                    <td>Краткое название</td>
+                    <td>ОГРН</td>
+                    <td>Тип</td>
+                    <td>Действия</td>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_abonents?.Any() ?? false)
+                {
+                    foreach (DBAbonent _org in _abonents)
+                    {
+                        <tr>
+                            <td>@_org.KeyId</td>
+                            <td>@_org.Inserted</td>
+                            <td>@_org.Inn</td>
+                            <td>@_org.ShortName</td>
+                            <td>@_org.Ogrn</td>
+                            <td>@(_types.GetValueOrDefault<string, string>(_org.UserTypeId.ToString(), "-"))</td>
+                            <td>
+                                <div class="table__icons">
+                                    <div class="table__icon" @onclick="@(() => AbonentDetailsAsync(_org.KeyId))">
+                                        <svg class="ico ico-mono-edit">
+                                            <use xlink:href="img/sprite-mono.svg#ico-mono-edit"></use>
+                                            <title>Редактировать</title>
+                                        </svg>
+                                    </div>
+                                    <div class="table__icon" @onclick="@(() => ThumbprintsAsync(_org.KeyId))">
+                                        <svg class="ico ico-mono-users">
+                                            <use xlink:href="img/sprite-mono.svg#ico-mono-users"></use>
+                                            <title>К пользователям</title>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@code {
+    /// <summary>
+    /// Номер страницы
+    /// </summary>
+    private int _page = 0;
+
+    /// <summary>
+    /// Количество записей на странице
+    /// </summary>
+    private int _pageSize = 50;
+
+    [CascadingParameter(Name = "Disabled")] public bool _disabled { get; set; } = false;
+
+    /// <summary>
+    /// Отображение параметров фильтрации
+    /// </summary>
+    private string _filter = "close";
+
+    /// <summary>
+    /// Признак создания новой организации
+    /// </summary>
+    private bool _isCreating = true;
+
+    /// <summary>
+    /// Комментарий для информационного модального окна
+    /// </summary>
+    private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+    /// <summary>
+    /// Отображение модального окна параметров организации
+    /// </summary>
+    private bool _popupShow = false;
+
+    /// <summary>
+    /// Организация для изменения параметров
+    /// </summary>
+    private DBAbonent _abonent = new DBAbonent();
+
+    /// <summary>
+    /// Список всех организаций
+    /// </summary>
+    private List<DBAbonent> _abonents = new List<DBAbonent>();
+
+    /// <summary>
+    /// Права доступа к сервисам организации
+    /// </summary>
+    private List<DBPermission> _accesses = new List<DBPermission>();
+
+    /// <summary>
+    /// Сервисы бюро
+    /// </summary>
+    private List<DBMethod> _services = new List<DBMethod>();
+
+    /// <summary>
+    /// Типы организаций
+    /// </summary>
+    private Dictionary<string, string>? _types = new();
+
+    /// <summary>
+    /// Инициализация страницы
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+        //Получаем список организаций
+        _abonents = (await _abntMngr.GetListAsync()).OrderByDescending(item => item.KeyId).ToList();
+
+        //Получаем список типов организаций
+        _types = (await _abntMngr.GetUserTypesAsync())?.OrderBy(t => t.KeyId)?.ToDictionary(x => x.KeyId.ToString(), x => x.Description) ?? new();
+
+        //Получаем список сервисов
+        _services = await _abntMngr.GetMethodsAsync();
+
+    }
+
+    /// <summary>
+    /// Настройка параметров организации
+    /// </summary>
+    /// <param name="id">Идентификатор организации</param>
+    /// <returns></returns>
+    private async Task AbonentDetailsAsync(int id)
+    {
+        _abonent = _abonents.FirstOrDefault(o => o.KeyId.Equals(id))!;
+
+        var orgType = _abonent.UserTypeId.ToString();
+
+        _isCreating = false;
+
+        _accesses = await _abntMngr.GetPermissionsAsync(id);
+
+        _accesses = !_accesses.Any()
+        ?
+        _services.Select(s =>
+        new DBPermission
+            {
+                AbonentsKeyId = _abonent.KeyId,
+                IsGranted = false,
+                ServicesKeyId = s.KeyId,
+            }).ToList()
+        :
+        _services.Select(s =>
+        new DBPermission
+            {
+                AbonentsKeyId = _abonent.KeyId,
+                IsGranted = _accesses.FirstOrDefault(o => o.ServicesKeyId.Equals(s.KeyId))?.IsGranted ?? false,
+                ServicesKeyId = s.KeyId,
+                KeyId = _accesses.FirstOrDefault(_item => _item.ServicesKeyId.Equals(s.KeyId))?.KeyId ?? 0
+            }).ToList();
+
+        _popupShow = true;
+    }
+
+    /// <summary>
+    /// Переход на страницу редактирования пользователей организации
+    /// </summary>
+    /// <param name="keyId"></param>
+    /// <returns></returns>
+    private async Task ThumbprintsAsync(int keyId)
+    {
+        await _session.SetAsync("AbonentId", keyId);
+
+        _navigator.NavigateTo("/abonent-certificates");
+    }
+
+    /// <summary>
+    /// Модальное окно для новой организации
+    /// </summary>
+    /// <returns></returns>
+    private void CreateNewAbonent()
+    {
+        _abonent = new DBAbonent()
+            {
+                UserTypeId = 1,
+                Inserted = DateTime.Now
+            };
+
+        _isCreating = true;
+
+        _accesses = _services.Select(s =>
+            new DBPermission
+                {
+                    AbonentsKeyId = _abonent.KeyId,
+                    IsGranted = false,
+                    ServicesKeyId = s.KeyId,
+                    Inserted = DateTime.Now
+                }).ToList();
+
+        _popupShow = true;
+    }
+
+    /// <summary>
+    /// Запрос информации ЕГРЮЛ
+    /// </summary>
+    /// <returns></returns>
+    private async Task GetTaxData()
+    {
+        _disabled = true;
+
+        if (string.IsNullOrEmpty(_abonent.Inn))
+        {
+            _comment = new Comment(true, "warning", "Запрос информации ЕГРЮЛ", "Необходимо заполнить ИНН организации");
+            _disabled = false;
+            return;
+        }
+
+        //Отправляем запрос к сервису
+        Answer error = await _sender.SendStringAsync($"{_configuration.GetSection("Links:TaxService").Value}", "POST", $"<Title caps=\"11111111111111111111111111111111111\"><IndividualTaxpayerNumber>{_abonent.Inn}</IndividualTaxpayerNumber></Title>");
+
+        if (!error.Code.Equals(200))
+        {
+            _comment = new Comment(true, "error", "Запрос информации ЕГРЮЛ", error.Message);
+            _disabled = false;
+            return;
+        }
+
+        if (error.Message.Contains("Error"))
+        {
+            _comment = new Comment(true, "error", "Запрос информации ЕГРЮЛ", XDocument.Parse(error.Message).Descendants("Error").First().Value);
+            _disabled = false;
+            return;
+        }
+
+        XElement? taxInfo;
+
+        try
+        {
+            taxInfo = XDocument.Parse(error.Message)?.Descendants("LPMain")?.FirstOrDefault();
+        }
+        catch
+        {
+            _comment = new Comment(true, "Запрос информации ЕГРЮЛ", "Не уадлось получить данные с сервиса, попробуйте позднее!", "error");
+            _disabled = false;
+            return;
+        }
+
+        if (taxInfo is null)
+        {
+            _comment = new Comment(true, "error", "Запрос информации ЕГРЮЛ", "По данному ИНН информация не найдена!");
+            _disabled = false;
+            return;
+        }
+
+        //Заполняем поля из ответа
+        _abonent.Ogrn = taxInfo.Element("PSRN")?.Value ?? string.Empty;
+        _abonent.FullName = taxInfo.Element("FullName")?.Value ?? string.Empty;
+        _abonent.ShortName = taxInfo.Element("FullName")?.Value ?? string.Empty;
+
+        _disabled = false;
+    }
+
+    /// <summary>
+    /// Сохранение параметров организации
+    /// </summary>
+    /// <returns></returns>
+    private async Task SaveAsync()
+    {
+        _disabled = true;
+        Answer _answer = _validator.Check(_abonent);
+
+        if (!_answer.Code.Equals(200))
+        {
+            _comment = new(true, "error", "Создание | обновление абонента", _answer.Message);
+            _disabled = false;
+            return;
+        }
+
+        if (string.IsNullOrEmpty(_abonent.FullName))
+            _abonent.FullName = _abonent.ShortName;
+
+        _answer = _isCreating
+            ? await _abntMngr.InsertAbonentAsync(_abonent, _accesses)
+            : await _abntMngr.UpdateAbonentAsync(_abonent, _accesses);
+
+        if (!_answer.Code.Equals(200))
+        {
+            _comment = new Comment(true, "error", "Ошибка создания | обновления абонента!", _answer.Message);
+            _disabled = false;
+            return;
+        }
+
+        //Выводим сообщение пользователю
+        _comment = new Comment(true, "ok", "Обновление данных абонента", _answer.Message);
+
+        //Получаем список организаций
+        _abonents = (await _abntMngr.GetListAsync()).OrderByDescending(item => item.KeyId).ToList() ?? new List<DBAbonent>();
+
+        _popupShow = false;
+        _disabled = false;
+
+    }
+
+}

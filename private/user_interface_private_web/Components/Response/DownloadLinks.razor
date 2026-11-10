@@ -1,0 +1,65 @@
+﻿@if (Response.Descendants().Any())
+{
+    <div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+        <div class="status-popup__item-arrow dropdown-arrow">
+            <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+                @*transition: 0.3s;*@
+                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+            </svg>
+        </div>
+        <div class="status-popup__item-title">Xml-файлы</div>
+    </div>
+    <div class="@(!_show ? "hidden" : "")">
+        <div class="document__caption">
+            <span class="document__table-icon">
+                <img class="image_icon" src="img/inn-grey.svg" alt="">Xml-файлы
+            </span>
+        </div>
+        <table class="status__table table">
+            <thead style="background: #eaedf3;">
+                <tr>
+                    <td>Наименование</td>
+                    <td>Действие</td>
+                </tr>
+            </thead>
+            <tbody style="background: #fff;">
+                <tr>
+                    <td>Запрос</td>
+                    <td>
+                        <div class="table__icons">
+                            <div class="table__icon" @onclick="@(async () => await _jsr.InvokeVoidAsync("SaveStringToFile", Request?.ToString(), $"request.xml"))">
+                                <svg class="ico ico-mono-edit">
+                                    <use xlink:href="img/sprite-mono.svg#ico-mono-upload"></use>
+                                    <title>Скачать</title>
+                                </svg>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Ответ</td>
+                    <td>
+                        <div class="table__icons">
+                            <div class="table__icon" @onclick="@(async () => await _jsr.InvokeVoidAsync("SaveStringToFile", Response?.ToString(), $"response.xml"))">
+                                <svg class="ico ico-mono-edit">
+                                    <use xlink:href="img/sprite-mono.svg#ico-mono-upload"></use>
+                                    <title>Скачать</title>
+                                </svg>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+}
+
+
+@code {
+    [Parameter] public XDocument Request { get; set; } = new XDocument(new XElement("REQUEST"));
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+    private bool _show = false;
+    
+
+}

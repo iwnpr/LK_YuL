@@ -1,0 +1,90 @@
+﻿@if (Response.Descendants("PreScoringRatingByNameString").Any())
+        {
+<div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+    <div class="status-popup__item-arrow dropdown-arrow">
+        <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+            <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+        </svg>
+    </div>
+    <div class="status-popup__item-title">Рейтинг заемщика в строковом представлении</div>
+</div>
+@if (_show)
+{
+    <div class="document__caption">
+        <span class="document__table-icon">
+            <img class="image_icon" src="img/doc-id.svg" alt="">Совокупный рейтинг в строковом представлении
+        </span>
+    </div>
+    <table class="document__table">
+        <thead style="background: #eaedf3;">
+            <tr>
+                <td>Наименование</td>
+                <td>Значение</td>
+            </tr>
+        </thead>
+        <tbody style="background: #fff;">
+            @foreach (var _item in Response.Descendants("PreScoringRatingByNameString").ToList() ?? new())
+            {
+                @*<div class="document__table-content document__table--general">*@
+                <tr>
+                    <td>Значение рейтинга физического лица</td>
+                    <td style="max-width: 500px; word-wrap: break-word;">
+                        @(_item.Value ?? "-")
+                    </td>
+                </tr>
+                @*</div>*@
+            }
+        </tbody>
+    </table>
+
+}
+        }
+
+@if (Response.Descendants("PreScoringRatingByAddressString").Any())
+        {
+<div class="status-popup__item-top" @onclick="@(() => _active = !_active)">
+    <div class="status-popup__item-arrow dropdown-arrow">
+        <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_active ? "270" : "360")deg);">
+            <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+        </svg>
+    </div>
+    <div class="status-popup__item-title">Кредитный рейтинг адреса в строковом представлении</div>
+</div>
+@if (_active)
+{
+    <div class="document__caption">
+        <span class="document__table-icon">
+            <img class="image_icon" src="img/doc-id.svg" alt="">Рейтинг в строковом представлении
+        </span>
+    </div>
+    <table class="document__table">
+        <thead style="background: #eaedf3;">
+            <tr>
+                <td>Наименование</td>
+                <td>Значение</td>
+            </tr>
+        </thead>
+        <tbody style="background: #fff;">
+            @foreach (var _item in Response.Descendants("PreScoringRatingByAddressString").ToList() ?? new())
+            {
+                @*<div class="document__table-content document__table--general">*@
+                <tr>
+                    <td>Значение рейтинга</td>
+                    <td style="max-width: 500px; word-wrap: break-word;">
+                        @(_item.Value ?? "-")
+                    </td>
+                </tr>
+                @*</div>*@
+            }
+        </tbody>
+    </table>
+
+}
+        }
+
+@code {
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+
+    private bool _show = false;
+    private bool _active = false;
+}

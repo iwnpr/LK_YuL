@@ -1,0 +1,411 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns:xs="http://www.w3.org/2001/XMLSchema"><head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE10"><style id="styles" type="text/css">
+          * {
+          font-family: Arial;
+          vertical-align: middle;
+          }
+          strong {
+          vertical-align: baseline;
+          }
+          ul {
+          list-style-type: disc;
+          padding: 0;
+          margin: 0;
+          }
+          ul, li {
+          padding-left: 0;
+          }
+          li {
+          font-weight: bold;
+          margin-left: 1em;
+          }
+          table, tr, td, p {
+          margin: 0px;
+          padding: 0px;
+          }
+          p {
+          display: block;
+          }
+          body, html {
+          font-size: 11px;
+          margin: 10px;
+          min-width: 600px;
+          }
+          table, td , th {
+          border-collapse: collapse;
+          border: 0px none transparent;
+          vertical-align: top;
+          }
+
+          table {
+          margin-left: 20px;
+          }
+          table.e, table.list, tr, caption {
+          page-break-inside: avoid;
+          }
+
+          table.e > tbody > tr > td {
+          min-width: 15px;
+          border-left: 1px solid transparent;
+          }
+
+          table.e > tbody > tr.space > td {
+          border-bottom: 1px solid transparent;
+          }
+
+
+          table.e > tbody > tr > td.no-width {
+          min-width: 0px;
+          }
+
+
+          table.e > tbody > tr.space-tr {
+          height: 15px;
+          }
+
+          .elem {
+          padding: 1px 5px 1px 5px;
+          margin-left: -8px;
+          margin-top: -10px;
+          margin-bottom: 2px;
+          border: solid 2px #6688AA;
+          background-color: window;
+          border-radius: 4px;
+          }
+
+          table.e > tbody > tr > td.line {
+          border-left-color: #ddd;
+          }
+
+          table.e > tbody > tr > td.line.choice-vert {
+          /*border-left-style: dotted;
+          border-left-color: red;*/
+          border-left-color: #c88;
+          }
+
+          table.e > tbody > tr > td.hor-line {
+          border-bottom: solid 1px #ddd;
+          }
+
+          table.e > tbody > tr > td.hor-line.choice {
+          /*border-bottom-style: dotted;
+          border-bottom-color: red;*/
+          border-bottom-color: #c88;
+          }
+
+          .hide {
+          visibility: hidden;
+          }
+          .choice {
+          border-color: #c88;
+          border-style: solid;
+          }
+          .abs-pos {
+          position: absolute;
+          visibility: visible;
+          }
+          .txt, .type {
+          margin-top: -9px;
+          margin-bottom: 2px;
+          padding: 1px 5px 1px 5px;
+          border: solid 1px gray;
+          background-color: window;
+          border-radius: 4px;
+          }
+          .type {
+          color: #006600;
+          border-color: #006600;
+          white-space: nowrap;
+          }
+          .value {
+          font-weight: bold;
+          }
+          .descr-ref {
+          color: gray;
+          cursor: pointer;
+          text-decoration: underline;
+          }
+          .descr-ref:hover {
+          color: blue;
+          }
+
+          .node-ctrl {
+          position: absolute;
+          display: block;
+          font-size: 0px;
+          width: 7px;
+          height: 7px;
+          border: solid 1px black;
+          margin-left: -21px;
+          margin-top: -5px;
+          background-color: window;
+          cursor: pointer;
+          border-radius: 2px;
+          }
+
+          .list-ctrl {
+          position: absolute;
+          display: block;
+          font-size: 0px;
+          width: 7px;
+          height: 7px;
+          border: solid 1px black;
+          margin-left: -14px;
+          margin-top: 2px;
+          background-color: window;
+          cursor: pointer;
+          border-radius: 2px;
+          }
+
+          .node-collapse-space {
+          position: absolute;
+          width: 5px;
+          height: 5px;
+          border: 1px solid Window;
+          z-index: 1;
+          }
+
+          table.node-collapse-ctrl {
+          margin-left: 0px;
+          margin-top: 0px;
+          width: 7px;
+          height: 7px;
+          cursor: pointer;
+          border: 1px solid Window;
+          }
+
+          table.node-collapse-ctrl td{
+          height: 2px;
+          width: 2px;
+          }
+          table.node-collapse-ctrl td.td-left-top {
+          border-bottom: 1px solid black;
+          border-right: 1px solid black;
+          }
+          table.node-collapse-ctrl td.td-bottom-right {
+          border-top: 1px solid black;
+          border-left: 1px solid black;
+          }
+          table.node-collapse-ctrl td.expanded {
+          border-right-color: Window;
+          border-left-color: Window;
+          }
+
+          .doc-title {
+          margin: 10px 10px 20px 5px;
+          border-bottom: solid 1px #446688;
+          }
+
+          .title-txt p {
+          padding: 0px 5px 2px 5px;
+          font-size: 18px;
+          color: #446688;
+          vertical-align: bottom;
+          }
+
+          .lang {
+          text-align: right;
+          vertical-align: bottom;
+          padding-right: 10px;
+          }
+
+          .lang-caption {
+          padding: 3px 15px 3px 3px;
+          cursor: pointer;
+          display: inline-block;
+          }
+
+          .lang-caption:hover {
+          color: blue;
+          }
+          .lang-caption-text {
+          text-decoration: underline;
+          }
+
+          .add {
+          margin-top: 1px;
+          border-top: 1px solid #CCCCCC;
+          }
+
+          .info {
+          /*
+          border-color: #0088FF;
+          */
+          color: #003366;
+          border: 1px dotted Black;
+          }
+
+          .not-used, .not-found {
+          color: red;
+          }
+          .no-info {
+          color: #AAAAAA;
+          }
+          
+          
+            .ru {
+              
+            }
+          
+            .en {
+              display: none;
+            }
+          
+          
+          table.list {
+            /*margin-bottom: 16px;*/
+          }
+
+          div.list-caption {
+            text-align: left;
+            padding-left: 4px;
+            padding-top: 0;
+            padding-bottom: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #446688;
+          }
+          
+          .list-caption {
+            text-align: left;
+            padding-bottom: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #446688;
+          }
+          
+          table.list th {
+            vertical-align: middle;
+            background-color: #DDEEFF;
+            height: 18px;
+          }
+          table.list td {
+            vertical-align: middle;
+          }
+          .list {
+            border-collapse: collapse;
+          }
+          .list > tbody > tr > td, .list > tbody > tr > th {
+            border: solid 1px #ddd;
+            padding-left: 5px;
+            padding-right: 5px;
+          }
+          sub {
+            font-size: 9px;
+          }
+          b.l {
+            padding-left: 15px;
+          }
+        </style><script id="scripts" type="text/javascript">
+          var LangNames = ['ru', 'en'];
+          
+
+          
+
+          function switchLanguage(lang) {
+            //var elems = document.getElementsByTagName('P').concat(document.getElementsByTagName('DIV'));
+            var elems = document.querySelectorAll("P,DIV");
+            for (var i=0;i<elems.length;i++) {
+              for (var j=0;j<LangNames.length;j++) {
+                if (elems[i].className.substr(0, 2) == LangNames[j]) {
+                  if (elems[i].className.substr(0, 2) == lang) {
+                    elems[i].style.display = 'block';
+                  } else {
+                    elems[i].style.display = 'none';
+                  }
+                  break;
+                }
+              }
+            }
+            for (var j=0;j<LangNames.length;j++) {
+              var elem = document.getElementById('lang-'+LangNames[j]);
+              if (elem) {
+                if (LangNames[j] == lang) {
+                  elem.style.fontWeight = 'bold';
+                } else {
+                  elem.style.fontWeight = 'normal';
+                }
+              }
+            }
+          }
+
+          function showList(listName) {
+            var w = window.open('about:blank', '_blank', 'width=800, height=800, status=no, toolbar=yes, menubar=no, location=no, resizable=yes, scrollbars=yes');
+            w.title = listName;
+            var HTML = '<!DOCTYPE html>';
+            var DataObj = document.getElementById(listName);
+            var DataText = '';
+            var CaptObj;
+            var Capt = '';
+            if (DataObj) {
+              DataText = DataObj.outerHTML;
+              if (DataObj.length > 0) CaptObj = DataObj.getElementsByTagName('CAPTION')[0];
+            }
+            if (CaptObj) {
+              var CaptText = CaptObj.getElementsByTagName('P');
+              for (var i=0;i<CaptText.length;i++) {
+                if (CaptText[i].style.display != 'none') {
+                  Capt = CaptText[i].innerText;
+                  break;
+                }
+              }
+            }
+            
+            HTML += 
+              '<html><head><title>' +
+              Capt + 
+              '</title>' +
+              document.getElementById('styles').outerHTML + 
+              '</head>' + 
+              DataText + 
+              '</html>';
+            w.document.write(HTML);
+            
+            var listCtrl = w.document.getElementById(listName).firstChild.firstChild.firstChild.firstChild;
+            if (listCtrl.className == 'list-ctrl') listCtrl.style.display = 'none';
+          }
+          
+          function nodeCtrlChange(elem, expand) {
+            var tds = elem.getElementsByTagName('TD');
+            if (expand) {
+              tds[0].setAttribute('colspan', '2');
+              tds[0].className = 'td-left-top expanded';
+              tds[2].className = 'td-bottom-right expanded';
+            } else {
+              tds[0].removeAttribute('colspan');
+              tds[0].className = 'td-left-top';
+              tds[2].className = 'td-bottom-right';
+            }            
+          }
+          
+          function ShowChildren(elemCtrl, isList) {
+            if (!isList) {
+              var ChirdrenDiv = document.getElementById('ch-'+elemCtrl.id);
+              if (ChirdrenDiv) {
+                var childrenLine = elemCtrl.parentElement;
+                if (ChirdrenDiv.style.display == 'none') {
+                  ChirdrenDiv.style.display = '';
+                  nodeCtrlChange(elemCtrl.lastChild, true);
+                  if (childrenLine) childrenLine.style.borderLeftColor = '#ddd';
+                } else {
+                  ChirdrenDiv.style.display = 'none';
+                  nodeCtrlChange(elemCtrl.lastChild, false);
+                  if (childrenLine) childrenLine.style.borderLeftColor = 'transparent';
+                }
+              }
+            } else {
+              var listTable = elemCtrl.parentElement.parentElement.nextSibling;
+              if (listTable.style.display == 'none') {
+                listTable.style.display = '';
+                nodeCtrlChange(elemCtrl.lastChild, true);
+              } else {
+                listTable.style.display = 'none';
+                nodeCtrlChange(elemCtrl.lastChild, false);
+              }
+            }
+          }
+          
+          
+
+        </script></head><body><div class="doc-title"><table style="width: 100%;"><tr><td class="title-txt"><p class="ru">Описание данных и структуры XML-документа, извещающего о получении/отклонении документа выгрузки (версия 5.08 )</p><p class="en">Description of data and structure of XML-document on uploading of credit histories (version )</p></td><td class="lang"><span class="lang-caption"><span id="lang-ru" class="lang-caption-text" onclick="switchLanguage('ru');" style="font-weight: bold;">Русский</span></span><span class="lang-caption"><span id="lang-en" class="lang-caption-text" onclick="switchLanguage('en');">English</span></span></td></tr></table></div><div id="data-marker"><table class="e"><tbody><tr class="space-tr"><td class="hor-line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=" "></td><td class="line"><div id="registration_result" class="node-ctrl" onmousedown="ShowChildren(this);"><div class="node-collapse-space"></div><table class="node-collapse-ctrl"><tbody><tr><td colspan="2" class="td-left-top expanded"></td></tr><tr><td></td><td class="td-bottom-right expanded"></td></tr></tbody></table></div><div class="elem abs-pos "><b>registration_result</b></div><p class="hide"><b>registration_result</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="txt info"><p class="ru">Корневой тег</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result"><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line "></td><td><div class="elem abs-pos ">@upload_file_name</div><p class="hide">@upload_file_name</p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">string</span></div></td><td></td><td><div class="txt info"><p class="ru">Имя файла выгрузки или имя архива, содержащего файлы выгрузки</p><p class="ru add">Если файл получен вне архива, то значение параметра "1"</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-upload_file_name"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" line "></td><td><div class="elem abs-pos ">@number_of_files</div><p class="hide">@number_of_files</p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">integer</span></div></td><td></td><td><div class="txt info"><p class="ru">Число файлов выгрузки, содержащихся в архиве</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-number_of_files"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=" "></td><td class="line"><div id="registration_result-document_registration" class="node-ctrl" onmousedown="ShowChildren(this);"><div class="node-collapse-space"></div><table class="node-collapse-ctrl"><tbody><tr><td colspan="2" class="td-left-top expanded"></td></tr><tr><td></td><td class="td-bottom-right expanded"></td></tr></tbody></table></div><div class="elem abs-pos "><b>document_registration</b></div><p class="hide"><b>document_registration</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный, количество повторений не ограничено</b></p><p class="en"><b>required, iteration unbounded</b></p></div></td><td></td><td><div class="txt info"><p class="ru">Сведения о документе выгрузки</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration"><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=""></td><td class=" line "></td><td><div class="elem abs-pos ">@schema_version</div><p class="hide">@schema_version</p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">decimal</span><span>"\d{2}[.]\d{2}"</span></div></td><td></td><td><div class="txt info"><p class="ru">Версия формата документа выгрузки</p><p class="en">version</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration-schema_version"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=""></td><td class=" line "></td><td><div class="elem abs-pos ">@registered</div><p class="hide">@registered</p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">boolean</span></div></td><td></td><td><div class="txt info"><p class="ru">Признак получения документа выгрузки</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration-registered"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=""></td><td class=" line "></td><td><div class="elem abs-pos ">@date_time</div><p class="hide">@date_time</p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">string</span><span>"\d{2}[.]\d{2}[.]\d{4}[ ]\d{2}[:]\d{2}[:]\d{2}"</span></div></td><td></td><td><div class="txt info"><p class="ru">Дата и время получения/отклонения документа выгрузки</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration-date_time"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=""></td><td class=" line "></td><td><div class="elem abs-pos ">@file_name</div><p class="hide">@file_name</p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">string</span></div></td><td></td><td><div class="txt info"><p class="ru">Наименование файла выгрузки или наименование файла из архива</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration-file_name"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=""></td><td class=" line "></td><td class="line"><div id="registration_result-document_registration-out_doc_data" class="node-ctrl" onmousedown="ShowChildren(this);"><div class="node-collapse-space"></div><table class="node-collapse-ctrl"><tbody><tr><td colspan="2" class="td-left-top expanded"></td></tr><tr><td></td><td class="td-bottom-right expanded"></td></tr></tbody></table></div><div class="elem abs-pos "><b>out_doc_data</b></div><p class="hide"><b>out_doc_data</b></p></td><td></td><td><div class="txt"><p class="ru">необязательный</p><p class="en">unrequired</p></div></td><td></td><td><div class="txt info"><p class="ru">Исходящие данные документа выгрузки (данные, присвоенные ИФКИ)</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration-out_doc_data"><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class=""></td><td class="line"></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=""></td><td class="line"></td><td class=" line "></td><td><div class="elem abs-pos "><b>reg_num</b></div><p class="hide"><b>reg_num</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">string</span></div></td><td></td><td><div class="txt info"><p class="ru">Исходящий регистрационный номер документа выгрузки</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration-out_doc_data-reg_num"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class=""></td><td class="line"></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=""></td><td class="line"></td><td class=" "></td><td><div class="elem abs-pos "><b>date_time</b></div><p class="hide"><b>date_time</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">string</span><span>"\d{2}[.]\d{2}[.]\d{4}[ ]\d{2}[:]\d{2}[:]\d{2}"</span></div></td><td></td><td><div class="txt info"><p class="ru">Исходящая дата документа выгрузки</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration-out_doc_data-date_time"></div></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=""></td><td class=" line "></td><td class="line"><div id="registration_result-document_registration-in_doc_data" class="node-ctrl" onmousedown="ShowChildren(this);"><div class="node-collapse-space"></div><table class="node-collapse-ctrl"><tbody><tr><td colspan="2" class="td-left-top expanded"></td></tr><tr><td></td><td class="td-bottom-right expanded"></td></tr></tbody></table></div><div class="elem abs-pos "><b>in_doc_data</b></div><p class="hide"><b>in_doc_data</b></p></td><td></td><td><div class="txt"><p class="ru">необязательный</p><p class="en">unrequired</p></div></td><td></td><td><div class="txt info"><p class="ru">Входящие данные документа выгрузки (данные, присвоенные Бюро)</p><p class="ru add">Параметр является обязательным, если признак получения документа выгрузки "true"</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration-in_doc_data"><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class=""></td><td class="line"></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=""></td><td class="line"></td><td class=" line "></td><td><div class="elem abs-pos "><b>reg_num</b></div><p class="hide"><b>reg_num</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">string</span></div></td><td></td><td><div class="txt info"><p class="ru">Входящий регистрационный номер документа выгрузки</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration-in_doc_data-reg_num"></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class=""></td><td class="line"></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=""></td><td class="line"></td><td class=" "></td><td><div class="elem abs-pos "><b>date_time</b></div><p class="hide"><b>date_time</b></p></td><td></td><td><div class="txt"><p class="ru"><b>обязательный</b></p><p class="en"><b>required</b></p></div></td><td></td><td><div class="type"><span class="value">string</span><span>"\d{2}[.]\d{2}[.]\d{4}[ ]\d{2}[:]\d{2}[:]\d{2}"</span></div></td><td></td><td><div class="txt info"><p class="ru">Входящая дата документа выгрузки</p><p class="en no-info">description not found</p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration-in_doc_data-date_time"></div></div><table class="e"><tbody><tr class="space-tr"><td class=""></td><td class=""></td><td class="hor-line line "></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td><td class="hor-line"></td><td></td></tr><tr><td class=""></td><td class=""></td><td class=" "></td><td><div class="elem abs-pos "><b>refuse_reg_reason</b></div><p class="hide"><b>refuse_reg_reason</b></p></td><td></td><td><div class="txt"><p class="ru">необязательный</p><p class="en">unrequired</p></div></td><td></td><td><div class="type"><span class="value">integer</span><span>(</span><span class="value">100</span><span>,</span><span class="value">101</span><span>,</span><span class="value">102</span><span>,</span><span class="value">103</span><span>,</span><span class="value">104</span><span>,</span><span class="value">105</span><span>,</span><span class="value">106</span><span>,</span><span class="value">107</span><span>,</span><span class="value">108</span><span>,</span><span class="value">109</span><span>,</span><span class="value">110</span><span>,</span><span class="value">111</span><span>,</span><span class="value">112</span><span>,</span><span class="value">113</span><span>,</span><span class="value">114</span><span>,</span><span class="value">115</span><span>,</span><span class="value">116</span><span>)</span></div></td><td></td><td><div class="txt info"><p class="ru">Причина отклонения документа выгрузки</p><p class="ru add">Параметр является обязательным, если признак получения документа выгрузки "false". В противном случае параметр не заполняется</p><p class="en no-info">description not found</p></div></td><td></td><td><div class="txt"><p class="ru"><span class="descr-ref" onmousedown="showList('RefuseRegReason');">справочник №1</span></p><p class="en"><span class="descr-ref" onmousedown="showList('RefuseRegReason');">reference list (codebook) №1</span></p></div></td></tr></tbody></table><div class="children" id="ch-registration_result-document_registration-refuse_reg_reason"></div></div></div></div><div class="doc-title"><table style="width: 100%;"><tr><td class="title-txt"><p class="ru">Cправочники</p><p class="en">Reference lists (codebooks)</p></td></tr></table></div><div id="RefuseRegReason"><table class="list"><caption><div class="list-caption"><div class="list-ctrl" onmousedown="ShowChildren(this, true);"><div class="node-collapse-space"></div><table class="node-collapse-ctrl"><tbody><tr><td colspan="2" class="td-left-top expanded"></td></tr><tr><td></td><td class="td-bottom-right expanded"></td></tr></tbody></table></div><nobr><p class="ru"><span id="1" style="text-transform: capitalize;">справочник №1. </span><span>Код причины отклонения документа выгрузки</span></p></nobr><nobr><p class="en"><span id="1" style="text-transform: capitalize;">reference list (codebook) №1. </span><span></span></p></nobr></div></caption><tr><th class="list"><div class="ru">Значение (id)</div><div class="en">Value (id)</div></th><th class="list"><div class="ru">Описание</div><div class="en">Description</div></th></tr><tr><td class="list" style="text-align: center;"><div class="ru">100</div><div class="en">100</div></td><td class="list"><div class="ru">Документ с таким регистрационным номером и датой от этого источника уже существует</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">101</div><div class="en">101</div></td><td class="list"><div class="ru">Для документа отсутствует электронная подпись или указанная электронная подпись невалидна</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">102</div><div class="en">102</div></td><td class="list"><div class="ru">Не удалось распаковать архив или он является пустым</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">103</div><div class="en">103</div></td><td class="list"><div class="ru">Архив содержит посторонние файлы</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">104</div><div class="en">104</div></td><td class="list"><div class="ru">Недопустимый тип файла</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">105</div><div class="en">105</div></td><td class="list"><div class="ru">Указанный сертификат не найден в системе Бюро. Обратитесь к администратору Бюро</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">106</div><div class="en">106</div></td><td class="list"><div class="ru">Файл не соответствует структуре XML-документа</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">107</div><div class="en">107</div></td><td class="list"><div class="ru">Партнер заблокирован в системе Бюро</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">108</div><div class="en">108</div></td><td class="list"><div class="ru">Файл не соответствует XSD-схеме</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">109</div><div class="en">109</div></td><td class="list"><div class="ru">Указанный ИНН ИФКИ не найден в системе Бюро</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">110</div><div class="en">110</div></td><td class="list"><div class="ru">Указанный ОГРН ИФКИ не найден в системе Бюро</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">111</div><div class="en">111</div></td><td class="list"><div class="ru">Исходящая дата документа выгрузки указана некорректно. Значение должно находиться в диапазоне от 01.01.2022 до текущей даты включительно</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">112</div><div class="en">112</div></td><td class="list"><div class="ru">Указанное значение не является датой</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">113</div><div class="en">113</div></td><td class="list"><div class="ru">Возникла ошибка. Необходимо обратиться в техническую поддержку Бюро по адресу help@rs-cb.ru</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">114</div><div class="en">114</div></td><td class="list"><div class="ru">Указанному ИФКИ загрузка файлов запрещена. Обратитесь к администратору Бюро</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">115</div><div class="en">115</div></td><td class="list"><div class="ru">Указанному пользователю ИФКИ загрузка файлов запрещена. Обратитесь к администратору Бюро</div><div class="en"></div></td></tr><tr><td class="list" style="text-align: center;"><div class="ru">116</div><div class="en">116</div></td><td class="list"><div class="ru">Прием документа в указанной версии формата прекращен</div><div class="en"></div></td></tr><tr><td colspan="2" style="height: 16px; visibility: hidden; border: 0px none transparent;"></td></tr></table></div></body></html>

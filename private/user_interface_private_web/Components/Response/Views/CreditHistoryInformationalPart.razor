@@ -1,0 +1,316 @@
+﻿<h2 class="document__title document__title--h2 document__title--black">Информационная часть кредитной истории</h2>
+
+
+
+@if (InformationalPart?.ProhibitionsInfo is not null)
+{
+    <div class="document__caption">
+        <span class="document__table-icon"> Сведения о запретах (снятиях запрета) на заключение договоров потребительского займа (кредита)</span>
+    </div>
+    <table class="document__list-content">
+        <tr>
+            <td class="document__list-icon"><img src="img/info.svg" alt="" /></td>
+            <td class="document__columns">
+                <table>
+                    <tr>
+                        <td class="document__column">
+                            <div class="document__column-title"><b style="color: #C41D39"><u>ВАЖНО!</u></b></div>
+                            <ul class="document__column-text">
+                                <li>Одновременное наличие сведений о действующих полном и частичном запретах означает, что установлен полный запрет на заключение договоров потребительского займа (кредита).</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    @if (InformationalPart.ProhibitionsInfo.ProhibitionAndLifting?.Any() ?? false)
+    {
+        <div class="document__list">
+            <div class="document__list-item">
+                <div class="document__item-title">Сведения об установке запрета на заключение договоров потребительского займа (кредита) и о его снятии</div>
+                @foreach (var _item in InformationalPart.ProhibitionsInfo.ProhibitionAndLifting)
+                {
+                    @if (_item.ProhibitionInfo?.Any() ?? false)
+                    {
+                        <div class="document__list-item">
+                            <table class="document__list-content">
+                                <tr>
+                                    <td class="document__list-icon"><img src="img/ProcessingTermination.svg" alt="" /></td>
+                                    <td class="document__columns">
+                                        <table>
+                                            <tr>
+                                                <td class="document__column">
+                                                    <div class="document__column-title" style="width:350px !important">Дата подачи заявления о запрете</div>
+                                                    <ul class="document__column-text">
+                                                        <li>@_item.ProhibitionInfo[0].ProhibitionApplicationDate?.ToRussianDate()</li>
+                                                    </ul>
+                                                </td>
+                                                <td class="document__column">
+                                                    <div class="document__column-title" style="width:350px !important">Время подачи заявления о запрете</div>
+                                                    <ul class="document__column-text">
+                                                        <li>
+                                                            @(_item.ProhibitionInfo[0].ProhibitionApplicationTime ?? "")
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                                <td class="document__column">
+                                                    <div class="document__column-title" style="width:350px !important">Дата начала действия запрета</div>
+                                                    <ul class="document__column-text">
+                                                        <li>@_item.ProhibitionInfo[0].ProhibitionDate.ToRussianDate()</li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="document__column" colspan="3">
+                                                    <div class="document__column-title">Условия запрета</div>
+                                                    <ul class="document__column-text">
+                                                        @foreach (var _condition in _item.ProhibitionInfo[0]!.ProhibitionСonditions ?? new())
+                                                        {
+                                                            <li>@(_dictionary.Reference_139.TryGetValueOrDefault(_condition))</li>
+                                                        }
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <hr style="border-top: 0.06em solid #000 !important; margin: 0px 50px 50px 50px !important;" />
+                    }
+
+                    @if (_item.ProhibitionLiftingInfo?.Any() ?? false)
+                    {
+                        <div class="document__list-item">
+                            <table class="document__list-content">
+                                <tr>
+                                    <td class="document__list-icon"><img src="img/IndependentGuarantee.svg" alt="" /></td>
+                                    <td class="document__columns">
+                                        <table>
+                                            <tr>
+                                                <td class="document__column">
+                                                    <div class="document__column-title" style="width:350px !important">Дата подачи заявления о снятии запрета</div>
+                                                    <ul class="document__column-text">
+                                                        <li>@_item.ProhibitionLiftingInfo[0].LiftingApplicationDate.ToRussianDate()</li>
+                                                    </ul>
+                                                </td>
+                                                <td class="document__column">
+                                                    <div class="document__column-title" style="width:350px !important">Время подачи заявления о снятии запрета</div>
+                                                    <ul class="document__column-text">
+                                                        <li>
+                                                            @(_item.ProhibitionLiftingInfo[0].LiftingApplicationTime ?? "")
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                                <td class="document__column">
+                                                    <div class="document__column-title" style="width:350px !important">Дата начала действия снятия запрета</div>
+                                                    <ul class="document__column-text">
+                                                        <li>@_item.ProhibitionLiftingInfo[0].LiftingDate?.ToRussianDate()</li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <hr style="border-top: 0.06em solid #000 !important; margin-bottom: 50px !important;" />
+                    }
+
+
+                }
+            </div>
+        </div>
+    }
+
+    @if (InformationalPart.ProhibitionsInfo.ProhibitionNoData is not null)
+    {
+        <div class="document__list">
+            <div class="document__list-item">
+                <table class="document__list-content">
+                    <tr>
+                        <td class="document__list-icon"><img src="img/svg/attention.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column" colspan="5">
+                                        <div class="document__column-title">Сведения о запрете (снятии запрета) субъекта кредитной истории</div>
+                                        <ul class="document__column-text">
+                                            <li>Сведений о запрете нет</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <hr style="border-top: 0.06em solid #000 !important; margin-bottom: 50px !important;" />
+    }
+
+}
+
+
+
+@if (Applications?.Any() ?? false)
+{
+    <div class="document__caption"><span class="document__table-icon">@*<img src="img/LP.svg" alt="">*@  Сведения об обращениях субъекта к источникам с предложением совершить сделку </span></div>
+    @foreach (var _app in Applications)
+    {
+        <table class="document__list-content">
+            <tr>
+                <td class="document__list-icon"><img src="img/doc-id.svg" alt="" /></td>
+                <td class="document__columns">
+                    <table>
+                        <tr>
+                            <td class="document__column">
+                                <div class="document__column-title">Вид участия в сделке</div>
+                                <ul class="document__column-text">
+                                    <li>@_dictionary.Reference_104.TryGetValueOrDefault(_app?.role)</li>
+                                </ul>
+                            </td>
+                            <td class="document__column">
+                                <div class="document__column-title">УИд обращения / Номер обращения</div>
+                                <ul class="document__column-text">
+                                    <li>@(_app?.uid ?? "-") / @(_app?.num ?? "-")</li>
+                                </ul>
+                            </td>
+                            <td class="document__column" colspan="2">
+                                <div class="document__column-title">Сумма запрошенного займа (кредита), лизинга или обеспечения</div>
+                                <ul class="document__column-text">
+                                    <li>@(_app?.sum ?? "-") @(_app?.currency)</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="document__column">
+                                <div class="document__column-title">Дата обращения</div>
+                                <ul class="document__column-text">
+                                    <li>@(_app?.applicationDate?.ToRussianDate() ?? "-")</li>
+                                </ul>
+                            </td>
+                            <td class="document__column">
+                                <div class="document__column-title">Способ обращения</div>
+                                <ul class="document__column-text">
+                                    <li>@_dictionary.Reference_113.TryGetValueOrDefault(_app?.wayCode)</li>
+                                </ul>
+                            </td>
+                            <td class="document__column" colspan="2">
+                                <div class="document__column-title">Дата окончания действия инвестиционного предложения, одобрения обращения (оферты кредитора)</div>
+                                <ul class="document__column-text">
+                                    <li>@(_app?.approvalEndDate?.ToRussianDate() ?? "-")</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="document__column">
+                                <div class="document__column-title">Cтадия рассмотрения обращения</div>
+                                <ul class="document__column-text">
+                                    <li><span style="color: @((_app?.stageCode ?? "-").Equals("3") ? "red" : "green")">@_dictionary.Reference_124.TryGetValueOrDefault(_app?.stageCode)</span></li>
+                                </ul>
+                            </td>
+                            <td class="document__column">
+                                <div class="document__column-title">Цель займа (кредита)</div>
+                                <ul class="document__column-text">
+                                    <li>@_dictionary.Reference_94.TryGetValueOrDefault(_app?.purposeCode?.FirstOrDefault())</li>
+                                </ul>
+                            </td>
+                            <td class="document__column" colspan="2">
+                                <div class="document__column-title">Дата окончания срока рассмотрения обращения</div>
+                                <ul class="document__column-text">
+                                    <li>@(_app?.stageEndDate?.ToRussianDate() ?? "-")</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="document__column">
+                                <div class="document__column-title">Дата перехода обращения в текущую стадию рассмотрения</div>
+                                <ul class="document__column-text">
+                                    <li>@(_app?.stageDate?.ToRussianDate() ?? "-")</li>
+                                </ul>
+                            </td>
+                            <td class="document__column">
+                                <div class="document__column-title">Вид обращения</div>
+                                <ul class="document__column-text">
+                                    <li>@_dictionary.Reference_138.TryGetValueOrDefault(_app?.applicationCode)</li>
+                                </ul>
+                            </td>
+                            <td class="document__column">
+                                <div class="document__column-title">Сумма одобренного займа (кредита), лизинга или обеспечения</div>
+                                <ul class="document__column-text">
+                                    <li>@(_app?.loanSum ?? "-") @_app?.loanCurrency</li>
+                                </ul>
+                            </td>
+                            <td class="document__column">
+                                <div class="document__column-title">Признак наличия подачи обращения с использованием финансовой платформы</div>
+                                <ul class="document__column-text">
+                                    <li>@(_app?.platformExist_1 is not null ? "Да" : _app?.platformExist_0 is not null ? "Нет" : "-")</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        @if (_app?.Reject is not null)
+                        {
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">Дата отказа</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_app?.Reject?.rejectDate?.ToRussianDate() ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" colspan="3">
+                                    <div class="document__column-title">
+                                        Причина отказа
+                                    </div>
+                                    <ul class="document__column-text">
+                                        <li>@_dictionary.Reference_114.TryGetValueOrDefault(_app?.Reject?.rejectCode?.FirstOrDefault())</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+            <tr><td colspan="2"><hr class="splitter" style="border-top: 0.06em solid #000 !important;" /></td></tr>
+        </table>
+    }
+
+}
+
+
+
+@code {
+    [Parameter] public InformationalPartType? InformationalPart { get; set; }
+
+    private Application? _application;
+    private List<Application> Applications = new();
+
+    protected override void OnInitialized()
+    {
+        var Groups = InformationalPart?.Application?.GroupBy(x => new { x.uid, x.num });
+
+        // Собираем заявки
+        if (Groups is not null)
+            foreach (var AppGroup in Groups)
+            {
+                // Заявки с уидами и статусами
+                _application = AppGroup.Where(x => x.stageCode is not null && (x.uid is not null || x.num is not null)).OrderByDescending(x => x.stageCode).FirstOrDefault();
+                if (_application is not null)
+                    Applications.Add(_application);
+
+                // Заявки без статусов
+                _application = AppGroup.Where(x => x.stageCode is null && (x.uid is not null || x.num is not null)).FirstOrDefault();
+                if (_application is not null)
+                    Applications.Add(_application);
+
+                // Заявки без статусов
+                var applications = AppGroup.Where(x => x.uid is null && x.num is null);
+                if (applications.Any())
+                    Applications.AddRange(applications);
+            }
+    }
+}

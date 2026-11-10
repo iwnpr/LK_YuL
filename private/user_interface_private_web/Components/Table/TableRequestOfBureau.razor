@@ -1,0 +1,43 @@
+﻿@*Кредитный отчет*@
+<CreditReportView Response="_response"/>
+
+@*Рейтинг в строковом формате*@
+<PreScoringRating Response="_response" />
+
+@*Верификация*@
+<Verification Response="_response" Request="XDocument.Parse(Request.Request)" />
+
+@*ФССП*@
+<BailiffsDebts Response="_response" Request="XDocument.Parse(Request.Request)"/>
+
+@*Предыдущие запросы*@
+<PreviousRequests Response="_response" Request="XDocument.Parse(Request.Request)" />
+
+@*Проверка паспорта в ФМС*@
+<MigrationServiceDocumentCheck Response="_response" Request="XDocument.Parse(Request.Request)" />
+
+<MIADockCheck Response="_response" Request="XDocument.Parse(Request.Request)" />
+<MIARegCheck Response="_response" Request="XDocument.Parse(Request.Request)" />
+<TaxServiceTaxNum Response="_response" Request="XDocument.Parse(Request.Request)" />
+<TaxServiceTaxNumCheck Response="_response" Request="XDocument.Parse(Request.Request)" />
+<PFRServiceSocialNumCheck Response="_response" Request="XDocument.Parse(Request.Request)" />
+<ActivityNavigator Response="_response" Request="XDocument.Parse(Request.Request)" />
+<SelfEmployedCheck Response="_response" />
+
+@*Предупреждения*@
+<Warning Response="_response" />
+
+@*Ошибки*@
+<Errors Response="_response" />
+
+<DownloadLinks Response="_response" Request="XDocument.Parse(Request.Request)" />
+
+@code {
+    [Parameter] public DBRequestOfBureau Request { get; set; } = new();
+    private XDocument _response = new(new XElement("RESPONSE"));
+
+    protected override void OnInitialized()
+    {
+        _response = XDocument.Parse(Request.Response ?? "<RESPONSE />");
+    }
+}

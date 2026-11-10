@@ -1,0 +1,376 @@
+﻿
+<CascadingValue Name="Disabled" Value="Disabled">
+    @if (Show)
+            {
+    <CommentWindow InfoComment
+    ="@_comment" />
+
+<div class="fancybox-container fancybox-is-open fancybox-can-swipe" role="dialog" tabindex="-1" id="fancybox-container-1" style="transition-duration: 366ms;">
+        <div class="fancybox-bg"></div><div class="fancybox-inner">
+            <div class="fancybox-infobar"><span data-fancybox-index="">1</span>&nbsp;&nbsp;<span data-fancybox-count="">1</span></div>
+            <div class="fancybox-toolbar">
+                <button data-fancybox-zoom="" class="fancybox-button fancybox-button--zoom" title="Zoom" disabled="">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M18.7 17.3l-3-3a5.9 5.9 0 0 0-.6-7.6 5.9 5.9 0 0 0-8.4 0 5.9 5.9 0 0 0 0 8.4 5.9 5.9 0 0 0 7.7.7l3 3a1 1 0 0 0 1.3 0c.4-.5.4-1 0-1.5zM8.1 13.8a4 4 0 0 1 0-5.7 4 4 0 0 1 5.7 0 4 4 0 0 1 0 5.7 4 4 0 0 1-5.7 0z"></path>
+                    </svg>
+                </button>
+                <button data-fancybox-play="" class="fancybox-button fancybox-button--play" title="Start slideshow" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M6.5 5.4v13.2l11-6.6z"></path>
+                    </svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M8.33 5.75h2.2v12.5h-2.2V5.75zm5.15 0h2.2v12.5h-2.2V5.75z"></path>
+                    </svg>
+                </button>
+                <button data-fancybox-thumbs="" class="fancybox-button fancybox-button--thumbs" title="Thumbnails" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M14.59 14.59h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76H5.65V5.65z"></path>
+                    </svg>
+                </button><button data-fancybox-close="" class="fancybox-button fancybox-button--close" title="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 10.6L6.6 5.2 5.2 6.6l5.4 5.4-5.4 5.4 1.4 1.4 5.4-5.4 5.4 5.4 1.4-1.4-5.4-5.4 5.4-5.4-1.4-1.4-5.4 5.4z"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="fancybox-navigation">
+                <button data-fancybox-prev="" class="fancybox-button fancybox-button--arrow_left" title="Previous" disabled="">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M11.28 15.7l-1.34 1.37L5 12l4.94-5.07 1.34 1.38-2.68 2.72H19v1.94H8.6z"></path>
+                        </svg>
+                    </div>
+                </button>
+                <button data-fancybox-next="" class="fancybox-button fancybox-button--arrow_right" title="Next" disabled="">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M15.4 12.97l-2.68 2.72 1.34 1.38L19 12l-4.94-5.07-1.34 1.38 2.68 2.72H5v1.94z"></path>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+            <div class="fancybox-stage">
+                <div class="fancybox-slide fancybox-slide--html fancybox-slide--current fancybox-slide--complete" style="">
+                    <div class="popup-fiz" id="popup-fiz" style="display: inline-block;">
+                        <div style="width: 100%; display: flex;justify-content: flex-end;">
+                            <button type="button" data-fancybox-close="" title="Close" style="" @onclick="OnClose">
+                                <!--!--><svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" version="1" viewBox="0 0 24 24"><path d="M13 12l5-5-1-1-5 5-5-5-1 1 5 5-5 5 1 1 5-5 5 5 1-1z"></path></svg>
+                            </button>
+                        </div>
+                        <div class="popup-organization__title">Запрос сведений о среднемесячных платежах</div>
+                        <form class="form">
+
+                            <div class="form__goals">
+
+                                <div class="result__item-top">
+                                    <div class="result__item-title">Параметры запроса</div>
+                                </div>
+
+                                <div class="form__inputs">
+                                    <div class="form__input">
+                                        <div class="form__input-label">Тип запроса</div>
+                                        <SelectionList ValuesList=_dictionary.RequestTypeQBCH
+                                                       OnChange=@SetRequestType
+                                                       SelectionValue=@_dictionary.RequestTypeQBCH[Subject.RequestType] />
+
+                                    </div>
+
+                                    <div class="form__input">
+                                        <div class="form__input-label">Тип сведений</div>
+                                        <SelectionList ValuesList=@AvailableInformationCodes
+                                                       OnChange=@((value) => Subject.InformationCode = _dictionary.InformationCode.FirstOrDefault(t => t.Value.Equals(value)).Key)
+                                                       SelectionValue=@AvailableInformationCodes[Subject.InformationCode] />
+
+                                    </div>
+
+                                    <div class="form__input">
+                                        <div class="form__input-label">Сертификат для подписи*</div>
+                                        <SelectionList ValuesList=_userCertificates
+                                                       OnChange=@((value) => Subject.Thumbprint = _userCertificates.FirstOrDefault(t => t.Value.Equals(value)).Key)
+                                                       SelectionValue=@_userCertificates[Subject.Thumbprint] />
+
+                                    </div>
+                                </div>
+
+                                <div class="result__item-top">
+                                    <div class="result__item-title">Правовые основы запроса ССП</div>
+                                </div>
+
+                                <div class="form__inputs">
+                                    <div class="form__input form__input">
+                                        <div class="form__input-label">Дата выдачи согласия*</div>
+                                        <input type="text" data-format="00.00.0000" @bind="@Subject.Request.Consent.ConsentDate" required>
+                                    </div>
+
+                                    <div class="form__input">
+                                        <div class="form__input-label">Срок действия согласия*</div>
+                                        <SelectionList ValuesList=@_dictionary.ConsentExpirationQBCH
+                                                       OnChange=@((value) => Subject.Request.Consent.ConsentExpiration = (_dictionary.ConsentExpirationQBCH.FirstOrDefault(t => t.Value.Equals(value)).Key))
+                                                       SelectionValue=@_dictionary.ConsentExpirationQBCH[Subject.Request.Consent.ConsentExpiration] />
+                                    </div>
+
+                                    <div class="form__input form__input">
+                                        <div class="form__input-label">Хэш код согласия</div>
+                                        <input type="text" @bind="@Subject.Request.Consent.HashCode">
+                                    </div>
+
+                                    <div class="form__input">
+                                        <div class="form__input-label">Цель выдачи согласия</div>
+                                        <SelectionList ValuesList=@_dictionary.ConsentTargetQBCH
+                                                       OnChange=@((value) => Subject.Request.Consent.Purpose.Code = (_dictionary.ConsentTargetQBCH.FirstOrDefault(t => t.Value.Equals(value)).Key))
+                                                       SelectionValue=@_dictionary.ConsentTargetQBCH[Subject.Request.Consent.Purpose.Code] />
+                                    </div>
+
+                                    @if (Subject.Request.Consent.ConsentExpiration.Equals("3"))
+                                    {
+<div class="form__input form__input">
+                                        <div class="form__input-label">Дата договора*</div>
+                                        <input type="text" data-format="00.00.0000" @bind="@Subject.Request.Consent.Obligation.Date" required>
+                                    </div>
+
+                                    }
+
+
+                                    @if (Subject.Request.Consent.Purpose.Code.Equals("99"))
+                                    {
+<div class="form__input form__input">
+                                        <div class="form__input-label">Иная цель выдачи согласия*</div>
+                                        <input type="text" @bind="@Subject.Request.Consent.Purpose.Description" required>
+                                    </div>
+
+                                    }
+                                    <div class="form__input form__checkbox check">
+                                        <input disabled @bind-value="@Subject.Request.Consent.IsWarned" checked="@Subject.Request.Consent.IsWarned.Equals("1")" @bind-value:event="onchange" type="checkbox">
+                                        <label class="form__checkbox-label" for="3"> Запрашивающий ознакомлен с административной ответственностью, устанавливаемой статьями 5.53 и 14.29 КоАП</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="result__item-top">
+                                <div class="result__item-title">Идентификация физического лица</div>
+                            </div>
+
+
+                            <div class="form__inputs">
+                                <div class="form__input">
+                                    <div class="form__input-label">Фамилия *</div>
+                                    <input type="text" @bind="@Subject.Request.Subject.Initials.LastName" oninput="this.value=this.value.toUpperCase()" required>
+                                </div>
+                                <div class="form__input">
+                                    <div class="form__input-label">Имя *</div>
+                                    <input type="text" @bind="@Subject.Request.Subject.Initials.FirstName" oninput="this.value=this.value.toUpperCase()" required>
+                                </div>
+                                <div class="form__input">
+                                    <div class="form__input-label">Отчество</div>
+                                    <input type="text" @bind="@Subject.Request.Subject.Initials.MiddleName" oninput="this.value=this.value.toUpperCase()">
+                                </div>
+                                <div class="form__input form__input-small">
+                                    <div class="form__input-label">Дата рождения *</div>
+                                    <input type="text" data-format="00.00.0000" @bind="@Subject.Request.Subject.BirthDate" required>
+                                </div>
+                                <div class="form__input">
+                                    <div class="form__input-label">ИНН</div>
+                                    <input type="text" @bind="@Subject.Request.Subject.TaxNum.Value" data-format="000000000000" oninput="this.value=this.value.toUpperCase()">
+                                </div>
+                                <div class="form__input">
+                                    <div class="form__input-label">СНИЛС</div>
+                                    <input type="text" @bind="@Subject.Request.Subject.SocialNum" data-format="00000000000" oninput="this.value=this.value.toUpperCase()">
+                                </div>
+                                <div class="form__input form__checkbox check">
+                                    <input @onchange="@(() => {if(Subject.Request.Subject.TaxNum.Checked.Equals("1")){ Subject.Request.Subject.TaxNum.Checked = "0";} else Subject.Request.Subject.TaxNum.Checked ="1";})" checked="@Subject.Request.Subject.TaxNum.Checked.Equals("1")" type="checkbox">
+                                    <label class="form__checkbox-label" for="3"> Признак проверки ИНН в ФНС</label>
+                                </div>
+                                <div class="form__input">
+                                    <div class="form__input-label">Тип документа</div>
+                                    <SelectionList ValuesList=@_dictionary.DocumentTypes
+                                                   OnChange=@((value) => Subject.Request.Subject.IdentityDocument.Code = _dictionary.DocumentTypes.FirstOrDefault(t => t.Value.Equals(value)).Key)
+                                                   SelectionValue=@_dictionary.DocumentTypes[Subject.Request.Subject.IdentityDocument.Code] />
+                                </div>
+                                <div class="form__input form__input-small">
+                                    <div class="form__input-label">Серия</div>
+                                    <input type="text" @bind="@Subject.Request.Subject.IdentityDocument.Seria" oninput="this.value=this.value.toUpperCase()">
+                                </div>
+                                <div class="form__input form__input-small">
+                                    <div class="form__input-label">Номер *</div>
+                                    <input type="text" @bind="@Subject.Request.Subject.IdentityDocument.Number" oninput="this.value=this.value.toUpperCase()" required>
+                                </div>
+                                <div class="form__input form__input-small">
+                                    <div class="form__input-label">Дата выдачи*</div>
+                                    <input type="text" @bind="@Subject.Request.Subject.IdentityDocument.DocDate" data-format="00.00.0000" required>
+                                </div>
+                            </div>
+
+                            <div class="result__item-top">
+                                <div class="result__item-title">Сведения из заявки заемщика</div>
+                            </div>
+
+                            <div class="form__inputs">
+                                <div class="form__input">
+                                    <div class="form__input-label">Цель запроса</div>
+                                    <SelectionList ValuesList=@_dictionary.ConsentTargetQBCH
+                                                   OnChange=@((value) => Subject.Request.Purpose.Code = (_dictionary.ConsentTargetQBCH.FirstOrDefault(t => t.Value.Equals(value)).Key))
+                                                   SelectionValue=@_dictionary.ConsentTargetQBCH[Subject.Request.Purpose.Code] />
+                                </div>
+
+                                @if (Subject.Request.Purpose.Code.Equals("99"))
+                                                {
+                                <div class="form__input form__input">
+                                    <div class="form__input-label">Иная цель запроса*</div>
+                                    <input type="text" @bind="@Subject.Request.Purpose.Description" required>
+                                </div>
+
+    }
+                                @if (new List<string>() { "1", "2", "3", "4", "5", "10", "11", "12", "13", "14", "15" }.Contains(Subject.Request.Purpose.Code))
+                                                {
+                                <div class="form__input form__input">
+                                    <div class="form__input-label">
+                                        Сумма обязательства
+                                    </div>
+                                    <input type="text" @bind="@Subject.Request.Amount.Text" required>
+                                </div>
+                                <div class="form__input form__input">
+                                    <div class="form__input-label">Валюта</div>
+                                    <SelectionList ValuesList=@_dictionary.Currency
+                                                   OnChange=@((value) => Subject.Request.Amount.Currency = (_dictionary.Currency.FirstOrDefault(t => t.Value.Equals(value)).Key))
+                                                   SelectionValue=@_dictionary.Currency[Subject.Request.Amount.Currency] />
+                                </div>
+}
+
+                            </div>
+
+                            <div class="form__bottom">
+                                <div class="form__bottom-message">* обязательно для заполнения</div>
+                            </div>
+
+
+                            <div class="form__btns">
+                                <button class="form__btn btn btn--green" disabled="@Disabled" type="button" @onclick=Method>
+                                    @if (Disabled)
+                                                        {
+                                    <img src="/img/loading.gif" width="20" />
+                                                        }
+                                    Выполнить запрос
+                                </button>
+                            </div>
+
+
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="fancybox-caption fancybox-caption--separate">
+                <div class="fancybox-caption__body"></div>
+            </div>
+        </div>
+    </div>
+    }
+
+</CascadingValue>
+
+
+@code {
+    [CascadingParameter(Name = "Disabled")] public bool Disabled { get; set; }
+
+/// <summary>
+/// Отображение окна
+/// </summary>
+[Parameter] public bool Show { get; set; } = false;
+
+/// <summary>
+/// Запрос в формате бюро
+/// </summary>
+[Parameter] public RequestAMP Subject { get; set; } = new();
+
+/// <summary>
+/// Комментарий для информационного модального окна
+/// </summary>
+private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+/// <summary>
+/// Метод запроса к сервису
+/// </summary>
+[Parameter] public EventCallback Method { get; set; }
+
+/// <summary>
+/// Событие на закрытие формы
+/// </summary>
+[Parameter] public EventCallback OnClose { get; set; }
+
+
+/// <summary>
+/// Сер
+/// </summary>
+private Dictionary<string, string> _userCertificates = new() { { "-", "-" } };
+
+private const string AllQbchRequestType = "2";
+private const string FraudOnlyInformationCode = "8";
+private const string DefaultInformationCode = "6";
+
+private Dictionary<string, string> AvailableInformationCodes =>
+    Subject.RequestType == AllQbchRequestType
+        ? _dictionary.InformationCode
+            .Where(code => code.Key != FraudOnlyInformationCode)
+            .ToDictionary(code => code.Key, code => code.Value)
+        : _dictionary.InformationCode;
+
+private void SetRequestType(string value)
+{
+    Subject.RequestType = _dictionary.RequestTypeQBCH.FirstOrDefault(type => type.Value.Equals(value)).Key;
+
+    // Нельзя отправлять запрос 8 во все КБКИ сразу 
+    // согласно Указанию Банка России от 29.09.2025 № 7189-У пункту 1.1
+    if (Subject is { RequestType: AllQbchRequestType, InformationCode: FraudOnlyInformationCode })
+    {
+        Subject.InformationCode = DefaultInformationCode;
+    }
+}
+
+
+protected override async Task OnParametersSetAsync()
+{
+    await _jsr.InvokeVoidAsync("mask");
+}
+
+protected override async Task OnInitializedAsync()
+{
+    Answer _error = new(300, "");
+    try
+    {
+        _error = await _jsr.InvokeAsync<Answer>("GetListOfCertificateAsync");
+    }
+    catch
+    {
+        _error = new(300, "");
+    }
+
+    if (_error.Code.Equals(200))
+    {
+        string[] _certificates = _error.Message.Split("$");
+
+        foreach (var _certificate in _certificates)
+        {
+            string[] _properties = _certificate.Split(";");
+
+                if (_properties[3].Contains("RCA Кредитное бюро РУсский Стандарт") || _properties[3].Contains("Центральный банк Российской Федерации"))
+            {
+                var _cn = _properties[0].Split(",").FirstOrDefault(item => item.Contains("CN=")) ?? string.Empty;
+                _userCertificates.Add(_properties[1], $"{_cn.Substring(_cn.IndexOf("=") + 1)}, Издатель: {_properties[3].Substring(_properties[3].IndexOf("=") + 1)}");
+            }
+        }
+    }
+
+    if (!_userCertificates.ContainsKey(Subject.Thumbprint))
+    {
+        Subject.Thumbprint = _userCertificates.Last().Key;
+    }
+
+}
+
+protected async override Task OnAfterRenderAsync(bool firstRender)
+{
+    await _jsr.InvokeVoidAsync("mask");
+}
+
+}
+

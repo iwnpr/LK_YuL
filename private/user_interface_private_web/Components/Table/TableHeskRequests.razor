@@ -1,0 +1,118 @@
+﻿<table class="status__table table">
+    <thead>
+        <tr>
+            <td>Статус</td>
+            <td>Id заявки</td>
+            <td>Дата/время создания</td>
+            <td>Тема</td>
+            <td>E-mail</td>
+            <td>Приотритет</td>
+            <td>Дата завершения</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var _request in _requests)
+        {
+        <tr @onclick="@(() => _jsr.InvokeVoidAsync("open", $"{_navMngr.BaseUri}{Url}/{_request.Element("id")?.Value ?? "-1"}", "_blank"))">
+            <td>
+                @switch (_request.Element("status")?.Attribute("name")?.Value)
+                {
+                    case "Открыта":
+                        <div class="status__icon inprocess"></div>
+                        ; break;
+                    case "Закрыта":
+                        <div class="status__icon checked"></div>
+                        ; break;
+                }
+            </td>
+            <td>@_request.Element("id")?.Value</td>
+            <td>@_request.Element("created_on")?.Value</td>
+            <td>@_request.Element("subject")?.Value</td>
+            <td>@_request.Element("author")?.Attribute("name")?.Value</td>
+            <td>
+                <svg width="30" height="30" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="15" cy="15" r="10" stroke="
+                @(_request.Element("priority")?.Attribute("name")?.Value switch
+                {
+                    "Нормальный" => "green",
+                    "Высокий" => "orange",
+                    "Низкий" => "grey",
+                    "Критический" => "red",
+                    _ => "grey"
+                })" fill="transparent" stroke-width="5" />
+                    <title>@_request.Element("priority")?.Attribute("name")?.Value</title>
+                </svg>
+            </td>
+            <td>@_request.Element("closed_on")?.Value</td>
+        </tr>
+        }
+        <tr>
+            <td colspan="7">
+                <div class="pagination">
+                    <div class="table__icons">
+                        <div class="table__icon" @onclick="@(() => PreviousPage())">
+                            <svg class="ico ico-mono-edit" style="width: 0.8em !important;">
+                                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                                <title>Назад</title>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="table__icons">
+                        <div class="table__icon">
+                            <svg class="ico ico-mono-registration" @onclick="@(() => NextPage())" style="transform: rotate(180deg);width: 0.8em !important;">
+                                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                                <title>Вперед</title>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+@code {
+    [Parameter] public List<XElement> Requests { get; set; } = new();
+    [Parameter] public string Url { get; set; } = string.Empty;
+
+    public List<XElement> _requests = new();
+
+    int _page = 0;
+    int _pageSize = 20;
+    private bool _disabled = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+    await Task.Delay(0);
+    _requests = Requests.Take(_pageSize).ToList();
+    }
+
+    private async Task PreviousPage()
+    {
+    await Task.Delay(0);
+
+    if (!_disabled)
+    {
+        _page = _page > 0 ? _page - 1 : 0;
+
+        _requests = Requests.Skip(_page * 20).Take(_pageSize).ToList();
+
+        _disabled = true;
+    }
+
+    _disabled = false;
+    }
+
+    private async Task NextPage()
+    {
+    await Task.Delay(0);
+    
+    if (!_disabled)
+    {
+        _page = Requests.Count == _pageSize ? _page + 1 : _page;
+        _requests = Requests.Skip(_page * 20).Take(_pageSize).ToList();
+    }
+
+    _disabled = false;
+    }
+}

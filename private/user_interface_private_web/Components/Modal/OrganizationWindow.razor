@@ -1,0 +1,141 @@
+﻿<CascadingValue Name="Disabed" Value="_disabled">
+    @if (Show)
+    {
+    <div class="fancybox-container fancybox-is-open fancybox-can-swipe" role="dialog" tabindex="-1" id="fancybox-container-1" style="transition-duration: 366ms;">
+        <div class="fancybox-bg"></div><div class="fancybox-inner">
+            <div class="fancybox-infobar"><span data-fancybox-index="">1</span>&nbsp;/&nbsp;<span data-fancybox-count="">1</span></div><div class="fancybox-toolbar compensate-for-scrollbar"><button data-fancybox-zoom="" class="fancybox-button fancybox-button--zoom" title="Zoom" disabled=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.7 17.3l-3-3a5.9 5.9 0 0 0-.6-7.6 5.9 5.9 0 0 0-8.4 0 5.9 5.9 0 0 0 0 8.4 5.9 5.9 0 0 0 7.7.7l3 3a1 1 0 0 0 1.3 0c.4-.5.4-1 0-1.5zM8.1 13.8a4 4 0 0 1 0-5.7 4 4 0 0 1 5.7 0 4 4 0 0 1 0 5.7 4 4 0 0 1-5.7 0z"></path></svg></button><button data-fancybox-play="" class="fancybox-button fancybox-button--play" title="Start slideshow" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 5.4v13.2l11-6.6z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.33 5.75h2.2v12.5h-2.2V5.75zm5.15 0h2.2v12.5h-2.2V5.75z"></path></svg></button><button data-fancybox-thumbs="" class="fancybox-button fancybox-button--thumbs" title="Thumbnails" style="display: none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.59 14.59h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76H5.65V5.65z"></path></svg></button><button data-fancybox-close="" class="fancybox-button fancybox-button--close" title="Close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 10.6L6.6 5.2 5.2 6.6l5.4 5.4-5.4 5.4 1.4 1.4 5.4-5.4 5.4 5.4 1.4-1.4-5.4-5.4 5.4-5.4-1.4-1.4-5.4 5.4z"></path></svg></button></div><div class="fancybox-navigation"><button data-fancybox-prev="" class="fancybox-button fancybox-button--arrow_left" title="Previous" disabled=""><div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.28 15.7l-1.34 1.37L5 12l4.94-5.07 1.34 1.38-2.68 2.72H19v1.94H8.6z"></path></svg></div></button><button data-fancybox-next="" class="fancybox-button fancybox-button--arrow_right compensate-for-scrollbar" title="Next" disabled=""><div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.4 12.97l-2.68 2.72 1.34 1.38L19 12l-4.94-5.07-1.34 1.38 2.68 2.72H5v1.94z"></path></svg></div></button></div><div class="fancybox-stage">
+                <div class="fancybox-slide fancybox-slide--html fancybox-slide--current fancybox-slide--complete" style="">
+                    <div class="popup-organization fancybox-content" id="popup-organization" style="display: inline-block;">
+                        <div class="popup-organization__title">Данные организации</div>
+                        <form class="form">
+                            <div class="form__item">
+                                <div class="caption">Реквизиты</div>
+                                <div class="form__inputs form__inputs-rek">
+                                    <div class="form__input">
+                                        <div class="form__input-label">ИНН *</div>
+                                        <input class="form__input--icon" type="text" required @bind="Organization.Itn">
+                                        <div class="form__input-icon">
+                                            <svg class="ico ico-color-search" @onclick="OnGetTaxData">
+                                                <use xlink:href="img/sprite-color.svg#ico-color-search">
+                                                </use>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="form__input">
+                                        <div class="form__input-label">ОГРН </div>
+                                        <input type="text" @bind="Organization.Psrn" required>
+                                    </div>
+                                    <div class="form__input">
+                                        <div class="form__input-label">ID *</div>
+                                        <input type="text" required @bind=Organization.LegalPersonId>
+                                    </div>
+                                    <div class="form__input">
+                                        <div class="form__input-label">ОКПО</div>
+                                        <input class="form__input--icon" type="text" @bind=Organization.OKPO>
+                                        <div class="form__input-icon" @onclick=Search>
+                                            <svg class="ico ico-color-ya">
+                                                <use xlink:href="img/sprite-color.svg#ico-color-ya"></use>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form__inputs">
+                                    <div class="form__input">
+                                        <div class="form__input-label">Краткое название </div>
+                                        <input type="text" @bind=Organization.ShortName oninput="this.value=this.value.toUpperCase()" required>
+                                    </div>
+                                    <div class="form__input">
+                                        <div class="form__input-label">Полное название</div>
+                                        <textarea @bind="Organization.FullName" oninput="this.value=this.value.toUpperCase()" required></textarea>
+                                    </div>
+                                </div>
+
+                                <button class="form__btn btn btn--green" type="button" @onclick=OnGetTaxData disabled="@_disabled">
+                                    @if (_disabled)
+                                                        {
+                                    <img src="/img/loading.gif" width="20" />
+                                                        }
+                                    Данные ЕГРЮЛ
+                                </button>
+                                <div class="caption">Реквизиты</div>
+                                <div class="form__inputs">
+                                    <div class="form__input form__select">
+                                        <div class="page-select-overlay" style="display: none;"></div>
+                                        <div class="select ">
+                                            <SelectionList ValuesList=@OrgTypes
+                                                           OnChange=@((value) => {Organization.OrganizationTypeId = int.Parse(OrgTypes.FirstOrDefault(t => t.Value.Equals(value)).Key); Organization.OrganizationType = value;})
+                                                           SelectionValue=@Organization.OrganizationType />
+
+
+                                        </div>
+                                    </div>
+                                    <div class="form__input form__checkbox">
+                                        <input type="checkbox" id="1222">
+                                        <label class="form__checkbox-label" for="1222">Предоставление бесплатных кредитных отчетов субъектам кредитных историй </label>
+                                    </div>
+                                </div>
+                                <div class="caption">Параметры доступа</div>
+                                <div class="form__inputs">
+                                    <div class="form__input form__checkbox">
+                                        <input type="checkbox" id="2222" @onchange="@(() => Organization.IsActive = !Organization.IsActive)" checked="@(!Organization.IsActive)">
+                                        <label class="form__checkbox-label" for="2222">Блокировка</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form__item">
+                                <div class="caption">Разрешения</div>
+                                <div class="form__item-subtitle">Сервисы</div>
+                                <fieldset disabled="@(!Organization.IsActive)" style="border: 0px;">
+                                    <div class="form__item-checkboxes">
+                                        @foreach (var service in Accesses)
+                                                                {
+                                        <div class="form__input form__checkbox">
+                                            <input type="checkbox" id="0" @bind=service.Access>
+                                            <label class="form__checkbox-label" for="0">@service.Comment</label>
+                                        </div>
+}
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <button class="form__submit form__btn btn btn--green" type="button" @onclick=Save disabled="@_disabled">
+                                @if (_disabled)
+                                                {
+                                <img src="/img/loading.gif" width="20" />
+}
+                                Сохранить изменения
+                            </button>
+                        </form>
+                        <button type="button" @onclick=OnClose data-fancybox-close="" class="fancybox-button fancybox-close-small" title="Close">
+                            <svg xmlns="http://www.w3.org/2000/svg" version="1" viewBox="0 0 24 24">
+                                <path d="M13 12l5-5-1-1-5 5-5-5-1 1 5 5-5 5 1 1 5-5 5 5 1-1z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div><div class="fancybox-caption fancybox-caption--separate"><div class="fancybox-caption__body"></div></div>
+        </div>
+    </div>
+}
+</CascadingValue>
+
+@code {
+[CascadingParameter(Name = "Disabled")] public bool _disabled { get; set; } = false;
+[Parameter] public DBOrganization Organization { get; set; } = null!;
+[Parameter] public Dictionary<string, string> OrgTypes { get; set; } = null!;
+[Parameter] public List<DBOrganizationAccess> Accesses { get; set; } = null!;
+[Parameter] public bool Show { get; set; } = false;
+
+[Parameter] public EventCallback Save { get; set; }
+[Parameter] public EventCallback OnClose { get; set; }
+[Parameter] public EventCallback OnGetTaxData { get; set; }
+
+/// <summary>
+///  Поиск ОКПО организации в яндексе по ИНН
+/// </summary>
+/// <returns></returns>
+private async Task Search()
+{
+    if (!string.IsNullOrWhiteSpace(Organization.Itn))
+    await _jsr.InvokeVoidAsync("open", $"https://yandex.ru/yandsearch?text={Organization.Itn} ОКПО", "_blank");
+}
+}

@@ -1,0 +1,747 @@
+create schema "personal_account";
+
+CREATE TYPE personal_account.acess_level AS ENUM (
+    'all',
+    'personal'
+);
+
+CREATE TYPE personal_account.acess_right AS ENUM (
+    'W',
+    'D',
+    'R'
+);
+
+CREATE TYPE personal_account.action_types AS ENUM (
+    'aprove_account',
+    'restore_password'
+);
+
+
+CREATE TYPE personal_account.cert_status AS ENUM (
+    'issued',
+    'cancelled_by_user',
+    'requested',
+    'cancelled_by_admin'
+);
+
+CREATE TYPE personal_account.events AS ENUM (
+    'insert',
+    'update',
+    'delete'
+);
+
+
+CREATE TYPE personal_account.examples_type AS ENUM (
+    'check_contracts',
+    'for_government',
+    'bureau',
+    'upload',
+    'ccch'
+);
+
+
+CREATE TYPE personal_account.governments AS ENUM (
+    'court',
+    'preliminary_investigation_authorities',
+    'financial_manager',
+    'federal_bailiff_service',
+    'notary',
+    'central_bank'
+);
+
+CREATE TABLE personal_account.td_organizations (
+    id serial NOT NULL,
+    itn character varying(12) NOT NULL,
+    psrn character varying(15) NOT NULL,
+    full_name text NOT NULL,
+    short_name text NOT NULL,
+    ownership_form text,
+    is_active boolean NOT NULL,
+    date_close date,
+    tr_organization_type_id integer NOT NULL,
+    okpo character varying(10),
+    legal_person_id bigint NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT null,
+    reg_date date
+
+);
+
+CREATE TABLE personal_account.tr_organization_type (
+    id serial NOT NULL,
+    organization_type text NOT NULL,
+    comment text
+);
+
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(1, 'Индивидуальный предприниматель', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment")VALUES(2, 'Кредитная организация', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(3, 'Микрофинансовая организация', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(4, 'Кредитный потребительский кооператив', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(5, 'Сельскохозяйственный кредитный потребительский кооператив', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(6, 'Ломбард', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(7, 'Лизинговая компания', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(8, 'Субъект страхового дела', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(9, 'Коллекторская организация', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(99, 'Иной пользователь', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(101, 'Предприятие ЖКХ', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(102, 'Другие гос. структуры', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(103, 'Страховое агентство', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(104, 'Кадровое агентство', NULL);
+INSERT INTO personal_account.tr_organization_type (id, organization_type, "comment") VALUES(105, 'Риэлтерское агентство', NULL);
+
+CREATE TABLE personal_account.td_users (
+    id serial NOT NULL,
+    last_name text NOT NULL,
+    first_name text NOT NULL,
+    middle_name text,
+    email text NOT NULL,
+    phone text,
+    is_active boolean DEFAULT false NOT NULL,
+    is_approved boolean DEFAULT false NOT NULL,
+    organization_id integer NOT NULL,
+    natural_person_id bigint NOT NULL,
+    --user_role_id integer NOT NULL,
+    password text NOT NULL,
+    login text NOT NULL,
+    sault text NOT NULL
+);
+
+
+CREATE TABLE personal_account.te_user_certificates (
+    id serial NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT NULL,
+    organizations_id integer NOT NULL,
+    users_id integer NOT NULL,
+    request_data xml NOT NULL,
+    status personal_account.cert_status NOT NULL,
+    certificate xml,
+    certificate_serial_number text,
+    certificate_date_from timestamp without time zone,
+    certificate_date_to timestamp without time zone,
+    request_id bigint not null,
+    legal_person_id bigint not null,
+    is_active boolean
+);
+
+CREATE VIEW personal_account.certificates AS
+ SELECT c.id,
+    c.inserted,
+    c.organizations_id,
+    c.users_id,
+    c.request_data,
+    c.status,
+    c.certificate,
+    c.certificate_serial_number,
+    c.certificate_date_from,
+    c.certificate_date_to,
+    c.is_active,
+    c.request_id,
+    c.legal_person_id,
+    (unnest(xpath('certificate-request/@name'::text, c.request_data)))::character varying(100) AS cert_owner,
+    o.short_name AS org_short_name
+   FROM (personal_account.te_user_certificates c
+     JOIN personal_account.td_organizations o ON ((c.organizations_id = o.id)));
+
+
+CREATE TABLE personal_account.td_access (
+    id serial NOT NULL,
+    organizations_id integer NOT NULL,
+    services_id integer NOT NULL,
+    access boolean NOT NULL
+);
+
+
+
+CREATE TABLE personal_account.tr_services (
+    id serial NOT NULL,
+    service_name text NOT NULL,
+    request_parameters xml NOT NULL,
+    comment text
+);
+
+INSERT INTO personal_account.tr_services VALUES (1, 'organizations', '<parameter name="organization" />', 'Редактирование организаций');
+INSERT INTO personal_account.tr_services VALUES (2, 'users', '<parameter name="users" />', 'Редактирование пользователей');
+INSERT INTO personal_account.tr_services VALUES (3, 'certificates', '<parameter name="certificates" />', 'Запросы сертификатов');
+INSERT INTO personal_account.tr_services VALUES (4, 'documentation', '<parameter name="documentation" />', 'Доступ к документации');
+INSERT INTO personal_account.tr_services VALUES (5, 'data-upload', '<parameter name="Uploads" value="true" />', 'Загрузка файлов в Бюро');
+INSERT INTO personal_account.tr_services VALUES (6, 'credit-report-for-user', '<parameter name="CreditReportDetalization" value="3" />', 'Кредитный отчет для пользователя');
+INSERT INTO personal_account.tr_services VALUES (7, 'fbs-debt-request', '<parameter name="fbs-debt" />', 'Запрос ФССП');
+INSERT INTO personal_account.tr_services VALUES (8, 'credit-report-for-state', '<parameter name="credit-report-for-state" />', 'Запросы Госорганы');
+INSERT INTO personal_account.tr_services VALUES (9, 'previous-requests', '<parameter name="PreviousRequestsCountLimit" value="-1" />', 'Информация о предыдущих запросах');
+INSERT INTO personal_account.tr_services VALUES (10, 'credit-record-status', '<parameter name="cr-status" />', 'Проверка КИ');
+INSERT INTO personal_account.tr_services VALUES (11, 'employer-rating', '<parameter name="getRating2" value="false" />', 'Рейтинг дефолтности работодателя');
+INSERT INTO personal_account.tr_services VALUES (12, 'prescoring-np-string-rating', '<parameter name="getRating3" value="false" />', 'Рейтинг ФЛ (строковое представление)');
+INSERT INTO personal_account.tr_services VALUES (13, 'tax-service-request', '<parameter name="getTaxServiceLPInfo" value="0" />', 'Запрос в ЕГРЮЛ ФНС');
+INSERT INTO personal_account.tr_services VALUES (14, 'ccch-request', '<parameter name="CCCH" value="false" />', 'Запрос в ЦККИ');
+INSERT INTO personal_account.tr_services VALUES (15, 'debt-rating', '<parameter name="getRating1" value="false" />', 'Кредитный рейтинг');
+INSERT INTO personal_account.tr_services VALUES (16, 'editor', '<parameter name="editor" />', 'Редактор КИ');
+INSERT INTO personal_account.tr_services VALUES (17, 'fms-document-check', '<parameter name="fms-document-check" />', 'Проверка паспорта (ФМС)');
+INSERT INTO personal_account.tr_services VALUES (18, 'verification', '<parameter name="fms-document-check" />', 'Сервис верификации');
+INSERT INTO personal_account.tr_services VALUES (19, 'fsspNP', '<parameter name="fsspNP" />', 'ФССП ФЛ');
+INSERT INTO personal_account.tr_services VALUES (20, 'fsspLP', '<parameter name="fsspLP" />', 'ФССП ЮЛ');
+INSERT INTO personal_account.tr_services VALUES (21, 'historicalFssp', '<parameter name="historicalFssp" />', 'ФССП с историзмом');
+INSERT INTO personal_account.tr_services VALUES (22, 'historicalFsspWithFines', '<parameter name="historicalFsspWithFines" />', 'ФССП с историзмом и штрафами');
+INSERT INTO personal_account.tr_services VALUES (23, 'fsspCetelem', '<parameter name="fsspCetelem" />', 'ФССП Сетелем');
+
+
+
+CREATE VIEW personal_account.organization_access AS
+ SELECT c.id,
+    c.organizations_id,
+    c.services_id,
+    c.access,
+    o.service_name,
+    o.comment
+   FROM (personal_account.td_access c
+     JOIN personal_account.tr_services o ON ((c.services_id = o.id)));
+
+
+
+CREATE VIEW personal_account.organizations AS
+ SELECT o.id,
+    o.itn,
+    o.psrn,
+    o.full_name,
+    o.short_name,
+    o.ownership_form,
+    o.is_active,
+    o.date_close,
+    o.tr_organization_type_id,
+    o.okpo,
+    o.legal_person_id,
+    o.inserted,
+    o.reg_date,
+    t.organization_type
+   FROM (personal_account.td_organizations o
+     JOIN personal_account.tr_organization_type t ON ((o.tr_organization_type_id = t.id)));
+
+    
+CREATE RULE organizations_insert AS
+    ON INSERT TO personal_account.organizations DO INSTEAD  INSERT INTO personal_account.td_organizations (itn, psrn, full_name, short_name, ownership_form, is_active, date_close, tr_organization_type_id, legal_person_id, reg_date)
+  VALUES (new.itn, new.psrn, new.full_name, new.short_name, new.ownership_form, new.is_active, new.date_close, new.tr_organization_type_id, new.legal_person_id, new.reg_date)
+  RETURNING td_organizations.id,
+    td_organizations.itn,
+    td_organizations.psrn,
+    td_organizations.full_name,
+    td_organizations.short_name,
+    td_organizations.ownership_form,
+    td_organizations.is_active,
+    td_organizations.date_close,
+    td_organizations.tr_organization_type_id,
+    td_organizations.okpo,
+    td_organizations.legal_person_id,
+    td_organizations.inserted,
+    td_organizations.reg_date,
+    NULL::text AS "?column?";
+
+
+CREATE RULE organizations_update AS
+    ON UPDATE TO personal_account.organizations DO INSTEAD  UPDATE personal_account.td_organizations SET itn = new.itn, legal_person_id = new.legal_person_id, psrn = new.psrn, full_name = new.full_name, short_name = new.short_name, ownership_form = new.ownership_form, okpo = new.okpo, is_active = new.is_active, reg_date = new.reg_date, date_close = new.date_close, tr_organization_type_id = new.tr_organization_type_id
+  WHERE (td_organizations.id = old.id);
+
+/*CREATE TABLE personal_account.td_menu_items (
+    id serial NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT NULL,
+    item_name text NOT NULL,
+    description text NOT NULL,
+    parent_item integer
+);*/
+
+
+CREATE TABLE personal_account.td_request_parameters (
+    id serial NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT NULL,
+    users_id integer NOT NULL,
+    request_parameters xml NOT NULL
+);
+
+/*CREATE TABLE personal_account.td_request_parameters_ (
+    id integer NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT NULL,
+    users_id integer NOT NULL,
+    services_id integer NOT NULL,
+    request_parameters xml NOT NULL
+);*/
+
+CREATE TABLE personal_account.td_user_access (
+    id serial NOT NULL,
+    users_id integer NOT NULL,
+    services_id integer NOT NULL,
+    access boolean DEFAULT false NOT NULL
+);
+
+
+/*
+CREATE TABLE personal_account.td_user_acess_level (
+    id serial NOT NULL,
+    user_role_id integer NOT NULL,
+    menu_tems_id integer NOT NULL,
+    rights personal_account.acess_right NOT NULL,
+    level personal_account.acess_level NOT NULL
+);
+*/
+
+
+
+
+/*CREATE TABLE personal_account.te_logon (
+    id bigserial NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT NULL,
+    user_id integer,
+    is_successfully boolean NOT NULL,
+    ip_address text NOT NULL,
+    login text NOT NULL
+);*/
+
+-- public.te_registration_codes определение
+
+-- Drop table
+
+-- DROP TABLE public.te_registration_codes;
+
+CREATE TABLE personal_account.te_registration_codes (
+id serial4 NOT NULL,
+inserted timestamp NOT NULL DEFAULT now()::timestamp without time zone,
+organizations_id int4 NOT NULL,
+code text NOT NULL,
+CONSTRAINT te_registration_codes_pkey PRIMARY KEY (id)
+);
+
+
+-- public.te_registration_codes внешние включи
+
+
+
+
+CREATE TABLE personal_account.te_requests_check_contracts_by_user (
+    id serial NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT NULL,
+    users_id integer NOT NULL,
+    organizations_id integer NOT NULL,
+    request xml NOT NULL,
+    response xml
+);
+
+
+CREATE TABLE personal_account.te_requests_for_government_by_user (
+    id serial NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT NULL,
+    users_id integer NOT NULL,
+    organizations_id integer NOT NULL,
+    request xml NOT NULL,
+    response xml,
+    updated timestamp without time zone DEFAULT (now())::timestamp without time zone,
+    incoming_request_id character varying(50) NOT NULL,
+    outgoing_response_id character varying(50) NOT NULL,
+    government_id personal_account.governments NOT NULL,
+    government_name character varying(100) NOT NULL,
+    request_date date NOT NULL,
+    response_date date NOT NULL
+);
+
+
+CREATE TABLE personal_account.te_requests_of_bureau (
+    id serial NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT NULL,
+    users_id integer NOT NULL,
+    organizations_id integer NOT NULL,
+    response_id bigint NOT NULL,
+    request xml NOT NULL,
+    response xml,
+    updated timestamp without time zone DEFAULT (now())::timestamp without time zone,
+    status integer DEFAULT 0 NOT NULL
+);
+
+CREATE TABLE personal_account.te_requests_of_uploads (
+    id serial NOT NULL,
+    upload_id character varying(50) NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT NULL,
+    users_id integer NOT NULL,
+    organizations_id integer NOT NULL,
+    upload_xml xml NOT NULL,
+    updated timestamp without time zone,
+    status integer,
+    in_process integer DEFAULT 0 NOT NULL,
+    reg_result_xml xml,
+    upload_result_xml xml,
+    priority integer DEFAULT 0 NOT NULL
+);
+
+CREATE TABLE personal_account.te_temporary_codes (
+    id serial NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT NULL,
+    users_id integer NOT NULL,
+    code text NOT NULL,
+    is_active boolean NOT NULL
+);
+
+
+
+/*CREATE TABLE personal_account.te_user_sent_data (
+    id serial NOT NULL,
+    inserted timestamp without time zone DEFAULT (now())::timestamp without time zone NOT NULL,
+    code text,
+    is_active boolean DEFAULT false NOT NULL,
+    users_id integer NOT NULL
+);
+
+CREATE TABLE personal_account.tr_examples (
+    id serial NOT NULL,
+    request_type personal_account.examples_type NOT NULL,
+    request xml NOT NULL
+);*/
+
+
+/*CREATE TABLE personal_account.tr_subscribe_services (
+    id serial NOT NULL,
+    subscribe_services text NOT NULL,
+    comment text
+);*/
+
+
+/*CREATE TABLE personal_account.tr_user_roles (
+    id serial NOT NULL,
+    user_role text NOT NULL,
+    comment text
+);*/
+
+
+
+CREATE VIEW personal_account.user_access AS
+ SELECT c.id,
+    c.users_id,
+    c.services_id,
+    c.access,
+    s.service_name,
+    s.comment
+   FROM (personal_account.td_user_access c
+     JOIN personal_account.tr_services s ON ((c.services_id = s.id)));
+
+/*CREATE VIEW personal_account.users AS
+ SELECT u.id,
+    u.last_name,
+    u.first_name,
+    u.middle_name,
+    u.email,
+    u.phone,
+    u.is_active,
+    u.is_approved,
+    u.organization_id,
+    u.login,
+    u.password,
+    u.user_role_id,
+    o.is_active AS org_is_active,
+    o.short_name,
+    o.full_name,
+    o.psrn,
+    o.itn,
+    o.tr_organization_type_id,
+    o.org_id,
+    r.user_role,
+    u.sault
+   FROM ((personal_account.td_users u
+     JOIN personal_account.td_organizations o ON ((u.organization_id = o.id)))
+     JOIN personal_account.tr_user_roles r ON ((u.user_role_id = r.id)));*/
+
+
+
+
+
+/*
+INSERT INTO personal_account.tr_user_roles VALUES (1, 'Администратор бюро', NULL);
+INSERT INTO personal_account.tr_user_roles VALUES (2, 'Администратор организации', NULL);
+INSERT INTO personal_account.tr_user_roles VALUES (3, 'Менеджер бюро', NULL);
+INSERT INTO personal_account.tr_user_roles VALUES (4, 'Менеджер организации', NULL);
+INSERT INTO personal_account.tr_user_roles VALUES (5, 'Пользователь организации', NULL);
+INSERT INTO personal_account.tr_user_roles VALUES (6, 'Аудитор бюро', NULL);
+INSERT INTO personal_account.tr_user_roles VALUES (7, 'Аудитор организации', NULL);
+*/
+
+
+ALTER TABLE ONLY personal_account.td_access
+    ADD CONSTRAINT td_access_pkey PRIMARY KEY (id);
+
+
+
+/*ALTER TABLE ONLY personal_account.tr_examples
+    ADD CONSTRAINT td_examples_pkey PRIMARY KEY (id);*/
+
+
+
+/*ALTER TABLE ONLY personal_account.td_menu_items
+    ADD CONSTRAINT td_menu_tems_pkey PRIMARY KEY (id);*/
+
+
+ALTER TABLE ONLY personal_account.td_organizations
+    ADD CONSTRAINT td_organizations_pkey PRIMARY KEY (id);
+
+
+ALTER TABLE ONLY personal_account.td_request_parameters
+    ADD CONSTRAINT td_request_parameters_pkey_1 PRIMARY KEY (id);
+
+   
+ALTER TABLE ONLY personal_account.td_user_access
+    ADD CONSTRAINT td_user_access_pkey PRIMARY KEY (id);
+
+
+/*
+ALTER TABLE ONLY personal_account.td_user_acess_level
+    ADD CONSTRAINT td_user_acess_level_pkey PRIMARY KEY (id);
+*/
+
+ALTER TABLE ONLY personal_account.td_users
+    ADD CONSTRAINT td_users_pkey PRIMARY KEY (id);
+
+
+/*ALTER TABLE ONLY personal_account.te_logon
+    ADD CONSTRAINT te_logon_pkey PRIMARY KEY (id);*/
+
+
+ALTER TABLE ONLY personal_account.te_requests_check_contracts_by_user
+    ADD CONSTRAINT te_requests_check_contracts_by_user_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY personal_account.te_requests_for_government_by_user
+    ADD CONSTRAINT te_requests_for_government_by_user_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY personal_account.te_requests_of_bureau
+    ADD CONSTRAINT te_requests_of_bureau_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY personal_account.te_requests_of_uploads
+    ADD CONSTRAINT te_requests_of_uploads_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY personal_account.te_temporary_codes
+    ADD CONSTRAINT te_temporary_codes_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY personal_account.te_user_certificates
+    ADD CONSTRAINT te_user_certificates_pkey PRIMARY KEY (id);
+
+/*
+ALTER TABLE ONLY personal_account.te_user_sent_data
+    ADD CONSTRAINT te_user_sent_data_pkey PRIMARY KEY (id);
+*/
+
+ALTER TABLE ONLY personal_account.tr_organization_type
+    ADD CONSTRAINT tr_organization_type_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY personal_account.tr_services
+    ADD CONSTRAINT tr_services_pkey PRIMARY KEY (id);
+
+/*
+ALTER TABLE ONLY personal_account.tr_subscribe_services
+    ADD CONSTRAINT tr_subscribe_services_pkey PRIMARY KEY (id);
+*/
+
+
+/*ALTER TABLE ONLY personal_account.tr_user_roles
+    ADD CONSTRAINT tr_user_role_pkey PRIMARY KEY (id);*/
+
+
+CREATE UNIQUE INDEX td_access_id_idx ON personal_account.td_access USING btree (id DESC);
+
+/*CREATE UNIQUE INDEX td_menu_tems_id_idx ON personal_account.td_menu_items USING btree (id DESC);*/
+
+CREATE UNIQUE INDEX td_organizations_id_idx ON personal_account.td_organizations USING btree (id DESC);
+
+/*CREATE UNIQUE INDEX td_user_acess_level_id_idx ON personal_account.td_user_acess_level USING btree (id);*/
+
+/*CREATE UNIQUE INDEX te_logon_id_idx ON personal_account.te_logon USING btree (id DESC);*/
+
+/*CREATE INDEX "te_logon_users_id_is_ successfully_idx" ON personal_account.te_logon USING btree (user_id, is_successfully);*/
+
+CREATE INDEX te_requests_of_bureau_user_id_idx ON personal_account.te_requests_of_bureau USING btree (users_id DESC);
+
+CREATE INDEX te_requests_check_contracts_by_user_user_id_idx ON personal_account.te_requests_check_contracts_by_user USING btree (users_id DESC);
+
+CREATE INDEX tte_requests_for_government_by_user_user_id_idx ON personal_account.te_requests_for_government_by_user USING btree (users_id DESC);
+
+
+CREATE INDEX te_user_certificates_certificate_date_to_idx ON personal_account.te_user_certificates USING btree (certificate_date_to DESC);
+
+CREATE UNIQUE INDEX te_user_certificates_id_idx ON personal_account.te_user_certificates USING btree (id DESC);
+
+CREATE INDEX "te_user_certificates_organizations_id_users_id_status _idx" ON personal_account.te_user_certificates USING btree (organizations_id, users_id, status);
+
+/*CREATE UNIQUE INDEX te_user_sent_data_id_idx ON personal_account.te_user_sent_data USING btree (id DESC);*/
+
+CREATE UNIQUE INDEX tr_organization_type_id_idx ON personal_account.tr_organization_type USING btree (id DESC);
+
+
+CREATE UNIQUE INDEX tr_services_id_idx ON personal_account.tr_services USING btree (id DESC);
+
+
+/*CREATE UNIQUE INDEX tr_subscribe_services_id_idx ON personal_account.tr_subscribe_services USING btree (id DESC);*/
+
+/*CREATE UNIQUE INDEX tr_user_role_id_idx ON personal_account.tr_user_roles USING btree (id DESC);*/
+
+
+CREATE RULE access_insert AS
+    ON INSERT TO personal_account.organization_access DO INSTEAD  INSERT INTO personal_account.td_access (organizations_id, services_id, access)
+  VALUES (new.organizations_id, new.services_id, new.access)
+  RETURNING td_access.id,
+    td_access.organizations_id,
+    td_access.services_id,
+    td_access.access,
+    NULL::text AS "?column?",
+    NULL::text AS "?column?";
+
+
+CREATE RULE access_insert AS
+    ON INSERT TO personal_account.user_access DO INSTEAD  INSERT INTO personal_account.td_user_access (users_id, services_id, access)
+  VALUES (new.users_id, new.services_id, new.access)
+  RETURNING td_user_access.id,
+    td_user_access.users_id,
+    td_user_access.services_id,
+    td_user_access.access,
+    NULL::text AS "?column?",
+    NULL::text AS "?column?";
+
+
+
+CREATE RULE access_update AS
+    ON UPDATE TO personal_account.organization_access DO INSTEAD  UPDATE personal_account.td_access SET access = new.access
+  WHERE (td_access.id = old.id);
+
+CREATE RULE access_update AS
+    ON UPDATE TO personal_account.user_access DO INSTEAD  UPDATE personal_account.td_user_access SET access = new.access
+  WHERE (td_user_access.id = old.id);
+
+CREATE RULE certificates_insert AS
+    ON INSERT TO personal_account.certificates DO INSTEAD  INSERT INTO personal_account.te_user_certificates (organizations_id, users_id, request_data, status, is_active, request_id, legal_person_id)
+  VALUES (new.organizations_id, new.users_id, new.request_data, new.status, new.is_active, new.request_id, new.legal_person_id)
+  RETURNING te_user_certificates.id,
+    te_user_certificates.inserted,
+    te_user_certificates.organizations_id,
+    te_user_certificates.users_id,
+    te_user_certificates.request_data,
+    te_user_certificates.status,
+    te_user_certificates.certificate,
+    te_user_certificates.certificate_serial_number,
+    te_user_certificates.certificate_date_from,
+    te_user_certificates.certificate_date_to,
+    te_user_certificates.is_active,
+    te_user_certificates.request_id,
+    te_user_certificates.legal_person_id,
+    (xpath('certificate-request/@name'::text, te_user_certificates.request_data))::character varying(100) AS xpath,
+    NULL::text AS "?column?";
+
+
+CREATE RULE certificates_update AS
+    ON UPDATE TO personal_account.certificates DO INSTEAD  UPDATE personal_account.te_user_certificates SET certificate = new.certificate, certificate_serial_number = new.certificate_serial_number, status = new.status, certificate_date_from = new.certificate_date_from, certificate_date_to = new.certificate_date_to, is_active = new.is_active, request_id = new.request_id
+  WHERE (te_user_certificates.id = old.id);
+
+
+
+
+/*CREATE RULE users_insert AS
+    ON INSERT TO personal_account.td_users DO INSTEAD  INSERT INTO personal_account.td_users (last_name, first_name, middle_name, email, phone, is_active, is_approved, organization_id, user_role_id, login, password, sault)
+  VALUES (new.last_name, new.first_name, new.middle_name, new.email, new.phone, new.is_active, new.is_approved, new.organization_id, new.user_role_id, new.login, new.password, new.sault)
+  RETURNING td_users.id,
+    td_users.last_name,
+    td_users.first_name,
+    td_users.middle_name,
+    td_users.email,
+    td_users.phone,
+    td_users.is_active,
+    td_users.is_approved,
+    td_users.organization_id,
+    td_users.login,
+    td_users.password,
+    td_users.user_role_id,
+    true AS bool,
+    NULL::text AS "?column?",
+    NULL::character varying(10) AS "varchar",
+    0 AS "?column?",
+    NULL::text AS "?column?",
+    td_users.sault;*/
+
+/*
+CREATE RULE users_update AS
+    ON UPDATE TO personal_account.users DO INSTEAD  UPDATE personal_account.td_users SET last_name = new.last_name, first_name = new.first_name, middle_name = new.middle_name, email = new.email, is_approved = new.is_approved, user_role_id = new.user_role_id, phone = new.phone, is_active = new.is_active, password = new.password
+  WHERE (td_users.id = old.id);
+*/
+
+
+ALTER TABLE ONLY personal_account.td_access
+    ADD CONSTRAINT td_access_organizations_id_fkey FOREIGN KEY (organizations_id) REFERENCES personal_account.td_organizations(id);
+
+
+ALTER TABLE ONLY personal_account.td_access
+    ADD CONSTRAINT td_access_services_id_fkey FOREIGN KEY (services_id) REFERENCES personal_account.tr_services(id);
+
+
+ALTER TABLE ONLY personal_account.td_organizations
+    ADD CONSTRAINT td_organizations_tr_organization_type_id_fkey FOREIGN KEY (tr_organization_type_id) REFERENCES personal_account.tr_organization_type(id);
+
+
+/*
+ALTER TABLE ONLY personal_account.td_user_acess_level
+    ADD CONSTRAINT td_user_acess_level_menu_tems_id_fkey FOREIGN KEY (menu_tems_id) REFERENCES personal_account.td_menu_items(id);
+*/
+
+/*
+ALTER TABLE ONLY personal_account.td_user_acess_level
+    ADD CONSTRAINT td_user_acess_level_user_role_id_fkey FOREIGN KEY (user_role_id) REFERENCES personal_account.tr_user_roles(id);
+*/
+
+
+ALTER TABLE ONLY personal_account.td_users
+    ADD CONSTRAINT td_users_organizations_id_fkey FOREIGN KEY (organization_id) REFERENCES personal_account.td_organizations(id);
+
+/*
+ALTER TABLE ONLY personal_account.td_users
+    ADD CONSTRAINT td_users_user_role_id_fkey FOREIGN KEY (user_role_id) REFERENCES personal_account.tr_user_roles(id);
+*/
+
+
+/*
+ALTER TABLE ONLY personal_account.te_logon
+    ADD CONSTRAINT te_logon_users_id_fkey FOREIGN KEY (user_id) REFERENCES personal_account.td_users(id);
+*/
+
+
+ALTER TABLE ONLY personal_account.te_requests_check_contracts_by_user
+    ADD CONSTRAINT te_requests_check_contracts_by_user_organizations_id_fkey FOREIGN KEY (organizations_id) REFERENCES personal_account.td_organizations(id);
+
+
+ALTER TABLE ONLY personal_account.te_requests_check_contracts_by_user
+    ADD CONSTRAINT te_requests_check_contracts_by_user_users_id_fkey FOREIGN KEY (users_id) REFERENCES personal_account.td_users(id);
+
+
+ALTER TABLE ONLY personal_account.te_requests_for_government_by_user
+    ADD CONSTRAINT te_requests_for_government_by_user_organizations_id_fkey FOREIGN KEY (organizations_id) REFERENCES personal_account.td_organizations(id);
+
+
+ALTER TABLE ONLY personal_account.te_requests_of_bureau
+    ADD CONSTRAINT te_requests_of_bureau_organizations_id_fkey FOREIGN KEY (organizations_id) REFERENCES personal_account.td_organizations(id);
+
+ALTER TABLE ONLY personal_account.te_requests_of_bureau
+    ADD CONSTRAINT te_requests_of_bureau_users_id_fkey FOREIGN KEY (users_id) REFERENCES personal_account.td_users(id);
+
+ALTER TABLE ONLY personal_account.te_requests_of_uploads
+    ADD CONSTRAINT te_requests_of_uploads_organizations_id_fkey FOREIGN KEY (organizations_id) REFERENCES personal_account.td_organizations(id);
+
+ALTER TABLE ONLY personal_account.te_requests_of_uploads
+    ADD CONSTRAINT te_requests_of_uploads_users_id_fkey FOREIGN KEY (users_id) REFERENCES personal_account.td_users(id);
+
+ALTER TABLE ONLY personal_account.te_requests_for_government_by_user
+    ADD CONSTRAINT te_requests_requests_for_government_by_user_users_id_fkey FOREIGN KEY (users_id) REFERENCES personal_account.td_users(id);
+
+ALTER TABLE ONLY personal_account.te_temporary_codes
+    ADD CONSTRAINT te_temporary_codes_users_id_fkey FOREIGN KEY (users_id) REFERENCES personal_account.td_users(id);
+
+ALTER TABLE ONLY personal_account.te_user_certificates
+    ADD CONSTRAINT te_user_certificates_organizations_id_fkey FOREIGN KEY (organizations_id) REFERENCES personal_account.td_organizations(id);
+
+ALTER TABLE ONLY personal_account.te_user_certificates
+    ADD CONSTRAINT te_user_certificates_users_id_fkey FOREIGN KEY (users_id) REFERENCES personal_account.td_users(id);
+
+ALTER TABLE personal_account.te_registration_codes 
+	ADD CONSTRAINT te_registration_codes_organizations_id_fkey FOREIGN KEY (organizations_id) REFERENCES personal_account.td_organizations(id);
+   
+/*
+ALTER TABLE ONLY personal_account.te_user_sent_data
+    ADD CONSTRAINT te_user_sent_data_users_id_fkey FOREIGN KEY (users_id) REFERENCES personal_account.td_users(id);
+*/
+
+
+
+

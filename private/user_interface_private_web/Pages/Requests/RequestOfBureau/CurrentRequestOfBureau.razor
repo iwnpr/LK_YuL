@@ -1,0 +1,62 @@
+﻿@layout ResponseLayout
+@page "/private/current-request-of-bureau/{Id}"
+@attribute [Authorize(Roles = "verification, fms-document-check, debt-rating, employer-rating, prescoring-np-string-rating, tax-service-request, credit-report-for-user, previous-requests")]
+
+<PageTitle>Запросы в бюро</PageTitle>
+
+@* <section class="status">
+    <div class="l-content"> *@
+        <h1 class="status__title title title--h1">Запросы в Бюро</h1>
+        @if (_request is not null)
+        {
+            <Subject Request="@(XDocument.Parse(_request.Request ?? "<REQUEST />"))" ShowServices=true></Subject>
+            <TableRequestOfBureau Request="@_request" />
+        }
+    @* </div>
+</section> *@
+
+<AuthorizeView Roles="organizations, users, certificates">
+    <Authorized>
+        @{
+                _isAdmin = true;
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    bool _isAdmin = false;
+
+    /// <summary>
+    /// Пользователь, осуществивший вход
+    /// </summary>
+    private DBUser _user = new();
+
+    private DBRequestOfBureau? _request;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _user = (await _session.GetAsync<DBUser>("UserDB")).Value;
+
+        if (_user is null)
+        {
+            _navMngr.NavigateTo("error");
+            return;
+        }
+
+        int.TryParse(Id, out int _id);
+
+        _request = await _requestMngr.GetAsync<DBRequestOfBureau>(_id, _user.Id, _isAdmin);
+
+        if (_request is null)
+        {
+            _navMngr.NavigateTo("404");
+
+        }
+        
+        await _jsr.InvokeVoidAsync("AddStyle");
+    }
+
+
+}

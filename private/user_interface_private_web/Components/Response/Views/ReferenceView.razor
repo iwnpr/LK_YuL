@@ -1,0 +1,10 @@
+﻿
+    <span style="margin: 10px;">
+        По состоянию на @Response.Descendants("ResponseDateTime")?.FirstOrDefault()?.Value в информационных системах ООО «БКИ КредитИнфо» отсутствует кредитная история субъекта
+    </span>
+
+
+@code {
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("REQUEST"));
+
+}

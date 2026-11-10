@@ -1,0 +1,52 @@
+﻿@page "/contract-documentation"
+@attribute [Authorize(Roles = "documentation")]
+
+<PageTitle>Договорная документация</PageTitle>
+
+<section class="documentation">
+    <div class="l-content">
+        <h1 class="documentation__title title title--h1">Договорная документация</h1>
+        @* <div class="caption">Документация:</div> *@
+
+        @if (_documents.Any())
+        {
+            @foreach (var _document in _documents)
+            {
+                <div class="caption">
+                    <a class="documentation__item" download href="@($"documents/contract_documentation/{Path.GetFileName(_document)}")">
+                        <div class="documentation__item-icon">
+                            @if (_document.Contains(".doc") || _document.Contains(".docx"))
+                            {
+                                <svg class="ico ico-color-word">
+                                    <use xlink:href="img/sprite-color.svg#ico-color-word"></use>
+                                </svg>
+                            }
+                            @if (_document.Contains(".pdf"))
+                            {
+                                <svg class="ico ico-color-pdf">
+                                    <use xlink:href="img/sprite-color.svg#ico-color-pdf"></use>
+                                </svg>
+                            }
+                        </div>
+                        <div class="documentation__item-title">@Path.GetFileNameWithoutExtension(_document)</div>
+                    </a>
+
+                </div>
+            }
+        }
+
+    </div>
+</section>
+
+@code {
+    private List<string> _documents = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        string _path = _configuration.GetSection("Documentation:Contract").Value!;
+
+        //Получаем список файлов
+        if (Directory.Exists(_path))
+            _documents = Directory.GetFiles(_path).ToList();
+    }
+}

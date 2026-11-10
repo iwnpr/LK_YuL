@@ -1,0 +1,54 @@
+﻿@page "/user-guide"
+@attribute [Authorize(Roles = "documentation")]
+
+<PageTitle>Документация пользователя</PageTitle>
+
+<section class="documentation">
+    <div class="l-content">
+        <h1 class="documentation__title title title--h1">Документация пользователя</h1>
+        @* <div class="caption">Документация:</div> *@
+
+        @if (_documents.Any())
+        {
+            @foreach (var _document in _documents)
+            {
+                <div class="caption">
+                    <a class="documentation__item" download href="@($"documents/user_guide/{Path.GetFileName(_document)}")">
+                        @if (_document.Contains(".doc"))
+                        {
+                            <div class="documentation__item-icon">
+                                <svg class="ico ico-color-word">
+                                    <use xlink:href="img/sprite-color.svg#ico-color-word"></use>
+                                </svg>
+                            </div>
+                        }
+                        @if (_document.Contains(".pdf"))
+                        {
+                            <div class="documentation__item-icon">
+                                <svg class="ico ico-color-pdf">
+                                    <use xlink:href="img/sprite-color.svg#ico-color-pdf"></use>
+                                </svg>
+                            </div>
+                        }
+                        <div class="documentation__item-title">@Path.GetFileNameWithoutExtension(_document)</div>
+                    </a>
+
+                </div>
+            }
+        }
+
+    </div>
+</section>
+
+@code {
+    private List<string> _documents = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        string _path = _configuration.GetSection("Documentation:Guide").Value!;
+
+        //Получаем список файлов
+        if (Directory.Exists(_path))
+            _documents = Directory.GetFiles(_path).ToList();
+    }
+}

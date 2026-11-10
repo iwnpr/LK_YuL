@@ -1,0 +1,64 @@
+﻿@inherits LayoutComponentBase
+@using System.Security.Claims
+@attribute [Authorize]
+
+<header class="header">
+    <div class="l-default">
+        <div class="header__wrapper">
+            <div class="header__logo">
+                <LogoSVG />
+            </div>
+            <div class="header__lang">
+                <div class="header__lang-chosen"></div>
+                <div class="header__lang-option">RU</div>
+            </div>
+            <div class="header__acc" style="width:auto">
+                <div class="header__acc-user">
+                    <svg class="ico ico-mono-user">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-user"></use>
+                    </svg>
+                </div>
+
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="header__acc-name">&nbsp;@(context?.User?.FindFirst("Caption")?.Value ?? "НЕ ОПОЗНАН")&nbsp;</div>
+                    </Authorized>
+                    <NotAuthorized>
+                        @* @if (true) { _navMngr.NavigateTo("/"); } *@
+                    </NotAuthorized>
+                </AuthorizeView>
+
+                <div class="header__acc-logout" @onclick=ExitAsync>
+                    <svg class="ico ico-mono-logout">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-logout"></use>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="main">
+    <sidebar class="sidebar">
+        <NavMenu />
+    </sidebar>
+    <div class="content">
+        
+        <ErrorBoundary>
+            @Body
+        </ErrorBoundary>
+    </div>
+</main>
+
+
+@code {
+    //Выход из личного кабинета
+    private async Task ExitAsync()
+    {
+        //Очищаем сессию
+        await _session.DeleteAsync("User");
+
+        //Переход на страницу авторизации
+        _navMngr.NavigateTo($"{_configuration.GetSection("Links:Public").Value}");
+    }
+
+}

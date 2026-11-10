@@ -1,0 +1,196 @@
+﻿@page "/private/credit-history-check"
+@attribute [Authorize(Roles = "credit-record-status")]
+
+<PageTitle>Информация о договорах</PageTitle>
+
+
+<CascadingValue Name="Disabled" Value="_disabled">
+    <RequestCheckContractWindow Show=_show
+                                Subject="_request"
+                                Method="SendRequestAsync"
+                                OnClose="(() => _show = false)"
+                                Type="RequestType.check" />
+</CascadingValue>
+
+<CommentWindow InfoComment="@_comment" />
+
+<AuthorizeView Roles="organizations, users, certificates">
+    <Authorized>
+        @{
+                _isAdmin = true;
+        }
+    </Authorized>
+</AuthorizeView>
+
+<section class="status">
+    <div class="l-content">
+        <h1 class="status__title title title--h1">Информация о договорах</h1>
+
+        @* <b>В настоящий момент сервис недоступен...</b> *@
+        <div class="status__items">
+        <a class="status__item" @onclick="(() => RequestFormShow(true))">
+        <div class="status__item-icon">
+        <svg class="ico ico-mono-search">
+        <use xlink:href="img/sprite-mono.svg#ico-mono-search"></use>
+        </svg>
+        </div>
+        <div class="status__item-title">Поиск</div>
+        </a>
+        </div>
+        <TableRequests Requests="_requests" Url="private/current-credit-record-check" Type="RequestType.check" UserId="_user.Id" />
+       
+    </div>
+</section>
+
+
+@code {
+    [CascadingParameter(Name = "Disabled")] public bool _disabled { get; set; } = false;
+
+bool _isAdmin = false;
+
+/// <summary>
+/// Пользователь, осуществивший вход
+/// </summary>
+private DBUser _user = new();
+
+/// <summary>
+/// Комментарий для информационного модального окна
+/// </summary>
+private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+/// <summary>
+/// Запрос проверки статусов договоров
+/// </summary>
+private Request _request = new();
+
+/// <summary>
+/// Отображать модальное окно
+/// </summary>
+private bool _show = false;
+
+/// <summary>
+/// Список запросов проверки статусов от организации
+/// </summary>
+private List<RequestRecord> _requests = new();
+
+private Answer _answer = new(300, "error");
+
+/// <summary>
+/// Инициализация страницы
+/// </summary>
+/// <returns></returns>
+protected override async Task OnInitializedAsync()
+{
+    ProtectedBrowserStorageResult<DBUser> _result = await _session.GetAsync<DBUser>("UserDB");
+
+    if (!_result.Success)
+    {
+    _navMngr.NavigateTo("error");
+    return;
+    }
+
+    _user = (await _session.GetAsync<DBUser>("UserDB")).Value!; ;
+
+    _requests = await _requestMngr.GetListAsync<DBRequestCheckContractsByUser>(_user.Id, 0, _isAdmin);
+}
+
+/// <summary>
+/// Отправка запроса на сервис
+/// </summary>
+/// <returns></returns>
+private async Task SendRequestAsync()
+{
+    _disabled = true;
+
+
+    if (_request?.Body?.NaturalPersonSubject is not null)
+    {
+    _request!.Body!.NaturalPersonSubject!.Title!.LastName = _request!.Body!.NaturalPersonSubject!.Title!.LastName!.Trim();
+    _request.Body.NaturalPersonSubject!.Title!.FirstName = _request!.Body!.NaturalPersonSubject!.Title!.FirstName.Trim();
+    _request.Body.NaturalPersonSubject!.Title!.MiddleName = _request!.Body!.NaturalPersonSubject!.Title!.MiddleName.Trim();
+    _request.Body.NaturalPersonSubject.IdentificationDocuments[0].DocSer = _request.Body.NaturalPersonSubject.IdentificationDocuments[0].DocSer.Trim();
+    _request.Body.NaturalPersonSubject.IdentificationDocuments[0].DocNum = _request.Body.NaturalPersonSubject.IdentificationDocuments[0].DocNum.Trim();
+    }
+    else if (_request?.Body.LegalPersonSubject is not null)
+    {
+    _request!.Body.LegalPersonSubject!.Title.Name!.FullName = _request.Body.LegalPersonSubject.Title.Name!.FullName.Trim();
+    _request.Body.LegalPersonSubject.Title.Name!.ShortName = _request.Body.LegalPersonSubject.Title.Name!.ShortName?.Trim();
+    }
+    else
+    {
+    _request!.Body.Contract!.Uid = _request?.Body.Contract?.Uid?.Trim() ?? string.Empty;
+    }
+
+    Answer _answer = _request?.Body.NaturalPersonSubject is not null
+    ? _validator.Check(_request.Body.NaturalPersonSubject)
+        : _request?.Body.LegalPersonSubject is not null
+    ? _validator.Check(_request.Body.LegalPersonSubject!)
+    : _validator.Check(_request!.Body.Contract!);
+
+    if (!_answer.Code.Equals(200))
+    {
+    _comment = new(true, "error", "Информация о договорах", _answer.Message);
+    _disabled = false;
+    return;
+    }
+
+    if (_request.Body.NaturalPersonSubject is not null)
+    {
+    _answer = _validator.Check(_request.Body.NaturalPersonSubject.IdentificationDocuments[0]);
+    }
+
+    if (!_answer.Code.Equals(200))
+    {
+    _comment = new(true, "error", "Информация о договорах", _answer.Message);
+    _disabled = false;
+    return;
+    }
+
+    DBRequestCheckContractsByUser _requestDB = new()
+    {
+        //Inserted = DateTime.UtcNow,
+        UserId = _user.Id,
+        OrganizationId = _user.Organization.Id,
+        Request = _request.Serialize()
+    };
+
+    // Отправляем запрос
+    _answer = await _requestMngr.SendRequestAsync(_requestDB);
+
+    //Выводим сообщение пользователю
+    if (_answer.Code.Equals(200))
+    {
+    _comment = new Comment(true, "ok", "Информация о договорах", _answer.Message);
+    _show = false;
+    _disabled = false;
+    _requests = await _requestMngr.GetListAsync<DBRequestCheckContractsByUser>(_user.Id, 0, _isAdmin) ?? new List<RequestRecord>();
+    return;
+    }
+
+    _comment = new Comment(true, "error", "Информация о договорах", _answer.Message);
+
+    _disabled = false;
+
+    _show = false;
+
+    _disabled = false;
+
+}
+
+/// <summary>
+/// Формирование формы запроса
+/// </summary>
+/// <param name="isNaturalPerson">Признак ФЛ</param>
+private void RequestFormShow(bool isNaturalPerson)
+{
+    _request = _requestMngr.CreateRequest(isNaturalPerson, _user.Organization);
+
+    _request.Version = "07.00";
+
+    _request.Body.RequestAttributes.Consent.Available = "1";
+
+    _show = true;
+}
+
+}
+

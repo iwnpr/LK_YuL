@@ -1,0 +1,44 @@
+﻿@using System.Net.Http
+@using System.Text.Json;
+@using System.Text.RegularExpressions;
+@using System.Xml.Linq;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Microsoft.JSInterop
+@using Serilog
+@using Serilog.Extensions.Logging
+@using legal_persons_lib.Entities
+@using legal_persons_lib.Enums
+@using legal_persons_lib.Services
+@using private_lib
+@using qbch_lib.Entities
+@using user_interface_public_web
+@using user_interface_public_web.Shared
+@using user_interface_public_web.Entities
+@using user_interface_public_web.Components
+@using user_interface_public_web.Components.Modal
+@using user_interface_public_web.Components.Scheme
+@using user_interface_web.Services
+@using application_lib.Entities
+@using application_lib.Services
+
+@inject AuthProvider _authenticationStateProvider
+@inject NavigationManager _navigator
+@inject ProtectedSessionStorage _session
+@inject IConfiguration _configuration
+@inject IUserManager _userMngr
+@inject IOrganizationManager _orgMngr
+@inject ICertificateManager _crtMngr
+@inject IServiceManager _svcMngr
+@inject IJSRuntime _jsr
+@inject IClassValidator _validator
+@inject ISender _sender
+@inject IRepository<DBRegistrationCode> _registration
+@inject IRepository<DBTemporaryCode> _temporaries
+@inject IStringManager _stringMngr
+@inject IAbonentManager _abntMngr

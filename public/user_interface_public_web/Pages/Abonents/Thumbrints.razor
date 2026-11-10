@@ -1,0 +1,233 @@
+﻿@page "/abonent-certificates"
+@attribute [Authorize(Roles = "abonents")]
+
+<PageTitle>Сертификаты абонентов КБКИ</PageTitle>
+
+<CommentWindow InfoComment="@_comment" />
+
+<section class="organizations">
+    <div class="l-content">
+        <div class="organizations__top">
+            <h1 class="organizations__title title title--h1">Сертификаты абонента</h1>
+            <a class="organizations__btn btn btn--green" @onclick="CreateNewCertificate">Новый сертификат</a>
+        </div>
+
+        <div class="form__inputs">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>ID</td>
+                        <td>Добавлен</td>
+                        <td>Действителен до</td>
+                        <td>Отпечаток</td>
+                        <td>Активен</td>
+                        <td>Действия</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (_abonents?.Any() ?? false)
+                    {
+                        foreach (DBAbonentCertificate item in _list)
+                        {
+                            <tr style="color:@(item.IsActive ?? false ? "" : "red")">
+                                @if (item.KeyId.Equals(_editingId))
+                                {
+                                    <td>@item.KeyId</td>
+                                    <td>@item.Inserted</td>
+                                    <td>
+                                        <div class="form__input" style="margin:0px !important;">
+                                            <input required type="text" @bind="item.ExpirationDate" data-format="00.00.0000 00:00:00">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form__input" style="margin:0px !important;">
+                                            <input required type="text" @bind="item.Thumbprint" oninput="this.value=this.value.toUpperCase()">
+                                        </div>
+                                    </td>
+                                    <td style ="text-align: center !important;">
+                                        <div class="form__input form__checkbox">
+                                            <input type="checkbox" @onchange="@(() => item.IsActive = !item.IsActive)" checked="@(item.IsActive)">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="table__icons">
+                                            <div class="table__icon" @onclick=@(async () => await UpdateAsync(item))>
+                                                <img src="img/svg/checked.svg" alt="">
+                                            </div>
+                                            <div class="table__icon" @onclick="@(() => _editingId = -1)">
+                                                <img src="img/svg/cancel.svg" alt="">
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                }
+                                else
+                                {
+                                    <td>@item.KeyId</td>
+                                    <td>@item.Inserted</td>
+                                    <td>@item.ExpirationDate</td>
+                                    <td>@item.Thumbprint</td>
+                                    <td>
+                                        <div class="form__input form__checkbox" style="text-align: center !important;">
+                                            <input type="checkbox" checked="@(item.IsActive)" disabled>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="table__icons">
+                                            <div class="table__icon">
+                                                <svg class="ico ico-mono-edit" @onclick="@(() => _editingId = item.KeyId)">
+                                                    <use xlink:href="img/sprite-mono.svg#ico-mono-edit"></use>
+                                                    <title>Редактировать</title>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+                    @if (_certificate is not null)
+                    {
+
+                        <tr>
+                            <td>
+                                @_certificate.KeyId
+                            </td>
+                            <td>
+                                @_certificate.Inserted
+                            </td>
+                            <td>
+                                <div class="form__input" style="margin:0px !important;">
+                                    <input required type="text" @bind="_certificate.ExpirationDate" data-format="00.00.0000 00:00:00" style="margin:0px !important;">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form__input" style="margin:0px !important;">
+                                    <input required type="text" @bind="_certificate.Thumbprint" oninput="this.value=this.value.toUpperCase()" style="margin:0px !important;">
+                                </div>
+                            </td>
+                            <td style="text-align: center !important;">
+                                <div class="form__input form__checkbox" style="text-align: center !important;">
+                                    <input type="checkbox" id="2222" @onchange="@(() => _certificate.IsActive = !_certificate.IsActive)" checked="@(_certificate.IsActive)">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="table__icons">
+                                    <div class="table__icon">
+                                        <img src="img/svg/checked.svg" @onclick=@(async () => await InsertAsync()) alt="">
+                                    </div>
+                                    <div class="table__icon" @onclick=@(() => _certificate = null)>
+                                        <img src="img/svg/cancel.svg" alt="">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+@code {
+    /// <summary>
+    /// Комментарий для информационного модального окна
+    /// </summary>
+    private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+    private DBAbonentCertificate? _certificate = null;
+
+    private List<DBAbonentCertificate> _list = new();
+
+    private List<DBAbonent>? _abonents = new();
+
+    Answer _answer = new(300, "");
+
+    private int _editingId = -1;
+
+    private int _abonentId = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var _id = (await _session.GetAsync<int>("AbonentId"));
+
+        _abonentId = _id.Success ? _id.Value : 1;
+
+        _abonents = await _abntMngr.GetListAsync();
+
+        _list = await _abntMngr.GetCertificatesAsync(_abonentId);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await _jsr.InvokeVoidAsync("mask");
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await _jsr.InvokeVoidAsync("mask");
+    }
+
+    private void CreateNewCertificate()
+    {
+        _certificate = new() { AbonentKeyId = _abonentId, IsActive = false };
+    }
+
+    private async Task InsertAsync()
+    {
+        if (_certificate is null)
+            return;
+
+            _certificate.Inserted = DateTime.Now;
+
+        Answer _answer = _validator.Check(_certificate);
+
+        if (!_answer.Code.Equals(200))
+        {
+            _comment = new(true, "error", "Создание | обновление данных сертификата", _answer.Message);
+            return;
+        }
+
+        _answer = await _abntMngr.InsertThumbprintAsync(_certificate);
+
+        if (!_answer.Code.Equals(200))
+        {
+            _comment = new Comment(true, "error", "Добавление сертификата абонента", _answer.Message);
+            return;
+        }
+
+        _comment = new Comment(true, "ok", "Добавление сертификата абонента", _answer.Message);
+
+        _certificate = null;
+
+        _list = await _abntMngr.GetCertificatesAsync(_abonentId);
+
+    }
+
+    private async Task UpdateAsync(DBAbonentCertificate item)
+    {
+        Answer _answer = _validator.Check(item);
+
+        if (!_answer.Code.Equals(200))
+        {
+            _comment = new(true, "error", "Создание | обновление данных сертификата абонента", _answer.Message);
+            return;
+        }
+
+        _answer = await _abntMngr.UpdateThumbprintAsync(item);
+
+        if (!_answer.Code.Equals(200))
+        {
+            _comment = new Comment(true, "error", "Добавление | обновление сертификата абонента", _answer.Message);
+            return;
+        }
+
+        _comment = new Comment(true, "ok", "Добавление | обновление сертификата абонента", _answer.Message);
+
+        _editingId = -1;
+
+        _list = await _abntMngr.GetCertificatesAsync(_abonentId);
+
+    }
+
+}

@@ -1,0 +1,17 @@
+﻿@page "/"
+@namespace user_interface_public_web.Pages
+@using user_interface_public_web.Entities
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+
+    var _connection = new ConnectionParameters()
+            {
+                IpAddress = Request?.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "-",
+                UserAgent = Request?.Headers["User-Agent"].ToString() ?? "-",
+                SerialNumber = Request?.HttpContext?.Connection?.ClientCertificate?.SerialNumber ?? string.Empty
+                //SerialNumber = Request?.HttpContext?.Connection?.ClientCertificate?.SerialNumber ?? string.Empty
+            };
+}
+
+<component type="typeof(App)" render-mode="Server" param-User="@_connection" />

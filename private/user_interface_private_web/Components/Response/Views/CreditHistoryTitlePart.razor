@@ -1,0 +1,499 @@
+﻿<h2 class="document__title document__title--h2 document__title--black">Титульная часть кредитной истории</h2>
+
+@if (TitlePart?.FL_TitlePart?.FL_Name is not null)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/user.svg" alt="">  Сведения об имени субъекта кредитной истории </span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Фамилия</td>
+                    <td>Имя</td>
+                    <td>Отчество</td>
+                    <td>Дата актуальности</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tp in TitlePart?.FL_TitlePart?.FL_Name ?? new())
+                {
+                    <tr>
+                        <td>@tp.lastName</td>
+                        <td>@tp.firstName</td>
+                        <td>@(tp.middleName ?? "-")</td>
+                        <td>@(tp.actualityDate?.ToRussianDate() ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (TitlePart?.FL_TitlePart?.FL_PrevName?.Count > 0)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/user.svg" alt="">  Сведения о предыдущем имени субъекта кредитной истории </span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Фамилия</td>
+                    <td>Имя</td>
+                    <td>Отчество</td>
+                    <td>Дата выдачи документа с измененнным имененм</td>
+                    <td>Дата актуальности</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tp in TitlePart?.FL_TitlePart?.FL_PrevName ?? new())
+                {
+                    <tr>
+                        <td>@tp.lastName</td>
+                        <td>@tp.firstName</td>
+                        <td>@(tp.middleName ?? "-")</td>
+                        <td>@(tp.date?.ToRussianDate() ?? "-")</td>
+                        <td>@(tp.actualityDate?.ToRussianDate() ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (TitlePart?.FL_TitlePart?.FL_Birth?.Count > 0)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/doc-time.svg" alt="">  Сведения о дате и месте рождения субъекта кредитной истории </span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Дата рождения</td>
+                    <td>Код страны места рождения по ОКСМ</td>
+                    <td>Место рождения</td>
+                    <td>Дата актуальности</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tp in TitlePart?.FL_TitlePart?.FL_Birth ?? new())
+                {
+                    <tr>
+                        <td>@(tp.birthDate?.ToRussianDate() ?? "-")</td>
+                        <td>@(tp.countryCode ?? "-")</td>
+                        <td>@(tp.birthPlace ?? "-")</td>
+                        <td>@(tp.actualityDate?.ToRussianDate() ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (TitlePart?.FL_TitlePart?.FL_Doc?.Count > 0)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/doc-grey.svg" alt="">  Сведения о документе, удостоверяющем личность субъекта кредитной истории</span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Код страны гражданства по ОКСМ</td>
+                    <td>Документ, удостоверяющий личность</td>
+                    <td>Серия и номер документа</td>
+                    <td>Дата выдачи документа</td>
+                    <td>Место выдачи и код подразделения</td>
+                    <td>Дата окончания срока действия документа</td>
+                    <td>Сведения о гражданстве</td>
+                    <td>Дата актуальности</td>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tp in TitlePart?.FL_TitlePart?.FL_Doc ?? new())
+                {
+                    <tr>
+                        <td>@(tp?.countryCode ?? "-") @(tp?.countryOther)</td>
+                        <td>@_dictionary.Reference_22.TryGetValueOrDefault(tp?.docCode) @(tp?.docOtherName)</td>
+                        <td>@(tp?.docSeries ?? "") @(tp?.docNum ?? "-")</td>
+                        <td>@(tp?.issueDate?.ToRussianDate() ?? "-")</td>
+                        <td>@(tp?.docIssuer ?? "-"), @(tp?.deptCode ?? "-")</td>
+                        <td>@(tp?.endDate?.ToRussianDate() ?? "-")</td>
+                        <td>@_dictionary.Reference_133.TryGetValueOrDefault(tp?.foreignerCode)</td>
+                        <td>@(tp?.actualityDate?.ToRussianDate() ?? "-")</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (TitlePart?.FL_TitlePart?.FL_PrevDoc?.Count > 0)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/doc-grey.svg" alt="">  Сведения о документе, ранее удостоверяющем личность субъекта кредитной истории</span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Код страны гражданства по ОКСМ</td>
+                    <td>Документ, удостоверяющий личность</td>
+                    <td>Серия и номер документа</td>
+                    <td>Дата выдачи документа</td>
+                    <td>Место выдачи и код подразделения</td>
+                    <td>Дата окончания срока действия документа</td>
+                    <td>Дата актуальности</td>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tp in TitlePart?.FL_TitlePart?.FL_PrevDoc ?? new())
+                {
+                    <tr>
+                        <td>@(tp?.countryCode ?? "-") @(tp?.countryOther ?? "")</td>
+                        <td>@_dictionary.Reference_22.TryGetValueOrDefault(tp?.docCode) @(tp?.docOtherName)</td>
+                        <td>@(tp?.docSeries ?? "") @(tp?.docNum ?? "-")</td>
+                        <td>@(tp?.issueDate?.ToRussianDate() ?? "-")</td>
+                        <td>@(tp?.docIssuer ?? "-"), @(tp?.deptCode ?? "-")</td>
+                        <td>@(tp?.endDate?.ToRussianDate() ?? "-")</td>
+                        <td>@(tp?.actualityDate?.ToRussianDate() ?? "-")</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (TitlePart?.FL_TitlePart?.FL_Tax?.Count > 0)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/inn-grey.svg" alt="">  Сведения об ИНН и регистрационном номере субъекта кредитной истории</span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Тип номера налогоплательщика (ИНН)</td>
+                    <td>Номер налогоплательщика (ИНН)</td>
+                    <td>Регистрационный номер</td>
+                    <td>Признак проверки ИНН в ФНС</td>
+                    <td>Признак специального налогового режима</td>
+                    <td>Дата актуальности</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tp in TitlePart?.FL_TitlePart?.FL_Tax ?? new())
+                {
+                    <tr>
+                        <td>@_dictionary.Reference_129.TryGetValueOrDefault(tp?.TaxNum_group?.FirstOrDefault()?.taxCode)</td>
+                        <td>@(tp?.TaxNum_group?.FirstOrDefault()?.taxNum ?? "-")</td>
+                        <td>@(tp?.regNum ?? "-")</td>
+                        <td>@((tp?.innChecked_1 ?? tp?.TaxNum_group?.FirstOrDefault()?.innChecked_1) is not null ? "Да" : (tp?.innChecked_0 ?? tp?.TaxNum_group?.FirstOrDefault()?.innChecked_0) is not null ? "Нет" : "-")</td>
+                        <td>@(tp?.specialMode_1 is not null ? "Да" : tp?.specialMode_0 is not null ? "Нет" : "-")</td>
+                        <td>@(tp?.actualityDate?.ToRussianDate() ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (TitlePart?.FL_TitlePart?.FL_Social?.Count > 0)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/snils-grey.svg" alt=""> Сведения о СНИЛС субъекта кредитной истории</span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>СНИЛС</td>
+                    <td>Дата актуальности</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tp in TitlePart?.FL_TitlePart?.FL_Social ?? new())
+                {
+                    <tr>
+                        <td>@(tp.socialNum ?? "-")</td>
+                        <td>@(tp?.actualityDate?.ToRussianDate() ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (@TitlePart?.UL_TitlePart is not null)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/lp.svg" alt=""> Сведения о субъекте кредитной истории - юридическом лице </span></div>
+    <div class="document__list">
+
+        <div class="document__list-item">
+            <table class="document__list-content" style="width: 100%;">
+                @foreach (var _tp in TitlePart?.UL_TitlePart?.UL_Name ?? new())
+                {
+                    <tr>
+                        <td class="document__list-icon"><img src="img/LP.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Полное наименование</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_tp.fullName ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Сокращенное наименование</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_tp.shortName ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата актуальности</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_tp.actualityDate?.ToRussianDate() ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                </tr>
+                                @foreach (string _other in _tp.otherName ?? new())
+                                {
+                                    <tr>
+                                        <td class="document__column" colspan="3">
+                                            <div class="document__column-title">Иное наименование</div>
+                                            <ul class="document__column-text">
+                                                <li>
+                                                    @(_other ?? "-")
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                }
+                                @foreach (string _prev in _tp.prevFull ?? new())
+                                {
+                                    <tr>
+                                        <td class="document__column" colspan="3">
+                                            <div class="document__column-title">Полное наименование до его смены</div>
+                                            <ul class="document__column-text">
+                                                <li>
+                                                    @(_prev ?? "-")
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td class="document__column" colspan="3">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+}
+
+@if (TitlePart?.UL_TitlePart?.UL_Reg?.Any() ?? false)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/snils-grey.svg" alt="" /> Сведения о регистрационном номере и идентификаторе юридического лица</span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Регистрационный номер</td>
+                    <td>Идентификатор LEI</td>
+                    <td>Дата актуальности</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var _reg in TitlePart?.UL_TitlePart?.UL_Reg ?? new())
+                {
+                    <tr>
+                        <td>@(_reg.regNum ?? "-")</td>
+                        <td>@(_reg.lei ?? "-")</td>
+                        <td>@(_reg.actualityDate?.ToRussianDate() ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (TitlePart?.UL_TitlePart?.UL_Tax?.Any() ?? false)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/inn-grey.svg" alt="" /> Сведения о номере налогоплательщика юридического лица</span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Тип номера налогоплательщика</td>
+                    <td>Номер налогоплательщика (ИНН)</td>
+                    <td>Дата актуальности</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var _tax in TitlePart?.UL_TitlePart?.UL_Tax ?? new())
+                {
+                    <tr>
+                        <td>@_dictionary.Reference_129.TryGetValueOrDefault(_tax.TaxNum_group?.taxCode)</td>
+                        <td>@(_tax.TaxNum_group?.taxNum ?? "-")</td>
+                        <td>@(_tax.actualityDate?.ToRussianDate() ?? "-")</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (TitlePart?.UL_TitlePart?.UL_Reorg?.Any() ?? false)
+{
+    <div class="document__list">
+        <div class="document__list-item">
+            <div class="document__item-title">Сведения о смене наименования юридического лица либо правопреемстве при реорганизации</div>
+            <table class="document__list-content">
+                @foreach (var _tp in TitlePart.UL_TitlePart.UL_Reorg ?? new())
+                {
+                    <tr>
+                        <td class="document__list-icon"><img src="img/LP.svg" alt="" /></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">
+                                            Полное наименование юридического лица, от которого перешли права и обязанности
+                                        </div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.fullName ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">
+                                            Сокращенное наименование юридического лица, от которого перешли права и обязанности
+                                        </div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.shortName ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Регистрационный номер лица, от которого перешли права и обязанности</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_tp.regNum ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата правопреемства (окончания реорганизации)</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_tp.date?.ToRussianDate() ?? "-")</li>
+                                        </ul>
+                                    </td>
+
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+}
+
+@if ((TitlePart?.UL_TitlePart?.UL_AddressOld?.Any() ?? false) || (TitlePart?.UL_TitlePart?.UL_Address?.Any() ?? false))
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/location.svg" alt="">  Адреса  юридического лица </span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Адрес юридического лица</td>
+                    <td>Дата актуальности</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ad in TitlePart?.UL_TitlePart?.UL_AddressOld ?? new())
+                {
+                    <tr>
+                        <td>@ad.address</td>
+                        <td>@ad.actualityDate?.ToRussianDate()</td>
+                    </tr>
+                }
+                @foreach (var _address in TitlePart?.UL_TitlePart?.UL_Address?.Where(item => item.countryCode is not null || item.locationCode is not null || item.regStateNum is not null || item.street is not null) ?? Enumerable.Empty<UL_AddressType>())
+                {
+                    <tr>
+                        <td>
+                            @(_address.countryCode ?? "-")@($" {_address.countryOther ?? ""}"),
+                            @(_address.regStateNum ?? "-"),
+                            @(_address.locationCode ?? "-")@($" {_address.locationOther ?? ""}"),
+                            ул. @(_address.street ?? "-"),
+                            д. @(_address.house ?? "-"),
+                            владение @(_address.estate ?? "-"),
+                            к. @(_address.block ?? "-"),
+                            стр. @(_address.build ?? "-"),
+                            кв. @(_address.apart ?? "-")
+                        </td>
+                        <td>@_address.actualityDate?.ToRussianDate()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (TitlePart?.UL_TitlePart?.UL_Address?.SelectMany(item => item.Phone_group ?? new(), (a, p) => new { a, p })?.Any() ?? false)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/phone-grey.svg" alt="" />  Номера телефонов </span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Тип</td>
+                    <td>Номер телефона</td>
+                    <td>Дата актуальности</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var _phone in TitlePart.UL_TitlePart?.UL_Address?.SelectMany(item => item.Phone_group ?? new(), (a, p) => new { a, p })?.ToList() ?? new())
+                {
+                    <tr>
+                        <td>@(_phone.p.phoneComment ?? "-")</td>
+                        <td>@(_phone.p.phone ?? "-")</td>
+                        <td>@(_phone.a.actualityDate?.ToRussianDate() ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (TitlePart?.UL_TitlePart?.UL_Address?.SelectMany(item => item.email ?? new(), (a, p) => new { a.ownerId, p })?.Any() ?? false)
+{
+    <div class="document__caption"><span class="document__table-icon"><img src="img/email-grey.svg" alt="" />  Адреса электронной почты </span></div>
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Электронная почта</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var _email in TitlePart?.UL_TitlePart?.UL_Address?.SelectMany(item => item.email ?? new(), (a, p) => new { a.ownerId, p })?.ToList() ?? new())
+                {
+                    <tr>
+                        <td>@(_email.p ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+@code {
+    [Parameter] public TitlePartType? TitlePart { get; set; }
+}

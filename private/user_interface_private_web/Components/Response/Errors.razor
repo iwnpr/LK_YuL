@@ -1,0 +1,47 @@
+﻿@if (Response.Root?.Element("BODY")?.Elements("Error").Any() ?? false)
+        {
+<div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+    <div class="status-popup__item-arrow dropdown-arrow">
+        <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+            <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+        </svg>
+    </div>
+    <div class="status-popup__item-title">Ошибки обработки запроса</div>
+</div>
+@if (_show)
+{
+    <div class="document__caption">
+        <span class="document__table-icon">
+            <img class="image_icon" src="img/doc-id.svg" alt="">Список ошибок
+        </span>
+    </div>
+    <table class="document__table">
+        <thead style="background: #eaedf3;">
+            <tr>
+                <td>Код</td>
+                <td>Значение</td>
+            </tr>
+        </thead>
+        <tbody style="background: #fff;">
+                @foreach (var _item in Response.Root?.Element("BODY")?.Elements("Error").ToList() ?? new())
+            {
+                @*<div class="document__table-content document__table--general">*@
+                <tr>
+                    <td>@_item.Attribute("Code")?.Value</td>
+                    <td style="max-width: 500px; word-wrap: break-word;">
+                        @(@_item.Value ?? "-")
+                    </td>
+                </tr>
+                @*</div>*@
+            }
+        </tbody>
+    </table>
+
+}
+        }
+
+        @code {
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+
+    private bool _show = false;
+}

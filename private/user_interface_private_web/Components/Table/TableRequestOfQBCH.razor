@@ -1,0 +1,562 @@
+﻿@if (_response?.Root?.Name.ToString()?.Equals("Результат") ?? false)
+        {
+<div class="document__caption"><span class="document__table-icon"><img class="image_icon" src="img/user.svg" alt="" /> Сведения об ошибке  </span></div>
+<div class="document__list">
+    <div class="document__list-item">
+        <table class="document__list-content">
+            <tr>
+                <td class="document__list-icon"><img src="img/svg/cancel.svg" alt=""></td>
+                <td class="document__columns">
+                    <table>
+                        <tr>
+                            <td class="document__column">
+                                <div class="document__column-title">Код ошибки</div>
+                                <ul class="document__column-text">
+                                    <li>@(_response.Root?.Element("Ошибка")?.Attribute("Код")?.Value ?? "")</li>
+                                </ul>
+                            </td>
+                            <td class="document__column" style="width:100%;">
+                                <div class="document__column-title">Описание ошибки</div>
+                                <ul class="document__column-text">
+                                    <li>@(_response.Root?.Element("Ошибка")?.Value ?? "")</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+        }
+
+
+else
+        {
+<div class="document__caption">
+    <span class="document__table-icon">
+        <img class="image_icon" src="img/doc-time.svg" alt="">Результат выполнения запроса ССП
+    </span>
+</div>
+
+<table class="status__table table">
+    <thead style="background: #eaedf3">
+
+        <tr>
+            <td>Версия запроса</td>
+            <td>Идентификатор запроса</td>
+            <td>Идентификатор ответа</td>
+            @* @if (_response?.Root?.Attribute("РежимЗапроса") is not null)
+            {
+                <td>Режим запроса</td>
+            } *@
+            <td>Действия</td>
+        </tr>
+    </thead>
+    <tbody style="background: #fff;">
+        <tr>
+            <td>
+                @(_response?.Root?.Element("Сведения")?.Attribute("Версия")?.Value ?? _response?.Root?.Attribute("Версия")?.Value ?? "")
+            </td>
+            <td>
+                @(_response?.Root?.Element("Сведения")?.Attribute("ИдентификаторЗапроса")?.Value ?? _response?.Root?.Attribute("ИдентификаторЗапроса")?.Value ?? "")
+            </td>
+            <td style="text-align:center !important;">
+                @(_response?.Root?.Element("Сведения")?.Attribute("ИдентификаторОтвета")?.Value ?? _response?.Root?.Attribute("ИдентификаторОтвета")?.Value ?? "")
+            </td>
+            @* @if (_response?.Root?.Attribute("РежимЗапроса") is not null)
+            {
+                <td> @(_dictionary.InformationCode[_response?.Root?.Attribute("РежимЗапроса")?.Value ?? "-"])</td>
+            }
+ *@
+            <td style="text-align:center !important;">
+                <div class="table__icons">
+                    <div class="table__icon" @onclick="@(async () => await _jsr.InvokeVoidAsync("SaveStringToFile", _response?.ToString(), $"response_{_response?.Root?.Attribute("ИдентификаторОтвета")?.Value ?? ""}.xml"))">
+                        <svg class="ico ico-mono-edit">
+                            <use xlink:href="img/sprite-mono.svg#ico-mono-upload"></use>
+                            <title>Скачать</title>
+                        </svg>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+@foreach (XElement _qbch in (_response?.Root?.Elements("КБКИ").Any() ?? false) ? _response.Root.Elements("КБКИ") : (_response?.Root?.Element("Сведения")?.Elements("КБКИ") ?? Enumerable.Empty<XElement>()))
+{
+   
+    @*Сведения о КБКИ*@
+    <div class="status-popup__item-top" @onclick="@(() => _show[_qbch.Attribute("ОГРН")?.Value ?? "-"] = !_show[_qbch.Attribute("ОГРН")?.Value ?? "-"])">
+        <div class="status-popup__item-arrow dropdown-arrow">
+            <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show[_qbch.Attribute("ОГРН")?.Value ?? "-"] ? "180" : "360")deg);">
+                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+            </svg>
+        </div>
+        <div class="status-popup__item-title">@(_dictionary.QBCH[_qbch.Attribute("ОГРН")?.Value ?? "-"])</div>
+    </div>
+    @if (_show[_qbch.Attribute("ОГРН")?.Value ?? "-"])
+    {
+        <div class="document__list-item">
+            <div class="document__caption"><span class="document__table-icon">Сведения о квалифицированном БКИ </span></div>
+
+            <table class="document__list-content">
+                <tr>
+                    <td class="document__list-icon"><img src="img/house.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">ОГРН</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_qbch.Attribute("ОГРН")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" colspan="2">
+                                    <div class="document__column-title">Наименование</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_dictionary.QBCH[_qbch.Attribute("ОГРН")?.Value ?? "-"])</li>
+                                    </ul>
+                                </td>
+                                @* </tr>
+                        <tr>
+                        <td class="document__column">
+                        <div class="document__column-title">Идентификатор запроса:</div>
+                        <ul class="document__column-text">
+                        <li>@(_qbch.Attribute("ИдентификаторЗапроса")?.Value ?? "-")</li>
+                        </ul>
+                        </td> *@
+                                <td class="document__column">
+                                    <div class="document__column-title">Идентификатор ответа</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_qbch.Attribute("ИдентификаторОтвета")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                 <td class="document__column">
+                                     <div class="document__column-title">Дата ответа</div>
+                                     <ul class="document__column-text">
+                                         <li>@(_qbch.Attribute("ПоСостояниюНа")?.Value?.ToRussianDateTime() ?? "-")</li>
+                                     </ul>
+                                 </td>
+                                 <td class="document__column">
+                                     <div class="document__column-title">Признак наличия кредитной истории</div>
+                                     <ul class="document__column-text">
+                                         <li>@(_qbch.Attribute("ПризнакНаличияКИ")?.Value == "1" ? "Есть сведения помимо титульной части и запретов" : _qbch.Attribute("ПризнакНаличияКИ")?.Value == "0" ? "Нет сведений помимо титульной части и запретов" : "-")</li>
+                                     </ul>
+                                 </td>
+                             </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+
+        @if (_qbch.Element("СубъектНеНайден") is not null)
+        {
+            <div class="document__list">
+                <div class="document__list-item">
+                    <table class="document__list-content">
+                        <tr>
+                            <td class="document__list-icon"><img src="img/svg/attention.svg" alt=""></td>
+                            <td class="document__columns">
+                                <table>
+                                    <tr>
+                                        <td class="document__column" colspan="5">
+                                            <div class="document__column-title">Результат</div>
+                                            <ul class="document__column-text">
+                                                <li>Субъект не найден</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        }
+
+        @if (_qbch.Element("ОбязательствНет") is not null)
+        {
+            <div class="document__list">
+                <div class="document__list-item">
+                    <table class="document__list-content">
+                        <tr>
+                            <td class="document__list-icon"><img src="img/svg/attention.svg" alt=""></td>
+                            <td class="document__columns">
+                                <table>
+                                    <tr>
+                                        <td class="document__column">
+                                            <div class="document__column-title">Результат</div>
+                                            <ul class="document__column-text">
+                                                <li>Обязательств нет</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        }
+
+        @foreach (var _obligation in _qbch?.Element("Обязательства")?.Elements("БКИ") ?? Enumerable.Empty<XElement>())
+        {
+            @foreach (var _amp in _obligation.Elements("Договор"))
+            {
+                <div class="document__caption"><span class="document__table-icon">Сведения о среднемесячном платеже по договору займа (кредита) </span></div>
+                <div class="document__list">
+                    <div class="document__list-item">
+                        <table class="document__list-content">
+                            <tr>
+                                <td class="document__list-icon"><img src="img/doc-id.svg" alt=""></td>
+                                <td class="document__columns">
+                                    <table>
+                                        <tr>
+                                            <td class="document__column" colspan="3">
+                                                <div class="document__column-title">Уникальный идентификатор договора (сделки)</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(_amp.Attribute("УИД")?.Value ?? "-")</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="document__list-item">
+                        <table class="document__list-content">
+                            <tr>
+                                <td class="document__list-icon"><img src="img/doc-3.svg" alt=""></td>
+                                <td class="document__columns">
+                                    <table>
+                                        <tr>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Величина и валюта среднемесячного платежа</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(_amp.Element("СреднемесячныйПлатеж")?.Value ?? "-") @(_amp.Element("СреднемесячныйПлатеж")?.Attribute("Валюта")?.Value ?? "-")</li>
+                                                </ul>
+                                            </td>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Дата расчета величины среднемесячного платежа</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(_amp.Element("СреднемесячныйПлатеж")?.Attribute("ДатаРасчета")?.Value?.ToRussianDate() ?? "-")</li>
+                                                </ul>
+                                            </td>
+                                             <td class="document__column">
+                                                 <div class="document__column-title">Регистрационный номер Бюро</div>
+                                                 <ul class="document__column-text">
+                                                     <li>@(_obligation.Attribute("ОГРН")?.Value ?? "-")</li>
+                                                 </ul>
+                                             </td>
+                                         </tr>
+                                         <tr>
+                                             <td class="document__column">
+                                                 <div class="document__column-title">Полная стоимость займа (кредита), % годовых</div>
+                                                 <ul class="document__column-text">
+                                                     <li>@(_amp.Element("ПСК")?.Value ?? "-")</li>
+                                                 </ul>
+                                             </td>
+                                             <td class="document__column">
+                                                 <div class="document__column-title">Дата последнего представления сведений о договоре</div>
+                                                 <ul class="document__column-text">
+                                                     <li>@(_amp.Attribute("Представлено")?.Value?.ToRussianDate() ?? "-")</li>
+                                                 </ul>
+                                             </td>
+                                             <td class="document__column">
+                                                 <div class="document__column-title">Дата прекращения обязательства</div>
+                                                 <ul class="document__column-text">
+                                                     <li>@(_amp.Element("ДатаПрекращения")?.Value?.ToRussianDate() ?? "-")</li>
+                                                 </ul>
+                                             </td>
+                                         </tr>
+                                     </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            }
+
+         }
+
+        @if (_qbch?.Element("СведенияДляПредупрежденияНеПредоставляются") is not null)
+        {
+            <div class="document__list">
+                <div class="document__list-item">
+                    <table class="document__list-content">
+                        <tr>
+                            <td class="document__list-icon"><img src="img/svg/attention.svg" alt=""></td>
+                            <td class="document__columns">
+                                <table>
+                                    <tr>
+                                        <td class="document__column" colspan="5">
+                                            <div class="document__column-title">Сведения для предупреждения возможного мошенничества</div>
+                                            <ul class="document__column-text">
+                                                <li>Сведения не предоставляются</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        }
+
+        @if (_qbch?.Element("СведенийДляПредупрежденияНет") is not null)
+        {
+            <div class="document__list">
+                <div class="document__list-item">
+                    <table class="document__list-content">
+                        <tr>
+                            <td class="document__list-icon"><img src="img/svg/attention.svg" alt=""></td>
+                            <td class="document__columns">
+                                <table>
+                                    <tr>
+                                        <td class="document__column" colspan="5">
+                                            <div class="document__column-title">Сведения для предупреждения возможного мошенничества</div>
+                                            <ul class="document__column-text">
+                                                <li>Сведения отсутствуют</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        }
+
+        @foreach (var _fraudBureau in _qbch?.Element("СведенияДляПредупреждения")?.Elements("БКИ") ?? Enumerable.Empty<XElement>())
+        {
+            @foreach (var _fraudInfo in _fraudBureau.Elements("ОбращениеОбязательство"))
+            {
+                <div class="document__caption"><span class="document__table-icon">Сведения для предупреждения возможного мошенничества</span></div>
+                <div class="document__list">
+                    <div class="document__list-item">
+                        <table class="document__list-content">
+                            <tr>
+                                <td class="document__list-icon"><img src="img/doc-id.svg" alt=""></td>
+                                <td class="document__columns">
+                                    <table>
+                                        <tr>
+                                            <td class="document__column" colspan="3">
+                                                <div class="document__column-title">Уникальный идентификатор договора (сделки) / обращения</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(_fraudInfo.Attribute("УИД")?.Value ?? "-")</li>
+                                                </ul>
+                                            </td>
+                                            <td class="document__column">
+                                                <div class="document__column-title">ОГРН БКИ</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(_fraudBureau.Attribute("ОГРН")?.Value ?? "-")</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Вид источника</div>
+                                                <ul class="document__column-text">
+                                                    <li>@GetReferenceValue(_dictionary.SourceTypeCaption, _fraudInfo.Element("КодИсточника")?.Value)</li>
+                                                </ul>
+                                            </td>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Стадия рассмотрения</div>
+                                                <ul class="document__column-text">
+                                                    <li>@GetReferenceValue(_dictionary.FraudReviewStage, _fraudInfo.Element("СтадияРассмотрения")?.Value)</li>
+                                                </ul>
+                                            </td>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Дата и время стадии</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(_fraudInfo.Element("ДатаСтадии")?.Value?.ToRussianDateTime() ?? "-")</li>
+                                                </ul>
+                                            </td>
+                                            <td class="document__column">
+                                                <div class="document__column-title">Сумма займа (кредита)</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(_fraudInfo.Element("СуммаЗайма")?.Value ?? "-") @(_fraudInfo.Element("СуммаЗайма")?.Attribute("Валюта")?.Value ?? "-")</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="document__column" colspan="4">
+                                                <div class="document__column-title">Причины отказа</div>
+                                                <ul class="document__column-text">
+                                                    <li>@(string.Join(", ", _fraudInfo.Elements("ПричинаОтказа").Select(_reason => GetReferenceValue(_dictionary.RefusalCode, _reason.Value))) is { Length: > 0 } _reasons ? _reasons : "-")</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            }
+        }
+
+        @foreach (var _amp in _qbch?.Elements("Ошибка") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__list">
+                <div class="document__list-item">
+                    <table class="document__list-content">
+                        <tr>
+                            <td class="document__list-icon"><img src="img/svg/cancel.svg" alt=""></td>
+                            <td class="document__columns">
+                                <table>
+                                    <tr>
+                                        <td class="document__column">
+                                            <div class="document__column-title">Код ошибки</div>
+                                            <ul class="document__column-text">
+                                                <li>@(_amp.Attribute("Код")?.Value ?? "-")</li>
+                                            </ul>
+                                        </td>
+                                        <td class="document__column">
+                                            <div class="document__column-title">Описание ошибки</div>
+                                            <ul class="document__column-text">
+                                                <li>@(_amp.Value ?? "-")</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        }
+
+        @if (_qbch?.Element("СведенияОЗапретеНеПредоставляются") is not null)
+        {
+            <div class="document__list">
+                <div class="document__list-item">
+                    <table class="document__list-content">
+                        <tr>
+                            <td class="document__list-icon"><img src="img/svg/attention.svg" alt=""></td>
+                            <td class="document__columns">
+                                <table>
+                                    <tr>
+                                        <td class="document__column" colspan="5">
+                                            <div class="document__column-title">Сведения о запрете (снятии запрета) субъекта кредитной истории</div>
+                                            <ul class="document__column-text">
+                                                <li>Сведения о запрете не предоставляются</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        }
+
+
+        @if (_qbch?.Element("СведенийОЗапретеНет") is not null)
+        {
+            <div class="document__list">
+                <div class="document__list-item">
+                    <table class="document__list-content">
+                        <tr>
+                            <td class="document__list-icon"><img src="img/svg/attention.svg" alt=""></td>
+                            <td class="document__columns">
+                                <table>
+                                    <tr>
+                                        <td class="document__column" colspan="5">
+                                            <div class="document__column-title">Сведения о запрете (снятии запрета) субъекта кредитной истории</div>
+                                            <ul class="document__column-text">
+                                                <li>Сведений о запрете нет</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        }
+
+        @foreach (var _condition in _qbch?.Element("УсловияЗапрета")?.Elements("Условие") ?? Enumerable.Empty<XElement>())
+        {
+            <div class="document__caption"><span class="document__table-icon">Сведения о запрете (снятии запрета) субъекта кредитной истории </span></div>
+            <div class="document__list">
+                <div class="document__list-item">
+                    <table class="document__list-content">
+                        <tr>
+                            <td class="document__list-icon"><img src="img/ProcessingTermination.svg" alt=""></td>
+                            <td class="document__columns">
+                                <table>
+                                    <tr>
+                                        <td class="document__column">
+                                            <div class="document__column-title">Дата и время подачи заявления о запрете (снятии запрета)</div>
+                                            <ul class="document__column-text">
+                                                <li>@(_condition.Attribute("ДатаЗаявления")?.Value?.ToRussianDate() ?? "-") @(_condition.Attribute("ВремяЗаявления")?.Value ?? "-")</li>
+                                            </ul>
+                                        </td>
+                                        <td class="document__column">
+                                            <div class="document__column-title">Дата начала действия запрета (снятия запрета) по московскому времени</div>
+                                            <ul class="document__column-text">
+                                                <li>@(_condition.Attribute("НачалоДействия")?.Value?.ToRussianDate() ?? "-")</li>
+                                            </ul>
+                                        </td>
+                                        <td class="document__column">
+                                            <div class="document__column-title">Условие запрета/снятие запрета</div>
+                                            <ul class="document__column-text">
+                                                <li>@(_dictionary.Conditions[_condition.Value ?? "-"])</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        }
+
+        <hr style="border-top: 1px dashed red;" />
+    }
+}
+
+        }
+
+
+
+
+
+@code {
+    [Parameter] public string Response { get; set; } = "<Результат />";
+
+    private Dictionary<string, bool> _show =
+    new Dictionary<string, bool>()
+    {
+        {"1047796788819", false },
+        {"1247700058319", false },
+        {"1057747734934", false },
+        {"1057746710713", false }
+    };
+
+    private XDocument _response = new(new XElement("Результат"));
+
+    protected override void OnInitialized()
+    {
+    _response = XDocument.Parse(Response ?? "<Результат />");
+    }
+
+    private static string GetReferenceValue(Dictionary<string, string> reference, string? value)
+    {
+        return value is not null && reference.TryGetValue(value, out var description) ? description : value ?? "-";
+    }
+
+}

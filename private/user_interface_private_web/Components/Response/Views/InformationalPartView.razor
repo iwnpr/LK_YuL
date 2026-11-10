@@ -1,0 +1,139 @@
+﻿<h2 class="document__title document__title--h2 document__title--black">Информационная часть кредитной истории</h2>
+<div class="document__caption"><span class="document__table-icon">@*<img src="Views/img/LP.svg" alt="">*@  Заявки субъекта </span></div>
+@if (true)
+        {
+_infoPart?.Descendants("CreditApplication")?.Where(item => item.Attribute("CreditApplicationUid") is not null && item.Attribute("CreditApplicationConsiderationStatus") is not null)?
+.OrderByDescending(item => item.Attribute("CreditApplicationConsiderationStatus")!.Value)?
+.GroupBy(item => item.Attribute("CreditApplicationUid")!.Value)?
+.SelectMany(item => item.Skip(1))?.Remove();
+        }
+
+
+@if ((_infoPart?.Descendants("CreditApplication")?.Where(e => e.Element("CreditRefusal") is null)?.Any() ?? false))
+        {
+<div class="document__table-content document__table--general">
+    <table class="document__table">
+        <thead>
+            <tr>
+                <td>УИд обращения и Дата обращения</td>
+                <td>Вид участия в сделке</td>
+                <td>Сумма и валюта запрошенного займа (кредита)</td>
+                <td>Способ обращения</td>
+                <td>Дата одобрения</td>
+                <td>Дата окончания действия одобрения</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var _event in _infoPart?.Descendants("CreditApplication")?.Where(e => e.Element("CreditRefusal") is null) ?? Enumerable.Empty<XElement>())
+            {
+                <tr>
+                    <td style="max-width: 20px; word-wrap: break-word;">
+                        @(
+                            _event.Attribute("CreditApplicationUid")?.Value ?? "-"
+                            ) <br /> @(
+                    _event.Attribute("CreditApplicationDate")?.Value ?? "-"
+                    )
+                    </td>
+                    <td>@_dictionary.ParticipationCode[_event.Attribute("ParticipationCode")?.Value ?? "-"]</td>
+                    <td>
+                        @(
+                            _event.Attribute("CreditApplicationSum")?.Value ?? "-"
+                            ) @(
+                          _event.Attribute("CreditApplicationCurrency")?.Value ?? "-"
+                          )
+                    </td>
+                    <td>@_dictionary.WayCode[_event.Attribute("WayCode")?.Value ?? "-"]</td>
+                    <td class="green">
+                        @(
+                            _event.Attribute("CreditApplicationDate")?.Value ?? "-"
+                            )
+                    </td>
+                    <td class="green">
+                        @(
+                            _event.Attribute("CreditApplicationExpirationDate")?.Value ?? "-"
+                            )
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+        }
+
+@if ((_infoPart?.Descendants("CreditApplication")?.Where(e => e.Element("CreditRefusal") is not null)?.Any() ?? false))
+        {
+<div class="document__table-content document__table--general">
+    <table class="document__table">
+        <thead>
+            <tr>
+                <td>УИд обращения и Дата обращения</td>
+                <td>Вид участия в сделке</td>
+                <td>Сумма и валюта запрошенного займа (кредита)</td>
+                <td>Способ обращения</td>
+                <td>Дата обращения</td>
+                <td>Дата отказа</td>
+                <td>Код причины отказа</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var _event in _infoPart?.Descendants("CreditApplication").Where(e => e.Element("CreditRefusal") is not null) ?? Enumerable.Empty<XElement>())
+            {
+                <tr>
+                    <td style="max-width: 20px; word-wrap: break-word;">
+                        @(
+                            _event.Attribute("CreditApplicationUid")?.Value ?? "-"
+                            ) <br /> @(
+                    _event.Attribute("CreditApplicationDate")?.Value ?? "-"
+                    )
+                    </td>
+                    <td>
+                        @(
+                            _dictionary.ParticipationCode[_event.Attribute("ParticipationCode")?.Value ?? "-"]
+                            )
+                    </td>
+                    <td>
+                        @(
+                            _event.Attribute("CreditApplicationSum")?.Value ?? "-"
+                            ) @(
+                          _event.Attribute("CreditApplicationCurrency")?.Value ?? "-"
+                          )
+                    </td>
+                    <td>
+                        @(
+                            _dictionary.WayCode[_event.Attribute("WayCode")?.Value ?? "-"]
+                            )
+                    </td>
+                    <td class="green">
+                        @(
+                            _event.Attribute("CreditApplicationDate")?.Value ?? "-"
+                            )
+                    </td>
+                    <td class="red">
+                        @(
+                            _event.Element("CreditRefusal")?.Attribute("RefuseDate")?.Value ?? "-"
+                            )
+                    </td>
+                    <td class="red">
+                        @(
+                            _dictionary.RefusalCode[_event.Element("CreditRefusal")?.Elements("RefuseReasonCode")?.FirstOrDefault()?.Value ?? "-"]
+                            )
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+        }
+
+
+@code {
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+
+    private XElement _infoPart = new("InformationalPart");
+
+    protected override void OnInitialized()
+    {
+    _infoPart = Response.Descendants("InformationalPart").FirstOrDefault() ?? new("InformationalPart");
+    }
+}

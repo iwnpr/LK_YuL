@@ -1,0 +1,321 @@
+﻿@page "/private/requests-of-bureau"
+@using System.Text
+@using System.Net.Http.Headers
+@attribute [Authorize(Roles = "verification, fms-document-check, debt-rating, employer-rating, prescoring-np-string-rating, tax-service-request, credit-report-for-user, previous-requests, fsspNP, fsspLP, historicalFssp, fsspCetelem, historicalFsspWithFines, fbs-debt-request")]
+@inject IBureauRequestModelFactory _modelFactory
+@inject IBureauRequestXmlBuilder _bureauRequestXmlBuilder
+@inject IBureauRequestValidator _bureauRequestValidator
+
+<PageTitle>Запросы в Бюро</PageTitle>
+
+<AuthorizeView Roles="organizations, users, certificates">
+    <Authorized>
+        @{
+            _isAdmin = true;
+        }
+    </Authorized>
+</AuthorizeView>
+
+<CascadingValue Name="Disabled" Value="_disabled">
+    <RequestOfBureauWindow Show=_show
+                           Model="_model"
+                           Method="SendRequestAsync"
+                           RequestParameters="_parameters"
+                           Type="RequestType.bureau"
+                           OnClose="(() => _show = false)" />
+</CascadingValue>
+
+<CommentWindow InfoComment="@_comment" />
+
+<section class="status">
+    <div class="l-content">
+        <h1 class="status__title title title--h1">Запросы в Бюро</h1>
+        <div class="status__items">
+            <a class="status__item" @onclick="@(() => RequestFormShow(true))">
+                <div class="status__item-icon">
+                    <svg class="ico ico-mono-add-doc">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-add-fl"></use>
+                    </svg>
+                </div>
+                <div class="status__item-title">ФЛ</div>
+            </a>
+            <a class="status__item" @onclick="@(() => RequestFormShow(false))">
+                <div class="status__item-icon">
+                    <svg class="ico ico-mono-print">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-add-ur"></use>
+                    </svg>
+                </div>
+                <div class="status__item-title">ЮЛ</div>
+            </a>
+        </div>
+        <form> <input type="text" data-format="00.00.0000" required></form>
+        <TableRequests Requests="_requests" Url="private/current-request-of-bureau" Type="RequestType.bureau" UserId="_user.Id" />
+    </div>
+</section>
+
+
+
+
+@code {
+    [CascadingParameter(Name = "Disabled")] public bool _disabled { get; set; } = false;
+
+    private bool _isAdmin = false;
+
+    /// <summary>
+    /// Пользователь, осуществивший вход
+    /// </summary>
+    private DBUser _user = new();
+
+    /// <summary>
+    /// Комментарий для информационного модального окна
+    /// </summary>
+    private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+    private BureauRequestModel _model = new();
+
+    /// <summary>
+    /// Результат методов сервисов
+    /// </summary>
+    private Answer _error = new(500, "Ошибка сервера");
+
+    /// <summary>
+    /// Признак отображение модального окна
+    /// </summary>
+    private bool _show = false;
+
+    /// <summary>
+    /// Запросы из БД
+    /// </summary>
+    private List<RequestRecord> _requests = new();
+
+    /// <summary>
+    /// Запрос к сервисам бюро
+    /// </summary>
+    private DBRequestOfBureau _request = new();
+
+    /// <summary>
+    /// Параметры запроса
+    /// </summary>
+    private ParametersBureau _parameters = new();
+
+    /// <summary>
+    /// Отпечаток сертификата
+    /// </summary>
+    private string? _thumbprint = string.Empty;
+
+    private FetchAnswer _answer = new();
+
+
+    private byte[] _responseBytes = new byte[100];
+
+
+    /// <summary>
+    /// Инициализация страницы
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+        var _result = await _session.GetAsync<DBUser>("UserDB");
+
+        if (!_result.Success)
+        {
+            _navMngr.NavigateTo("error");
+            return;
+        }
+
+        ProtectedBrowserStorageResult<string> _connection = await _session.GetAsync<string>("Connection");
+
+        _thumbprint = JsonSerializer.Deserialize<ConnectionParameters>(_connection.Value)?.Thumbprint;
+
+        _user = (await _session.GetAsync<DBUser>("UserDB")).Value!;
+
+        _requests = await _requestMngr.GetListAsync<DBRequestOfBureau>(_user.Id, 0, _isAdmin);
+
+        _parameters = _bureauRequestXmlBuilder.DeserializeParameters(
+            (await _userMngr.GetRequestParametersAsync(_user.Id)).RequestParameters);
+    }
+
+    /// <summary>
+    /// Рендеринг страницы
+    /// </summary>
+    /// <param name="firstRender"></param>
+    /// <returns></returns>
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _jsr.InvokeVoidAsync("mask");
+        }
+    }
+
+    /// <summary>
+    /// Отправка запроса на сервис
+    /// </summary>
+    /// <returns></returns>
+    private async Task SendRequestAsync()
+    {
+        _disabled = true;
+
+        var buildResult = _bureauRequestXmlBuilder.Build(
+            _model,
+            _parameters,
+            _user.Organization);
+
+        _request.Request = buildResult.Xml;
+
+        //Массив байт для отправки на сервис
+        byte[] _bytes;
+
+        if (buildResult.RequiresSignature)
+        {
+            if (_model.Consent.Available.Equals("1"))
+            {
+                _comment = new Comment(true, "error", "Запрос в Бюро", "Для запроса кредитного отчета обязательно наличие согласия субъекта");
+                _disabled = false;
+                return;
+            }
+
+            _error = _bureauRequestValidator.ValidateConsent(_model);
+
+            if (!_error.Code.Equals(200))
+            {
+                _comment = new Comment(true, "error", "Запрос в Бюро", _error.Message);
+                _disabled = false;
+                return;
+            }
+
+            // Подписание запроса
+            var base64 = await _jsr.InvokeAsync<string>("CreateSign", _thumbprint, Base64Encode(buildResult.Xml));
+
+            try
+            {
+                _bytes = Convert.FromBase64String(base64);
+                _request.SignedRequest = base64;
+            }
+            catch
+            {
+                _comment = new Comment(true, "error", "Ошибка при обработке запроса", base64);
+                _disabled = false;
+                return;
+            }
+        }
+        else
+        {
+            _bytes = Encoding.UTF8.GetBytes(_request.Request);
+        }
+
+        try
+        {
+            var dataReference =
+                await _jsr.InvokeAsync<IJSStreamReference>("PostBytesAsync", $"{_configuration.GetSection("Links:A2A").Value}", _bytes);
+            using var dataReferenceStream =
+                await dataReference.OpenReadStreamAsync(maxAllowedSize: 10_000_000);
+
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                await dataReferenceStream.CopyToAsync(ms);
+                _answer.Message = ms.ToArray();
+                _answer.Code = 200;
+
+            }
+
+        }
+        catch
+        {
+            _answer = new() { Code = 200, Message = new byte[0] };
+        }
+
+        if (_answer.Message.Length == 0)
+        {
+            _comment = new Comment(true, "error", "Ошибка при обработке запроса", "При отправке запроса к Бюро произошла ошибка!");
+            _disabled = false;
+            return;
+        }
+
+        try
+        {
+            //Снятие подписи
+            var signedCms = new SignedCms();
+            signedCms.Decode(_answer.Message);
+
+            //Убираем преамбулу у сообщения (UTF8-BOM)
+            _request.Response = Encoding.UTF8.GetString(signedCms.ContentInfo.Content).Trim(new char[] { '\uFEFF' });
+            _request.SignedResponse = Base64Encode(Encoding.UTF8.GetString(_answer.Message).Trim(new char[] { '\uFEFF' }));
+        }
+        catch
+        {
+            //string otvet = Encoding.UTF8.GetString(_answer.Message);
+            _request.Response = Encoding.UTF8.GetString(_answer.Message).Trim((new char[] { '\uFEFF' }));
+        }
+
+        _request.Updated = DateTime.Now;
+
+        XDocument _response = new();
+        try
+        {
+            _response = XDocument.Parse(_request.Response);
+        }
+        catch
+        {
+            _comment = new Comment(true, "error", "Ошибка при обработке запроса", "При отправке запроса к Бюро произошла ошибка!");
+            _disabled = false;
+            return;
+
+        }
+
+    (_request as DBRequestOfBureau)!.Status = _response.Descendants("Error").Any() ? 3 : _response.Descendants("Warning").Any() ? 2 : 1;
+
+        long.TryParse(_response.Descendants("ResponseID")?.FirstOrDefault()?.Value, out var _responseId);
+
+        (_request as DBRequestOfBureau)!.ResponseId = _responseId;
+
+        _request.Inserted = DateTime.Now;
+
+        _error = await _requestMngr.InsertAsync(_request);
+
+        if (_error.Code.Equals(200))
+        {
+            _comment = new Comment(true, "ok", "Запросы в Бюро", _error.Message);
+            _show = false;
+            _disabled = false;
+            _requests = await _requestMngr.GetListAsync<DBRequestOfBureau>(_user.Id, 0, _isAdmin) ?? new List<RequestRecord>();
+            return;
+        }
+
+        _show = false;
+
+        //Получаем список запросов
+        _requests = await _requestMngr.GetListAsync<DBRequestOfBureau>(_user.Id, 0, _isAdmin) ?? new List<RequestRecord>();
+
+        _disabled = false;
+
+    }
+
+    /// <summary>
+    /// Показать окно для формирования запроса
+    /// </summary>
+    private void RequestFormShow(bool isNaturalPerson)
+    {
+        _model = _modelFactory.Create(isNaturalPerson);
+
+        _request = new()
+            {
+                Inserted = DateTime.Now,
+                UserId = _user.Id,
+                OrganizationId = _user.OrganizationId,
+                Request = string.Empty
+            };
+
+        _show = true;
+
+    }
+
+    private static string Base64Encode(string plainText)
+    {
+        var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+        return Convert.ToBase64String(plainTextBytes);
+    }
+
+}
+

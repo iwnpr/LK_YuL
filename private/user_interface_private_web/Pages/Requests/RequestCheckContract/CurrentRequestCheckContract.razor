@@ -1,0 +1,66 @@
+﻿@layout ResponseLayout
+@page "/private/current-credit-record-check/{Id}"
+@attribute [Authorize(Roles = "credit-record-status")]
+
+<PageTitle>Информация о договорах</PageTitle>
+
+<AuthorizeView Roles="organizations, users, certificates">
+    <Authorized>
+        @{
+                _isAdmin = true;
+        }
+    </Authorized>
+</AuthorizeView>
+
+
+<h1 class="status__title title title--h1">Информация о договорах</h1>
+
+@if (_request is not null)
+{
+    <Subject Request="@(XDocument.Parse(_request.Request ?? "<REQUEST />"))"></Subject>
+    <TableCreditRecordStatus Response="@(XDocument.Parse(_request.Response ?? "<response />"))" />
+}
+
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    bool _isAdmin = false;
+
+    /// <summary>
+    /// Пользователь, осуществивший вход
+    /// </summary>
+    private DBUser? _user = new();
+
+    /// <summary>
+    /// Запрос из таблицы БД
+    /// </summary>
+    private DBRequestCheckContractsByUser? _request;
+
+    /// <summary>
+    /// Инициализация страницы
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+    _user = (await _session.GetAsync<DBUser>("UserDB")).Value;
+
+    if (_user is null)
+    {
+        _navMngr.NavigateTo("error");
+        return;
+    }
+
+    int.TryParse(Id, out int _id);
+
+    _request = await _requestMngr.GetAsync<DBRequestCheckContractsByUser>(_id, _user.Id, _isAdmin);
+
+    if (_request is null)
+    {
+        _navMngr.NavigateTo("404");
+
+    }
+
+    }
+
+}

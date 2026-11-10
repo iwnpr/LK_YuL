@@ -1,0 +1,155 @@
+﻿@page "/personal"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Globalization
+@attribute [Authorize]
+
+<PageTitle>Личные данные</PageTitle>
+
+<CommentWindow InfoComment="_comment" />
+
+@if (_user is not null)
+{
+    <section class="personal">
+        <div class="l-content">
+            <h1 class="personal__title title title--h1">Личные данные</h1>
+            <div class="caption">Организация</div>
+
+            <div class="form__input">
+                <div class="form__input-label">Идентификатор</div>
+                <div class="personal__item-text">
+                    @_user.Organization.LegalPersonId
+                </div>
+            </div>
+
+            <div class="form__input">
+                <div class="form__input-label">Наименование</div>
+                <div class="personal__item-text">
+                    @_user.Organization.ShortName
+                </div>
+            </div>
+
+            <div class="form__input">
+                <div class="form__input-label">ИНН</div>
+                <div class="personal__item-text">
+                    @_user.Organization.Itn
+                </div>
+            </div>
+
+            <div class="form__input">
+                <div class="form__input-label">ОГРН</div>
+                <div class="personal__item-text">
+                    @_user.Organization.Psrn
+                </div>
+            </div>
+
+            <form class="form">
+                <div class="caption">Учетная запись</div>
+
+                <div class="form__input">
+                    <div class="form__input-label">Логин</div>
+                    <div class="personal__item-text">
+                        @_user.Login
+                    </div>
+                </div>
+
+                <div class="form__input">
+                    <div class="form__input-label">E-mail</div>
+                    <div class="personal__item-text">
+                        @_user.Email
+                    </div>
+                </div>
+
+                <div class="caption">Пользователь</div>
+                <div class="personal__item">
+                    <div class="form__inputs">
+                        <div class="form__input">
+                            <div class="form__input-label">Фамилия *</div>
+                            <input type="text" required name="secondName" @bind=@_user.LastName>
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">Имя *</div>
+                            <input type="text" required name="name" @bind=@_user.FirstName>
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">Отчество </div>
+                            <input type="text" name="thirdName" @bind=@_user.MiddleName>
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">Номер телефона</div>
+                            <input type="tel" name="tel" data-format="0000000000" @bind=@_user.Phone class="@(string.IsNullOrEmpty(_user.Phone) || Regex.IsMatch(_user.Phone!, "[0-9]{7,10}", RegexOptions.IgnoreCase) ? "" : "red")">
+                        </div>
+                    </div>
+                </div>
+                <button class="form__submit btn btn--green" type="button" @onclick=SaveChangesAsync>Сохранить изменения</button>
+            </form>
+        </div>
+    </section>
+}
+
+@code {
+    /// <summary>
+    /// Пользователь, осуществивший вход
+    /// </summary>
+    private DBUser _user = null!;
+
+    /// <summary>
+    /// Содержимое модального окна
+    /// </summary>
+    private Comment _comment = new(false, string.Empty, string.Empty, string.Empty);
+
+    /// <summary>
+    /// Инициализация параметров
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+        ProtectedBrowserStorageResult<string> _userJson = await _session.GetAsync<string>("User");
+
+        if (!_userJson.Success)
+        {
+            _navigator.NavigateTo("/");
+            return;
+        }
+
+        _user = JsonSerializer.Deserialize<DBUser>(_userJson.Value!)!;
+    }
+
+    /// <summary>
+    /// Рендеринг страницы
+    /// </summary>
+    /// <param name="firstRender"></param>
+    /// <returns></returns>
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await _jsr.InvokeVoidAsync("mask");
+    }
+
+    /// <summary>
+    /// Сохранение изменений
+    /// </summary>
+    /// <returns></returns>
+    private async Task SaveChangesAsync()
+    {
+        Answer _error = _validator.Check(_user);
+
+        if (!_error.Code.Equals(200))
+        {
+            _comment = new(true, "error", "Редактирование пользователя", _error.Message);
+            return;
+        }
+
+        _error = await _userMngr.UpdateAsync(_user);
+
+        _comment = new(true, _error.Code.Equals(200) ? "ok" : "error", "Обновление данных", _error.Message);
+
+        // if (_error.Code.Equals(200))
+        // {
+        //     await _session.SetAsync("User", JsonSerializer.Serialize(_user));
+
+        //     _authenticationStateProvider.UpdateAsync();
+        // }
+
+    }
+
+}

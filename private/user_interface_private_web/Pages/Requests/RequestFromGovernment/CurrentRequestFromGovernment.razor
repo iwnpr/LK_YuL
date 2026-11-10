@@ -1,0 +1,61 @@
+﻿@layout ResponseLayout
+@page "/private/current-request-from-government/{Id}"
+@attribute [Authorize]
+
+<PageTitle>Запрос для Госорганов</PageTitle>
+
+<section class="status">
+    <div class="l-content">
+        <h1 class="status__title title title--h1">Запрос для Госорганов</h1>
+        @if (_request is not null)
+        {
+            <Subject Request="@(XDocument.Parse(_request.Request ?? "<REQUEST />"))"></Subject>
+            <TableRequestFromGovernment Request="@_request" />
+        }
+    </div>
+</section>
+
+<AuthorizeView Roles="organization, users, certificates">
+    <Authorized>
+        @{
+                _isAdmin = true;
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+        bool _isAdmin = false;
+
+    /// <summary>
+    /// Пользователь, осуществивший вход
+    /// </summary>
+    private DBUser? _user = new();
+
+    private DBRequestForGovernmentByUser? _request;
+
+    protected override async Task OnInitializedAsync()
+    {
+    _user = (await _session.GetAsync<DBUser>("UserDB")).Value;
+
+    if (_user is null)
+    {
+        _navMngr.NavigateTo("error");
+        return;
+    }
+
+    int.TryParse(Id, out int _id);
+
+    _request = await _requestMngr.GetAsync<DBRequestForGovernmentByUser>(_id, _user.Id, _isAdmin);
+    
+    if (_request is null)
+    {
+        _navMngr.NavigateTo("404");
+
+    }
+
+     }
+
+
+}

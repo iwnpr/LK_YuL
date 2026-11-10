@@ -1,0 +1,155 @@
+﻿@layout ResponseLayout
+@page "/private/current-hesk-request-check/{Id}"
+@attribute [Authorize(Roles = "hesk")]
+
+<PageTitle>Информация об обращениях</PageTitle>
+
+@if (_request is not null)
+        {
+<div class="status-popup">
+    <div class="l-content">
+        <h1 class="status-popup__title title title--h1">Информация об обращении</h1>
+        <div class="status-popup__item">
+            <div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+                <div class="status-popup__item-arrow dropdown-arrow">
+                    <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                    </svg>
+                </div>
+                <div class="status-popup__item-title">Информация об обращении</div>
+            </div>
+            @if (_show)
+            {
+                <div class="status-popup__item-wrapper dropdown-content">
+                    <div class="status-popup__item-content">
+                    <table class="table table-status">
+                        <tbody>
+                            <tr>
+                                <td>Идентификатор</td>
+                                <td>@_request.Element("id")?.Value</td>
+                            </tr>
+                            <tr>
+                                <td>Проект</td>
+                                <td>@_request.Element("project")?.Attribute("name")?.Value</td>
+                            </tr>
+                            <tr>
+                                <td>Трекер</td>
+                                    <td>@_request.Element("tracker")?.Attribute("name")?.Value</td>
+                            </tr>
+                            <tr>
+                                <td>Статус</td>
+                                <td>@_request.Element("status")?.Attribute("name")?.Value</td>
+                            </tr>
+                            <tr>
+                                <td>Дата/время создания</td>
+                                <td>@_request.Element("created_on")?.Value</td>
+                            </tr>
+                            <tr>
+                                <td>Тема</td>
+                                <td>@_request.Element("subject")?.Value</td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td>@_request.Element("author")?.Attribute("name")?.Value</td>
+                            </tr>
+                            <tr>
+                                <td>Дата / время обновления</td>
+                                <td>@_request.Element("updated_on")?.Value</td>
+                            </tr>
+                            <tr>
+                                <td>Приоритет</td>
+                                <td>@_request.Element("priority")?.Attribute("name")?.Value</td>
+                            </tr>
+                            <tr>
+                                <td>Дата / время завершения</td>
+                                <td>@_request.Element("closed_on")?.Value</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="status-popup__item-comments comments">
+                    <div class="comments__title">Описание:</div>
+
+
+                    <div class="comment">
+                        <div class="comment__top">
+                            <div class="comment__name comment__name--red"></div>
+                            <div class="comment__date"></div>
+                        </div>
+
+                        <div class="comment__body">
+                            <div class="comment__body-text"><StringToHtml Value="@_request?.Element("description")?.ToString()" /></div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            }
+        </div>
+
+
+
+    </div>
+</div>
+        }
+
+
+
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    bool _show = true;
+
+    /// <summary>
+    /// Пользователь, осуществивший вход
+    /// </summary>
+    private DBUser? _user = new();
+
+    /// <summary>
+    /// Запрос из таблицы БД
+    /// </summary>
+    private XElement? _request;
+
+    /// <summary>
+    /// Инициализация страницы
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+    _user = (await _session.GetAsync<DBUser>("UserDB")).Value;
+
+    if (_user is null)
+    {
+        _navMngr.NavigateTo("error");
+        return;
+    }
+
+    string _id = _user.OrganizationId.Equals(1) ? "1" : _user.Organization.LegalPersonId.ToString();
+
+    Answer _answer = await _sender.SendStringAsync(_configuration.GetSection("Links:Hesk").Value.Replace("#", _id), "GET", string.Empty);
+
+    if (!_answer.Equals(200))
+    {
+        try
+        {
+            _request = XDocument.Parse(_answer.Message).Descendants("issue").FirstOrDefault(item => item.Element("id")?.Value.Equals(Id) ?? false);
+        }
+        catch (Exception ex)
+        {
+            _answer = new(300, ex.Message);
+
+        }
+    }
+
+    if (_request is null)
+    {
+        _navMngr.NavigateTo("404");
+    }
+
+    }
+
+}

@@ -1,0 +1,276 @@
+﻿
+<CascadingValue Name="Disabled" Value="Disabled">
+    @if (Show)
+    {
+        <CommentWindow InfoComment="@_comment" />
+
+        <div class="fancybox-container fancybox-is-open fancybox-can-swipe" role="dialog" tabindex="-1" id="fancybox-container-1" style="transition-duration: 366ms;">
+            <div class="fancybox-bg"></div><div class="fancybox-inner">
+                <div class="fancybox-infobar"><span data-fancybox-index="">1</span>&nbsp;&nbsp;<span data-fancybox-count="">1</span></div>
+                <div class="fancybox-toolbar">
+                    <button data-fancybox-zoom="" class="fancybox-button fancybox-button--zoom" title="Zoom" disabled="">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M18.7 17.3l-3-3a5.9 5.9 0 0 0-.6-7.6 5.9 5.9 0 0 0-8.4 0 5.9 5.9 0 0 0 0 8.4 5.9 5.9 0 0 0 7.7.7l3 3a1 1 0 0 0 1.3 0c.4-.5.4-1 0-1.5zM8.1 13.8a4 4 0 0 1 0-5.7 4 4 0 0 1 5.7 0 4 4 0 0 1 0 5.7 4 4 0 0 1-5.7 0z"></path>
+                        </svg>
+                    </button>
+                    <button data-fancybox-play="" class="fancybox-button fancybox-button--play" title="Start slideshow" style="display: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M6.5 5.4v13.2l11-6.6z"></path>
+                        </svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M8.33 5.75h2.2v12.5h-2.2V5.75zm5.15 0h2.2v12.5h-2.2V5.75z"></path>
+                        </svg>
+                    </button>
+                    <button data-fancybox-thumbs="" class="fancybox-button fancybox-button--thumbs" title="Thumbnails" style="display: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M14.59 14.59h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76H5.65V5.65z"></path>
+                        </svg>
+                    </button><button data-fancybox-close="" class="fancybox-button fancybox-button--close" title="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 10.6L6.6 5.2 5.2 6.6l5.4 5.4-5.4 5.4 1.4 1.4 5.4-5.4 5.4 5.4 1.4-1.4-5.4-5.4 5.4-5.4-1.4-1.4-5.4 5.4z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="fancybox-navigation">
+                    <button data-fancybox-prev="" class="fancybox-button fancybox-button--arrow_left" title="Previous" disabled="">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M11.28 15.7l-1.34 1.37L5 12l4.94-5.07 1.34 1.38-2.68 2.72H19v1.94H8.6z"></path>
+                            </svg>
+                        </div>
+                    </button>
+                    <button data-fancybox-next="" class="fancybox-button fancybox-button--arrow_right" title="Next" disabled="">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M15.4 12.97l-2.68 2.72 1.34 1.38L19 12l-4.94-5.07-1.34 1.38 2.68 2.72H5v1.94z"></path>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+                <div class="fancybox-stage">
+                    <div class="fancybox-slide fancybox-slide--html fancybox-slide--current fancybox-slide--complete" style="">
+                        <div class="popup-fiz" id="popup-fiz" style="display: inline-block;">
+                            <div style="width: 100%; display: flex;justify-content: flex-end;">
+                                <button type="button" data-fancybox-close="" title="Close" style="" @onclick="OnClose">
+                                    <!--!--><svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" version="1" viewBox="0 0 24 24"><path d="M13 12l5-5-1-1-5 5-5-5-1 1 5 5-5 5 1 1 5-5 5 5 1-1z"></path></svg>
+                                </button>
+                            </div>
+                            <div class="popup-organization__title">Поиск договоров</div>
+                            <form class="form">
+                                <div class="form__goals">
+
+                                    <div class="result__item-top">
+                                        <div class="result__item-title">Параметры поиска</div>
+                                    </div>
+
+                                    <div class="form__inputs">
+                                        <div class="form__input">
+                                            <div class="form__input-label">&nbsp;</div>
+                                            <SelectionList ValuesList=_dictionary.CheckContractParameter
+                                                           OnChange=@((value) => {_parameter = _dictionary.CheckContractParameter.FirstOrDefault(t => t.Value.Equals(value)).Key; OnParameterSelect(_parameter);})
+                                                           SelectionValue=@_dictionary.CheckContractParameter[_parameter] />
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if (Subject.Body.NaturalPersonSubject is not null)
+                                {
+                                    <div class="result__item-top">
+                                        <div class="result__item-title">Физическое лицо</div>
+                                    </div>
+
+                                    <div class="form__inputs">
+                                        <div class="form__input" style="width: 22%">
+                                            <div class="form__input-label">Фамилия *</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject!.Title!.LastName" oninput="this.value=this.value.toUpperCase()" required>
+                                        </div>
+                                        <div class="form__input" style="width: 22%">
+                                            <div class="form__input-label">Имя *</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.Title!.FirstName" oninput="this.value=this.value.toUpperCase()" required>
+                                        </div>
+                                        <div class="form__input" style="width: 22%">
+                                            <div class="form__input-label">Отчество</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.Title!.MiddleName" oninput="this.value=this.value.toUpperCase()">
+                                        </div>
+                                        <div class="form__input form__input-small" style="width: 22%">
+                                            <div class="form__input-label">Дата рождения *</div>
+                                            <input type="text" data-format="00.00.0000" @bind="@Subject.Body.NaturalPersonSubject.BirthDate" required>
+                                        </div>
+                                        <div class="form__input form__input-small" style="width: 33%">
+                                        <div class="form__input-label">Тип документа</div>
+                                            <SelectionList ValuesList=@_dictionary.DocumentTypes
+                                                   OnChange=@((value) => Subject.Body.NaturalPersonSubject.IdentificationDocuments[0]!.DocTypeID = _dictionary.DocumentTypes.FirstOrDefault(t => t.Value.Equals(value)).Key)
+                                                   SelectionValue=@_dictionary.DocumentTypes[Subject.Body.NaturalPersonSubject.IdentificationDocuments[0]!.DocTypeID] />
+                                        </div>
+                                        <div class="form__input form__input-small" style="width: 15%">
+                                            <div class="form__input-label">Серия</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.IdentificationDocuments[0]!.DocSer"  oninput="this.value=this.value.toUpperCase()" required>
+                                        </div>
+                                        <div class="form__input form__input-small" style="width: 20%">
+                                            <div class="form__input-label">Номер *</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.IdentificationDocuments[0]!.DocNum"  oninput="this.value=this.value.toUpperCase()" required>
+                                        </div>
+                                        <div class="form__input form__input-small" style="width: 20%">
+                                            <div class="form__input-label">Дата выдачи*</div>
+                                            <input type="text" @bind="@Subject.Body.NaturalPersonSubject.IdentificationDocuments[0]!.DocDate" data-format="00.00.0000" required>
+                                        </div>
+                                    </div>
+                                }
+
+
+                                @if (Subject.Body.LegalPersonSubject is not null)
+                                {
+                                    <div class="result__item-top">
+                                        <div class="result__item-title">Юридического лицо</div>
+                                    </div>
+
+
+                                    <div class="form__inputs">
+                                        <div class="form__input">
+                                            <div class="form__input-label">Наименование ЮЛ *</div>
+                                            <input type="text" @bind="@Subject.Body.LegalPersonSubject!.Title!.Name!.FullName" oninput="this.value=this.value.toUpperCase()" required>
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">ИНН *</div>
+                                            <input type="text" @bind="@Subject.Body.LegalPersonSubject.Title.IndividualTaxpayerNumber" data-format="000000000000" required>
+                                        </div>
+                                        <div class="form__input">
+                                            <div class="form__input-label">ОГРН *</div>
+                                            <input type="text" @bind="@Subject.Body.LegalPersonSubject.Title.PrimaryStateRegistrationNumber" data-format="000000000000000" required>
+                                        </div>
+                                    </div>
+
+                                }
+                                @if (Subject.Body.Contract is not null)
+                                {
+                                    <div class="result__item-top">
+                                        <div class="result__item-title">Договор</div>
+                                    </div>
+
+
+                                    <div class="form__inputs">
+                                        <div class="form__input" style="width: 47%;">
+                                            <div class="form__input-label">УИд договора *</div>
+                                            <input type="text" @bind="@Subject.Body.Contract.Uid" oninput="this.value=this.value.toLowerCase()" required>
+                                        </div>
+                                        @if (Subject.Header.User.UserId.Equals("0"))
+                                        {
+                                            <div class="form__input" style="width: 47%;">
+                                                <div class="form__input-label">ID организации *</div>
+                                                <input type="text" @bind="@Subject.Body.Contract.LegalPersonId" data-format="0000" required>
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                }
+
+                                <div class="form__bottom">
+                                    <div class="form__bottom-message">* обязательно для заполнения</div>
+                                    <div class="form__btns">
+                                        <button class="form__btn btn" data-btn="next" type="button" @onclick=Method disabled="@Disabled">
+                                            @if (Disabled)
+                                            {
+                                                <img src="/img/loading.gif" width="20" />
+}  Выполнить запрос
+                                        </button>
+                                    </div>
+                                </div>
+
+
+
+
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="fancybox-caption fancybox-caption--separate">
+                    <div class="fancybox-caption__body"></div>
+                </div>
+            </div>
+        </div>
+
+    }
+
+</CascadingValue>
+
+
+@code {
+    [CascadingParameter(Name = "Disabled")] public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Отображение окна
+    /// </summary>
+    [Parameter] public bool Show { get; set; } = false;
+
+    private string _parameter = "1";
+
+    /// <summary>
+    /// Запрос в формате бюро
+    /// </summary>
+    [Parameter] public Request Subject { get; set; } = new();
+
+    /// <summary>
+    /// Согласие
+    /// </summary>
+    private Dictionary<string, string> Consent { get; set; } = null!;
+
+    /// <summary>
+    /// Комментарий для информационного модального окна
+    /// </summary>
+    private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+
+    private List<bool> _steps = new() { true, false, false, false, false, false, false };
+
+    /// <summary>
+    /// Тип запроса к сервису
+    /// </summary>
+    [Parameter] public RequestType Type { get; set; } = RequestType.check;
+
+    /// <summary>
+    /// Метод запроса к сервису
+    /// </summary>
+    [Parameter] public EventCallback Method { get; set; }
+
+    /// <summary>
+    /// Событие на закрытие формы
+    /// </summary>
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!Disabled)
+        { 
+            await _jsr.InvokeVoidAsync("mask"); 
+
+            _parameter = Subject.Body?.NaturalPersonSubject is not null ? "1" : Subject.Body?.LegalPersonSubject is not null ? "2" : "3";
+        }
+
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await _jsr.InvokeVoidAsync("mask");
+    }
+
+    private void OnParameterSelect(string value)
+    {
+        Subject.Body.NaturalPersonSubject = null;
+        Subject.Body.LegalPersonSubject = null;
+        Subject.Body.Contract = null;
+
+        if (value.Equals("1"))
+            Subject.Body.NaturalPersonSubject = new() { Title = new(), IdentificationDocuments = new() { new() } };
+
+        if (value.Equals("2"))
+            Subject.Body.LegalPersonSubject = new() { Title = new() { Name = new() } };
+
+        if (value.Equals("3"))
+            Subject.Body.Contract = new() { LegalPersonId = Subject.Header.User.UserId };
+
+    }
+
+}

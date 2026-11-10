@@ -1,0 +1,400 @@
+﻿@using user_interface_private_web.Pages.Requests.RequestOfBureau
+<style>
+    .strike-through {
+        text-decoration: line-through;
+    }
+</style>
+
+<AuthorizeView Roles="credit-report-for-user, credit-report-with-amp">
+    <Authorized>
+        <div class="caption">Кредитный отчет</div>
+        <div class="form__checkbox-list">
+            <div class="form__input form__checkbox check form__checkbox-parameters">
+                <input type="checkbox"
+                       id="CreditReport"
+                       checked="@Parameters.CreditReport"
+                       disabled="@Parameters.GetReportWithBailiffsDebtInfo"
+                       @onchange="OnCreditReportChanged">
+                <label class="form__checkbox-label @(Parameters.GetReportWithBailiffsDebtInfo ? "strike-through" : "")"
+                       for="CreditReport">
+                    Кредитный отчет для пользователя
+                </label>
+            </div>
+
+            @if (Parameters.CreditReport)
+            {
+                <div class="form__checkbox-items">
+                    <div class="form__checkbox-item">
+                        <div class="form__radio">
+                            <input type="radio"
+                                   name="CreditReportDetalization"
+                                   id="CreditReportDetalization0"
+                                   value="0"
+                                   @onchange="@(() => Parameters.CreditReportDetalization = 0)"
+                                   checked="@(Parameters.CreditReportDetalization == 0)">
+                            <div class="form__radio-btn"></div>
+                            <label class="form__radio-label" for="CreditReportDetalization0">
+                                Кредитный отчет для пользователя, содержащий титульную, основную и информационную части КИ
+                            </label>
+                        </div>
+
+                        <div class="form__radio">
+                            <input type="radio"
+                                   name="CreditReportDetalization"
+                                   id="CreditReportDetalization1"
+                                   value="1"
+                                   @onchange="@(() => Parameters.CreditReportDetalization = 1)"
+                                   checked="@(Parameters.CreditReportDetalization == 1)">
+                            <div class="form__radio-btn"></div>
+                            <label class="form__radio-label" for="CreditReportDetalization1">
+                                Кредитный отчет для пользователя, содержащий только титульную и основную части КИ
+                            </label>
+                        </div>
+
+                        <div class="form__radio">
+                            <input type="radio"
+                                   name="CreditReportDetalization"
+                                   id="CreditReportDetalization2"
+                                   value="2"
+                                   @onchange="@(() => Parameters.CreditReportDetalization = 2)"
+                                   checked="@(Parameters.CreditReportDetalization == 2)">
+                            <div class="form__radio-btn"></div>
+                            <label class="form__radio-label" for="CreditReportDetalization2">
+                                Кредитный отчет для пользователя, содержащий только титульную и информационную часть КИ
+                            </label>
+                        </div>
+                    </div>
+
+                    @if (context.User.IsInRole("credit-report-with-amp"))
+                    {
+                        <div class="form__input form__checkbox check form__checkbox-parameters">
+                            <input type="checkbox"
+                                   id="GetReportWithAMP"
+                                   @bind="Parameters.GetReportWithAMP">
+                            <label class="form__checkbox-label" for="GetReportWithAMP">
+                                Сведения о среднемесячных платежах
+                            </label>
+                        </div>
+                    }
+                    else
+                    {
+                        Parameters.GetReportWithAMP = false;
+                    }
+                </div>
+            }
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.CreditReport = false;
+            Parameters.CreditReportDetalization = 3;
+            Parameters.GetReportWithAMP = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<div class="caption">Дополнительные сервисы</div>
+
+<AuthorizeView Roles="prescoring-np-string-rating">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input type="checkbox"
+                   id="PreviousRequests"
+                   @bind="Parameters.PreviousRequests">
+            <label class="form__checkbox-label" for="PreviousRequests">
+                Информация о предыдущих запросах
+            </label>
+
+            @if (Parameters.PreviousRequests)
+            {
+                <span>
+                    (в ответе не более
+                    <input type="text"
+                           id="PreviousRequestsCount"
+                           size="5"
+                           maxlength="5"
+                           aria-label="Количество предыдущих запросов"
+                           @bind="Parameters.PreviousRequestsCount">
+                    последних)
+                </span>
+            }
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.PreviousRequests = false;
+            Parameters.PreviousRequestsCount = 0;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="fms-document-check">
+    <Authorized>
+        <div class="form__checkbox-list">
+            <div class="form__input form__checkbox form__checkbox-parameters check">
+                <input type="checkbox"
+                       id="Fms"
+                       checked="@Parameters.Fms"
+                       @onchange="OnFmsChanged">
+                <label class="form__checkbox-label" for="Fms">
+                    Запрос в ФМС (проверка паспорта)
+                </label>
+            </div>
+
+            @if (Parameters.Fms)
+            {
+                <div class="form__checkbox-items">
+                    <div class="form__input form__checkbox check">
+                        <input type="checkbox"
+                               id="Fns"
+                               @bind="Parameters.Fns">
+                        <label class="form__checkbox-label" for="Fns">
+                            Запрос в ФМС (проверка паспорта) и ФНС (проверка документ + ФИО и ДР)
+                        </label>
+                    </div>
+                </div>
+            }
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.Fms = false;
+            Parameters.Fns = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="fsspNP, fsspLP, historicalFssp, fsspCetelem, historicalFsspWithFines, fbs-debt-request">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input type="checkbox"
+                   id="GetBailiffsServiceDebtInfo"
+                   disabled="@Parameters.GetReportWithBailiffsDebtInfo"
+                   @bind="Parameters.GetBailiffsServiceDebtInfo">
+            <label class="form__checkbox-label @(Parameters.GetReportWithBailiffsDebtInfo ? "strike-through" : "")"
+                   for="GetBailiffsServiceDebtInfo">
+                Запрос в ФССП (долги)
+            </label>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.GetBailiffsServiceDebtInfo = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="mia-service-doc-check">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input type="checkbox"
+                   id="GetMIAServiceDocCheck"
+                   @bind="Parameters.GetMIAServiceDocCheck">
+            <label class="form__checkbox-label" for="GetMIAServiceDocCheck">
+                Запрос проверки паспорта в МВД
+            </label>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.GetMIAServiceDocCheck = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="mia-service-reg-check">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input type="checkbox"
+                   id="GetMIAServiceRegCheck"
+                   @bind="Parameters.GetMIAServiceRegCheck">
+            <label class="form__checkbox-label" for="GetMIAServiceRegCheck">
+                Запрос проверки регистрации в МВД
+            </label>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.GetMIAServiceRegCheck = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="tax-service-tax-num">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input type="checkbox"
+                   id="GetTaxServiceTaxNum"
+                   @bind="Parameters.GetTaxServiceTaxNum">
+            <label class="form__checkbox-label" for="GetTaxServiceTaxNum">
+                Запрос ИНН в ФНС
+            </label>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.GetTaxServiceTaxNum = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="tax-service-tax-num-check">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input type="checkbox"
+                   id="GetTaxServiceTaxNumCheck"
+                   @bind="Parameters.GetTaxServiceTaxNumCheck">
+            <label class="form__checkbox-label" for="GetTaxServiceTaxNumCheck">
+                Запрос проверки ИНН в ФНС
+            </label>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.GetTaxServiceTaxNumCheck = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="activity-navigator">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input type="checkbox"
+                   id="GetActivityNavigator"
+                   @bind="Parameters.GetActivityNavigator">
+            <label class="form__checkbox-label" for="GetActivityNavigator">
+                Запрос навигатора активности
+            </label>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.GetActivityNavigator = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="pfr-service-social-num-check">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input type="checkbox"
+                   id="GetPFRServiceSocialNumCheck"
+                   @bind="Parameters.GetPFRServiceSocialNumCheck">
+            <label class="form__checkbox-label" for="GetPFRServiceSocialNumCheck">
+                Запрос проверки СНИЛС в ПФР
+            </label>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.GetPFRServiceSocialNumCheck = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="report-with-bailiffs-debt-info">
+    <Authorized>
+        <div class="form__input form__checkbox check">
+            <input type="checkbox"
+                   id="GetReportWithBailiffsDebtInfo"
+                   disabled="@(Parameters.CreditReport || Parameters.GetBailiffsServiceDebtInfo)"
+                   @bind="Parameters.GetReportWithBailiffsDebtInfo">
+            <label class="form__checkbox-label @(Parameters.CreditReport || Parameters.GetBailiffsServiceDebtInfo ? "strike-through" : "")"
+                   for="GetReportWithBailiffsDebtInfo">
+                Запрос кредитного отчета и сервиса ФССП
+            </label>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.GetReportWithBailiffsDebtInfo = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="self-employment-service">
+    <Authorized>
+        <div class="form__checkbox-list">
+            <div class="form__input form__checkbox check">
+                <input type="checkbox"
+                       id="GetSelfEmployedCheck"
+                       @bind="Parameters.GetSelfEmployedCheck">
+                <label class="form__checkbox-label" for="GetSelfEmployedCheck">
+                    Запрос статуса самозанятого
+                </label>
+            </div>
+
+            @if (Parameters.GetSelfEmployedCheck)
+            {
+                <div class="form__checkbox-items">
+                    <div class="form__input">
+                        <div class="form__input-label">Дата проверки</div>
+                        <input
+                            type="text" data-format="00.00.0000"
+                            title="Дата в формате дд.мм.гггг"
+                            @bind="@Model.ResponseCapabilities.GetSelfEmployedCheck.CheckDate" required/>
+                    </div>
+                </div>
+            }
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        @{
+            Parameters.GetSelfEmployedCheck = false;
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    // TODO: вынести в отдельный класс
+    [Parameter]
+    public ParametersBureau Parameters { get; set; } = new();
+    
+    [Parameter]
+    public BureauRequestModel Model { get; set; } = new();
+
+    private void OnCreditReportChanged(ChangeEventArgs args)
+    {
+        Parameters.CreditReport = GetCheckedValue(args);
+
+        if (Parameters.CreditReport)
+        {
+            if (Parameters.CreditReportDetalization is < 0 or > 2)
+            {
+                Parameters.CreditReportDetalization = 0;
+            }
+
+            return;
+        }
+
+        Parameters.CreditReportDetalization = 3;
+        Parameters.GetReportWithAMP = false;
+    }
+
+    private void OnFmsChanged(ChangeEventArgs args)
+    {
+        Parameters.Fms = GetCheckedValue(args);
+
+        if (!Parameters.Fms)
+        {
+            Parameters.Fns = false;
+        }
+    }
+
+    private static bool GetCheckedValue(ChangeEventArgs args)
+    {
+        return args.Value is true;
+    }
+}

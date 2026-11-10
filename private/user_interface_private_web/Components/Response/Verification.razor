@@ -1,0 +1,173 @@
+﻿@if (Response.Descendants("PreScoringRating").Any())
+        {
+<div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+    <div class="status-popup__item-arrow dropdown-arrow">
+        <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+            <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+        </svg>
+    </div>
+    <div class="status-popup__item-title">Информация сервиса верификации</div>
+</div>
+@if (_show)
+{
+    <div class="document__caption">
+        <span class="document__table-icon">
+            <img class="image_icon" src="img/doc-id.svg" alt="">Результат сервиса верификации
+        </span>
+    </div>
+    @if (Response.Descendants("Group").Any())
+    {
+        <table class="document__table">
+            <thead style="background: #eaedf3;">
+                <tr>
+                    <td>Идентификатор группы</td>
+                    <td>Наименование</td>
+                    <td>Идентификатор подгруппы</td>
+                    <td>Наименование подгруппы</td>
+                    <td>Идентификатор статьи</td>
+                    <td>Год события</td>
+                    <td>Название статьи</td>
+                    <td>Модуль</td>
+                </tr>
+            </thead>
+            <tbody style="background: #fff;">
+                @foreach (var _item in Response.Descendants("Group").ToList() ?? new())
+                {
+                    int _rowspan = _item.Descendants("Article").Count();
+
+                    @foreach (var _subgroup in _item.Descendants("SubGroup"))
+                    {
+                        _rowspan = _item.Descendants("Article").Count();
+
+                        @foreach (var _article in _subgroup.Descendants("Article"))
+                        {
+                            var _module = _article.Attribute("Module")?.Value ?? "00000";
+
+                            <tr>
+                                <td>
+                                    @_item.Attribute("ID")?.Value
+                                </td>
+                                <td>
+                                    @_item.Attribute("Name")?.Value
+                                </td>
+
+                                <td>
+                                    @_subgroup.Attribute("ID")?.Value
+                                </td>
+                                <td>
+                                    @_subgroup.Attribute("Name")?.Value
+                                </td>
+
+                                <td>
+                                    @_article.Attribute("ID")?.Value
+                                </td>
+                                <td>
+                                    @_article.Attribute("EventYear")?.Value
+                                </td>
+                                <td>
+                                    @_article.Attribute("Name")?.Value
+                                </td>
+                                <td nowrap>
+                                    <span style="color: @(_module[0] == '1' ? "red" : "grey");">Л</span>
+                                    <span style="color:  @(_module[1] == '1' ? "red" : "grey");">Д</span>
+                                    <span style="color:  @(_module[2] == '1' ? "red" : "grey");">Т</span>
+                                    <span style="color:  @(_module[3] == '1' ? "red" : "grey");">А</span>
+                                    <span style="color:  @(_module[4] == '1' ? "red" : "grey");">И</span>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                }
+            </tbody>
+        </table>
+
+        <div class="document__caption">
+            <span class="document__table-icon">
+                <img class="image_icon" src="img/doc-id.svg" alt="">Результат поиска по сервису верификации
+            </span>
+        </div>
+    }
+    @if (Response.Descendants("SearchResult").Any())
+        {
+            var _result = Response.Descendants("Record");
+            
+            <table class="document__table">
+                <thead style="background: #eaedf3;">
+                    <tr>
+                        <td>ФИО, д.р. (<span style="color: green;">@_result?.Descendants("H")?.Where(_item => _item.Value.Equals("1"))?.Count()</span>/<span style="color: red;">@_result?.Descendants("H")?.Where(_item => _item.Value.Equals("-1"))?.Count()</span>)</td>
+                        <td>Документ (<span style="color: green;">@_result.Descendants("D").Where(_item => _item.Value.Equals("1")).Count()</span>/<span style="color: red;">@_result.Descendants("D").Where(_item => _item.Value.Equals("-1")).Count()</span>)</td>
+                        <td>Телефон (<span style="color: green;">@_result.Descendants("P").Where(_item => _item.Value.Equals("1")).Count()</span>/<span style="color: red;">@_result.Descendants("P").Where(_item => _item.Value.Equals("-1")).Count()</span>)</td>
+                        <td>Адрес (<span style="color: green;">@_result.Descendants("A").Where(_item => _item.Value.Equals("1")).Count()</span>/<span style="color: red;">@_result.Descendants("A").Where(_item => _item.Value.Equals("-1")).Count()</span>)</td>
+                        <td>ИНН (<span style="color: green;">@_result.Descendants("I").Where(_item => _item.Value.Equals("1")).Count()</span>/<span style="color: red;">@_result.Descendants("I").Where(_item => _item.Value.Equals("-1")).Count()</span>)</td>
+                        <td>Дата информации</td>
+                    </tr>
+                </thead>
+                <tbody style="background: #fff;">
+                    @foreach (var _item in Response.Descendants("Record").ToList() ?? new())
+                    {
+                        <tr>
+                            <td>
+                                <span style="color: @(_item.Element("H")!.Value.Equals("1") ? "green" : _item.Element("H")!.Value.Equals("-1") ? "red" : "grey");">@_item.Element("HT")?.Value</span>
+                            </td>
+                            <td>
+                                <span style="color: @(_item.Element("D")!.Value.Equals("1") ? "green" : _item.Element("D")!.Value.Equals("-1") ? "red" : "grey");">@_item.Element("DT")?.Value</span>
+                            </td>
+                            <td>
+                                <span style="color: @(_item.Element("P")!.Value.Equals("1") ? "green" : _item.Element("P")!.Value.Equals("-1") ? "red" : "grey");">@_item.Element("PT")?.Value</span>
+                            </td>
+                            <td>
+                                <span style="color: @(_item.Element("A")!.Value.Equals("1") ? "green" : _item.Element("A")!.Value.Equals("-1") ? "red" : "grey");">@_item.Element("AT")?.Value</span>
+                            </td>
+                            <td>
+                                <span style="color: @(_item.Element("I")!.Value.Equals("1") ? "green" : _item.Element("I")!.Value.Equals("-1") ? "red" : "grey");">@_item.Element("IT")?.Value</span>
+                            </td>
+                            <td>
+                                @_item.Element("CDate")?.Value
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+    
+
+
+
+    else
+    {
+        <span>Информация не найдена</span>
+    }
+
+}
+
+
+
+        }
+        else if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getVerificationService")?.Value?.ToLower().Equals("true") ?? false)
+        {
+<div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+    <div class="status-popup__item-arrow dropdown-arrow">
+        <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+            <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+        </svg>
+    </div>
+    <div class="status-popup__item-title">Информация сервиса верификации</div>
+</div>
+@if (_show)
+{
+    <span style="margin: 10px;">
+        Информация не найдена
+    </span>
+}
+}
+
+
+@code {
+    [Parameter] public XDocument Request { get; set; } = new XDocument(new XElement("REQUEST"));
+
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+
+    private bool _show = false;
+}

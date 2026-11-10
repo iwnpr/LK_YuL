@@ -1,0 +1,50 @@
+@if (Response.Descendants("SelfEmployedCheck").FirstOrDefault() is XElement result)
+{
+    <div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+        <div class="status-popup__item-arrow dropdown-arrow">
+            <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+            </svg>
+        </div>
+        <div class="status-popup__item-title">Сведения о проверке статуса самозанятого</div>
+    </div>
+    <div class="@(!_show ? "hidden" : "")">
+        <div class="document__caption">
+            <span class="document__table-icon">
+                <img class="image_icon" src="img/inn-grey.svg" alt="">Сведения о проверке статуса самозанятого
+            </span>
+        </div>
+        <table class="status__table table">
+            <thead style="background: #eaedf3;">
+                <tr>
+                    <td>Наименование</td>
+                    <td>Значение</td>
+                </tr>
+            </thead>
+            <tbody style="background: #fff;">
+                <tr>
+                    <td>Дата проверки</td>
+                    <td>@(result.Attribute("checkDate")?.Value ?? "-")</td>
+                </tr>
+                <tr>
+                    <td>Статус самозанятого</td>
+                    <td>@(result.Attribute("status")?.Value.Trim() switch
+                        {
+                            "true" or "1" => "Является самозанятым",
+                            "false" or "0" => "Не является самозанятым",
+                            _ => "-"
+                        })</td>
+                </tr>
+                <tr>
+                    <td>Сообщение</td>
+                    <td>@(result.Element("messageInfo")?.Value ?? "-")</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+    private bool _show = false;
+}

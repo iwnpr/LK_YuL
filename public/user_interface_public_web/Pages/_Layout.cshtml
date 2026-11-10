@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace user_interface_web.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html id="html" lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
+    <link rel="shortcut icon" href="/img/CreditInfo.svg" type="image/x-icon">
+    <link rel="stylesheet" href="/css/main_min.css">
+    <link href="user_interface_public_web.styles.css" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="Server" />
+</head>
+<body>
+    @RenderBody()
+
+    <script defer src="/js/cadesplugin_api.js"></script>
+    <script defer src="/js/certificate_request_async.js"></script>
+    <script defer src="/js/certificate_data.js"></script>
+    <script defer src="/js/imask.js"></script>
+    <script defer src="/js/date-mask.js"></script>
+    <script defer src="/js/methods.js"></script>
+    <script defer src="/js/crypto_info.js"></script>
+    <script src="_framework/blazor.server.js"></script>
+</body>
+</html>

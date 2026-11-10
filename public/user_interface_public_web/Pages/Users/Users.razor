@@ -1,0 +1,299 @@
+﻿@page "/users"
+@using System.Globalization
+@attribute [Authorize(Roles = "users")]
+
+<PageTitle>Пользователи</PageTitle>
+
+<CommentWindow InfoComment="@_comment" />
+
+<UserWindow Show="_popupShow" User="_user" Save="SaveChangesAsync" Accesses="_userAccesses" OnClose="@(() => _popupShow = false)" />
+
+<section class="organizations">
+    <div class="l-content">
+        <div class="organizations__top">
+            <h1 class="organizations__title title title--h1">Пользователи</h1>
+            @if (!_orgId.Equals(-1))
+            {
+                <a class="organizations__btn btn btn--green" @onclick=CreateUser>Новый пользователь</a>
+            }
+        </div>
+
+        <div class="form__input form__select">
+            <div class="form__input-label">Организация:</div>
+            <SelectionList ValuesList=@_organizations.ToDictionary(x => x.Id.ToString(), x => x.ShortName)
+                           OnChange="@OnOrganizationSelectedAsync"
+                           SelectionValue=@_organizations.FirstOrDefault(o => o.Id.Equals(_orgId))?.ShortName />
+        </div>
+        <div class="organizations__filters filters">
+            <div class="filters__top" @onclick="@(() => _filter = _filter.Equals("close") ? string.Empty : "close")">
+                <div class="filters__top-icon">
+                    <svg class="ico ico-mono-arrow-dropdown">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                    </svg>
+                </div>
+                <div class="filters__top-title">Фильтр</div>
+            </div>
+            <div class="filters__content  @_filter">
+                <form class="form">
+                    <div class="form__inputs">
+                        <div class="form__input">
+                            <div class="form__input-label">Индетификатор:</div>
+                            <input type="text" @bind=_id>
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">Фамилия:</div>
+                            <input type="text" @bind=_lastname>
+                        </div>
+                        @* <div class="form__input">
+                        <div class="form__input-label">Роль:</div>
+                        <Selection
+                        ValuesList=@_rolesText
+                        OnChange=@((value) => roleType = value)
+                        SelectionValue=@roleType />
+                        </div>
+                        <div class="form__input">
+                        <div class="form__input-label">Логин:</div>
+                        <input type="text" @bind=login>
+                        </div>*@
+                        <div class="form__input">
+                            <div class="form__input-label">Имя:</div>
+                            <input type="text" @bind=_firstname>
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">Email:</div>
+                            <input type="text" @bind=_email>
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">Дата создания:</div>
+                            <input type="text">
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">Отчество:</div>
+                            <input type="text" @bind=_middlename>
+                        </div>
+                        <div class="form__input">
+                            <div class="form__input-label">Телефон:</div>
+                            <input type="text" @bind=_phone>
+                        </div>
+                    </div>
+                    <div class="form__btns">
+                        <button class="form__btn btn" type="reset">Очистить</button>
+                        <button class="form__btn btn btn--green" type="button" @onclick=OnFilterSubmit>Применить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <TableUsers Users="_users" OnUserSelect="UserDetailsAsync" />
+    </div>
+</section>
+
+@code {
+    /// <summary>
+    /// Комментарий для информационного модального окна
+    /// </summary>
+    private Comment _comment = new Comment(false, string.Empty, string.Empty, string.Empty);
+
+    private Answer _error = new Answer(300, "error");
+
+    /// <summary>
+    /// Идентификатор организации
+    /// </summary>
+    private int _orgId;
+
+    /// <summary>
+    /// Список пользователей организации
+    /// </summary>
+    private List<DBUser> _users = new List<DBUser>();
+
+    /// <summary>
+    /// Список организаций
+    /// </summary>
+    private List<DBOrganization> _organizations = new();
+
+    /// <summary>
+    /// Отображение параметров фильтрации
+    /// </summary>
+    private string _filter = "close";
+
+    /// <summary>
+    /// Права доступа организации
+    /// </summary>
+    private List<DBUserAccess> _orgServices = new List<DBUserAccess>();
+
+    /// <summary>
+    /// Создание|обновление пользователя
+    /// </summary>
+    private bool _isCreatingUser = false;
+
+    /// <summary>
+    /// Текущий пользователь
+    /// </summary>
+    private DBUser _user = new();
+
+    /// <summary>
+    /// Отображение модального окна параметров организации
+    /// </summary>
+    private bool _popupShow = false;
+
+    /// <summary>
+    /// Права доступа пользователя
+    /// </summary>
+    private List<DBUserAccess> _userAccesses = new();
+
+    //TODO вынести в отдельный класс
+    /// <summary>
+    /// Параметры для фильтрации
+    /// </summary>
+    private string _id = string.Empty;
+    private string _lastname = string.Empty;
+    private string _firstname = string.Empty;
+    private string _middlename = string.Empty;
+    private string _email = string.Empty;
+    private string _phone = string.Empty;
+    private string _roleType = string.Empty;
+    private List<DBUser> _usersTmp = new List<DBUser>();
+
+    /// <summary>
+    /// Инициализация компонента
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+        var _id = (await _session.GetAsync<int>("OrgId"));
+
+        _orgId = _id.Success ? _id.Value : 1;
+
+        _organizations = await _orgMngr.GetListAsync();
+
+        _users = await _userMngr.GetListAsync(_orgId);
+
+        _usersTmp.AddRange(_users);
+    }
+
+    /// <summary>
+    /// Добавление нового пользователя
+    /// </summary>
+    /// <returns></returns>
+    private async Task CreateUser()
+    {
+        _isCreatingUser = true;
+
+        _user = new() { Email = string.Empty, Login = string.Empty, LastName = string.Empty, FirstName = string.Empty, Password = _stringMngr.CreateCode(10), OrganizationId = _orgId };
+
+        _userAccesses =
+            (await _orgMngr.GetAccessesAsync(_orgId))
+            .Where(a => a.Access)
+            .Select(a => new DBUserAccess() { Id = a.Id, Access = false, Comment = a.Comment, ServiceName = a.ServiceName, ServiceId = a.ServiceId })
+            .ToList();
+
+        _popupShow = true;
+    }
+
+    /// <summary>
+    /// Обработка события выбора организации
+    /// </summary>
+    /// <param name="value">Наименование оргнаизации</param>
+    /// <returns></returns>
+    private async Task OnOrganizationSelectedAsync(string value)
+    {
+        _orgId = _organizations.Where(org => org.ShortName.Equals(value)).FirstOrDefault()!.Id;
+
+        //Получаем список пользователей
+        _users = await _userMngr.GetListAsync(_orgId);
+    }
+
+    /// <summary>
+    /// Фильтрация пользователей по параметрам
+    /// </summary>
+    /// <returns>Результат фильтрации</returns>
+    private void OnFilterSubmit()
+    {
+        _users.Clear();
+
+        _users.AddRange(_usersTmp);
+
+        if (!string.IsNullOrEmpty(_id))
+            _users = _users.Where(u => u.Id.ToString().Contains(_id, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+        if (!string.IsNullOrEmpty(_lastname))
+            _users = _users.Where(u => u.LastName.Contains(_lastname, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+        if (!string.IsNullOrEmpty(_firstname))
+            _users = _users.Where(u => u.FirstName.Contains(_firstname, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+        /*
+        if (!string.IsNullOrEmpty(roleType))
+            _users = _users.Where(u => u.Role.Contains(roleType, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        */
+
+        if (!string.IsNullOrEmpty(_middlename))
+            _users = _users.Where(u => u.MiddleName?.Contains(_middlename, StringComparison.InvariantCultureIgnoreCase) ?? false).ToList();
+
+        if (!string.IsNullOrEmpty(_email))
+            _users = _users.Where(u => u.Email.Contains(_email, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+        if (!string.IsNullOrEmpty(_phone))
+            _users = _users.Where(u => u.Phone?.Contains(_phone, StringComparison.InvariantCultureIgnoreCase) ?? false).ToList();
+
+    }
+
+    /// <summary>
+    /// Открываем модальное окно для обновления данных пользователя
+    /// </summary>
+    /// <param name="id">Идентификатор пользователя</param>
+    /// <returns></returns>
+    private async Task UserDetailsAsync(int id)
+    {
+        _isCreatingUser = false;
+
+        //Определяем пользователя для изменения
+        _user = (await _userMngr.GetAsync(id))!;
+
+        var _rigths = await _userMngr.GetAccessesAsync(id);
+
+        _userAccesses =
+            (await _orgMngr.GetAccessesAsync(_user.OrganizationId))
+            .Where(a => a.Access)
+            .Select(a => new DBUserAccess() { Id = a.Id, Access = (_rigths.FirstOrDefault(u => u.ServiceId.Equals(a.ServiceId))?.Access ?? false), Comment = a.Comment, ServiceName = a.ServiceName, ServiceId = a.ServiceId })
+            .ToList();
+
+        //Открываем модальное окно для правки
+        _popupShow = true;
+    }
+
+    /// <summary>
+    /// Сохранение параметров пользователя
+    /// </summary>
+    /// <returns></returns>
+    private async Task SaveChangesAsync()
+    {
+        //Проверка правильности введенных данных
+        _error = _validator.Check(_user);
+
+        if (!_error.Code.Equals(200))
+        {
+            _comment = new(true, "error", "Регистрация пользователя", _error.Message);
+            return;
+        }
+
+        _error = _isCreatingUser ? await _userMngr.InsertAsync(_user, _userAccesses) : await _userMngr.UpdateAsync(_user, _userAccesses);
+
+        if (!_error.Code.Equals(200))
+        {
+            _comment = new Comment(true, "error", "Ошибка создания | обновления пользователя!", _error.Message);
+            return;
+        }
+
+        //Выводим сообщение пользователю
+        _comment = new Comment(true, "ok", "Создание | обновление пользователя!", _error.Message);
+
+        //Получаем список пользователей
+        _users = await _userMngr.GetListAsync(_orgId);
+
+        _usersTmp.Clear();
+        _usersTmp.AddRange(_users);
+
+        _popupShow = false;
+    }
+
+}

@@ -1,0 +1,268 @@
+﻿@page "/diagnostic"
+@using System.Security.Cryptography.X509Certificates
+@attribute [Authorize]
+
+<PageTitle>Диагностика</PageTitle>
+
+
+<CommentWindow InfoComment="_comment" />
+
+@if (_show)
+        {
+<div class="fancybox-container fancybox-is-open fancybox-can-swipe" role="dialog" tabindex="-1" id="fancybox-container-1" style="transition-duration: 366ms;">
+    <div class="fancybox-bg"></div><div class="fancybox-inner">
+        <div class="fancybox-infobar">
+            <span data-fancybox-index="">1</span>&nbsp;/&nbsp;
+            <span data-fancybox-count="">1</span>
+        </div>
+        <div class="fancybox-toolbar compensate-for-scrollbar">
+            <button data-fancybox-zoom="" class="fancybox-button fancybox-button--zoom" title="Zoom" disabled="">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.7 17.3l-3-3a5.9 5.9 0 0 0-.6-7.6 5.9 5.9 0 0 0-8.4 0 5.9 5.9 0 0 0 0 8.4 5.9 5.9 0 0 0 7.7.7l3 3a1 1 0 0 0 1.3 0c.4-.5.4-1 0-1.5zM8.1 13.8a4 4 0 0 1 0-5.7 4 4 0 0 1 5.7 0 4 4 0 0 1 0 5.7 4 4 0 0 1-5.7 0z"></path></svg>
+            </button>
+            <button data-fancybox-play="" class="fancybox-button fancybox-button--play" title="Start slideshow" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 5.4v13.2l11-6.6z"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.33 5.75h2.2v12.5h-2.2V5.75zm5.15 0h2.2v12.5h-2.2V5.75z"></path></svg>
+            </button>
+            <button data-fancybox-thumbs="" class="fancybox-button fancybox-button--thumbs" title="Thumbnails" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.59 14.59h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76H5.65V5.65z"></path></svg>
+            </button>
+            <button data-fancybox-close="" class="fancybox-button fancybox-button--close" title="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 10.6L6.6 5.2 5.2 6.6l5.4 5.4-5.4 5.4 1.4 1.4 5.4-5.4 5.4 5.4 1.4-1.4-5.4-5.4 5.4-5.4-1.4-1.4-5.4 5.4z"></path></svg>
+            </button>
+        </div>
+        <div class="fancybox-navigation"><button data-fancybox-prev="" class="fancybox-button fancybox-button--arrow_left" title="Previous" disabled=""><div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.28 15.7l-1.34 1.37L5 12l4.94-5.07 1.34 1.38-2.68 2.72H19v1.94H8.6z"></path></svg></div></button><button data-fancybox-next="" class="fancybox-button fancybox-button--arrow_right compensate-for-scrollbar" title="Next" disabled=""><div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.4 12.97l-2.68 2.72 1.34 1.38L19 12l-4.94-5.07-1.34 1.38 2.68 2.72H5v1.94z"></path></svg></div></button></div><div class="fancybox-stage">
+            <div class="fancybox-slide fancybox-slide--html fancybox-slide--current fancybox-slide--complete" style="">
+                <div class="popup popup-certificate fancybox-content" id="popup-certificate" style="display: inline-block;">
+                    <!--!--><div class="popup__top">
+                        <div class="popup__top-icon"><svg class="ico ico-mono-new-request"><use xlink:href="img/sprite-mono.svg#ico-mono-new-request"></use></svg></div>
+                        <div class="popup__top-title">Информации о сертификате</div>
+                    </div>
+                    <div class="popup__content">
+                        <form class="form">
+                            <div class="popup__step" data-step="2">
+                                <div class="form__inputs">
+                                    <div class="form__input">
+                                        <div class="form__input-label">Серийный номер</div>
+                                        <input type="email" name="email" disabled value="@_certificate.SerialNumber">
+                                    </div>
+                                    <div class="form__input">
+                                        <div class="form__input-label">Алгоритм подписи</div>
+                                        <input type="text" name="certificate_name" value="@_certificate.Algorithm" disabled>
+                                    </div>
+                                    <div class="form__input">
+                                        <div class="form__input-label">Издатель</div>
+                                        <input type="text" name="algorythm" value="@_certificate.IssuerName" disabled>
+                                    </div>
+                                    <div class="form__input">
+                                        <div class="form__input-label">Отпечаток</div>
+                                        <input type="text" name="country_code" value="@_certificate.Thumbprint" disabled>
+                                    </div>
+                                    <div class="form__input">
+                                        <div class="form__input-label">Выдан</div>
+                                        <input type="text" name="city" value="@DateTime.Parse(_certificate.ValidFromDate).ToString("dd.MM.yyyy HH:mm")" disabled>
+                                    </div>
+                                    <div class="form__input">
+                                        <div class="form__input-label">Действителен до</div>
+                                        <input type="text" name="city" value="@DateTime.Parse(_certificate.ValidToDate).ToString("dd.MM.yyyy HH:mm")" disabled>
+                                    </div>
+                                    <div class="form__input">
+                                        <div class="form__input-label">Субъект</div>
+                                        <input type="text" name="city" value="@_certificate.SubjectName" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form__btns">
+                                <button data-fancybox-close class="form__btn btn btn--green" type="button" @onclick="(() => _show = false)">Закрыть</button>
+                            </div>
+                        </form>
+                    </div>
+                    <button type="button" data-fancybox-close="" class="fancybox-button fancybox-close-small" title="Close" @onclick="(() => _show = false)">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1" viewBox="0 0 24 24"><path d="M13 12l5-5-1-1-5 5-5-5-1 1 5 5-5 5 1 1 5-5 5 5 1-1z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div><div class="fancybox-caption fancybox-caption--separate"><div class="fancybox-caption__body"></div></div>
+    </div>
+</div>
+        }
+
+<section class="sign">
+    <div class="l-default">
+        <h1 class="parameters__title title title--h1">Диагностика</h1>
+
+        <div class="caption">Параметры подключения</div>
+
+        <div class="sign__platform">
+            <div class="sign__platform-text"><strong>IP-адрес:</strong> @_connection?.IpAddress</div>
+            <div class="sign__platform-text"><strong>UserAgent:</strong> @* @_connection?.UserAgent *@ @_agent </div>
+            @* <div class="sign__platform-text"><strong>Сертификат:</strong> @_connection?.SerialNumber</div> *@
+        </div>
+
+        <div class="caption">Информация об установленном плагине</div>
+
+        <div class="sign__platform">
+            <div class="sign__platform-text"><strong>Криптопровайдер:</strong> @_info?.PluginInfo?.CSPName</div>
+            <div class="sign__platform-text"><strong>Версия плагина:</strong> @_info?.PluginInfo?.CurrentPluginVersion</div>
+            <div class="sign__platform-text"><strong>Версия криптопровайдера:</strong> @_info?.PluginInfo?.Version</div>
+        </div>
+
+        <div class="caption">Информация о КриптоПро</div>
+
+        <div class="sign__platform">
+            <div class="sign__platform-text"><strong>Серийный номер:</strong> @_info?.CryptoProInfo?.SerialNumber</div>
+            <div class="sign__platform-text"><strong>Срок действия:</strong> @_info?.CryptoProInfo?.ValidTo</div>
+            <div class="sign__platform-text"><strong>Дата установки:</strong> @_info?.CryptoProInfo?.FirstInstall</div>
+            <div class="sign__platform-text"><strong>Тип лицензии:</strong> @_info?.CryptoProInfo?.LicType</div>
+            <div class="sign__platform-text"><strong>Организация:</strong> @_info?.CryptoProInfo?.CompanyName</div>
+        </div>
+
+        <div class="sign__sertificates">
+            <div class="caption">Сертификаты</div>
+            <div class="sign__sertificates-content">
+                @foreach (var item in _certificates)
+        {
+                @if (true)
+                {
+                    DateTime.TryParse(item.ValidToDate, out DateTime _validTo);
+                    <div class="sign__sertificates-item" @onclick=@(() => { _certificate = item; _show = true; })>
+                        <div class="sign__sertificates-icon"><img src="img/svg/@(_validTo > DateTime.Now ? "checked-border.svg" : "x.svg")"></div>
+                        <div class="sign__sertificates-title">@item.SubjectName.Split(", ").First(_cn => _cn.Contains("CN=")).Replace("CN=", "") </div>
+                        <div class="sign__sertificates-text">Действителен до: @DateTime.Parse(item.ValidToDate).ToString("dd.MM.yyyy HH:mm")</div>
+                    </div>
+                }
+        }
+
+            </div>
+        </div>
+
+
+        <div class="sign__sertificates" style="margin-top:29px;">
+            <div class="caption">Необходимое ПО</div>
+            <div class="sign__sertificates-content">
+                <div class="sign__sertificates-item">
+                    <div class="sign__uploads-icon"> <img src="img/Yandex.Browser_icon.svg" width="24" alt=""></div>
+                    <div class="sign__uploads-title">Yandex браузер</div>
+                    <div class="sign__uploads-subtitle"></div>
+                    <div class="sign__uploads-input sign__uploads-input--green" @onclick="@(() => _jsr.InvokeVoidAsync("open", $"{_configuration.GetSection("Links:Yandex").Value}", "_blank"))">
+                        <span>Скачать</span>
+                    </div>
+                </div>
+
+                <div class="sign__sertificates-item">
+                    <div class="sign__uploads-icon"> <img src="img/Chromium_Logo.svg" width="24" alt=""></div>
+                    <div class="sign__uploads-title">Chrome GOST</div>
+                    <div class="sign__uploads-subtitle"></div>
+                    <div class="sign__uploads-input sign__uploads-input--green" @onclick="@(() => _jsr.InvokeVoidAsync("open", $"{_configuration.GetSection("Links:Chromium").Value}", "_blank"))">
+                        <span>Скачать</span>
+                    </div>
+                </div>
+
+                <div class="sign__sertificates-item">
+                    <div class="sign__uploads-icon"><img src="img/svg/danger.svg" alt=""></div>
+                    <div class="sign__uploads-title">КриптоПро ЭЦП Browser plug-in</div>
+                    <div class="sign__uploads-subtitle"></div>
+                    <div class="sign__uploads-input sign__uploads-input--green" @onclick="@(() => _jsr.InvokeVoidAsync("open", $"{_configuration.GetSection("Links:BrowserPlugIn").Value}", "_blank"))">
+                        <span>Скачать</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</section>
+
+@code {
+    // Информация о Крипто-Про и Плагина
+    private Info _info = new Info() { PluginInfo = new Plugin(), CryptoProInfo = new CryptoPro() };
+
+    /// <summary>
+    /// Список установленных сертификатов
+    /// </summary>
+    private List<UserCertificate> _certificates = new();
+
+    /// <summary>
+    /// User-Agent (браузер)
+    /// </summary>
+    private string _agent = string.Empty;
+
+    /// <summary>
+    /// Текущий сертификат
+    /// </summary>
+    private UserCertificate _certificate = new UserCertificate();
+
+    private bool _show = false;
+
+    private ConnectionParameters? _connection;
+
+    /// <summary>
+    /// Результат обработки метода
+    /// </summary>
+    private Answer _answer = new(300, "");
+
+
+    /// <summary>
+    /// Содержимое модального окна
+    /// </summary>
+    private Comment _comment = new(false, string.Empty, string.Empty, string.Empty);
+
+
+    protected override async Task OnInitializedAsync()
+    {
+    try
+    {
+        _connection = JsonSerializer.Deserialize<ConnectionParameters>((await _session.GetAsync<string>("Connection")).Value!);
+    }
+    catch
+    {
+        _navigator.NavigateTo("/");
+        return;
+    }
+
+    _agent = await _jsr.InvokeAsync<string>("GetUserAgent");
+
+    //Получаем данные о КриптоПро и сертификатах
+    try
+    {
+        _answer = await _jsr.InvokeAsync<Answer>("GetCryptoProInfoAsync");
+
+        if (!_answer.Code.Equals(200))
+        {
+            _comment = new(true, "error", "Диагностика", $"При получении данных о КриптоПро возникла ошибка: {_answer.Message}");
+            return;
+        }
+
+        _info = JsonSerializer.Deserialize<Info>(_answer.Message) ?? new Info() { PluginInfo = new Plugin(), CryptoProInfo = new CryptoPro() };
+
+        _answer = await _jsr.InvokeAsync<Answer>("GetListOfCertificateAsync");
+    }
+    catch (Exception _ex)
+    {
+        _comment = new(true, "error", "Диагностика", $"При получении данных о КриптоПро возникла ошибка: {_ex.Message}");
+        return;
+    }
+
+    try
+    {
+        _answer = await _jsr.InvokeAsync<Answer>("GetListOfCertificateAsync");
+
+        if (!_answer.Code.Equals(200))
+        {
+            _comment = new(true, "error", "Диагностика", $"При получении списка установленных сертификатов возникла ошибка: {_answer.Message}");
+            return;
+        }
+
+        _certificates = JsonSerializer.Deserialize<List<UserCertificate>>(_answer.Message) ?? new();
+
+    }
+    catch (Exception _ex)
+    {
+        _comment = new(true, "error", "Диагностика", $"При получении списка установленных сертификатов возникла ошибка: {_ex.Message}");
+        return;
+    }
+
+    }
+
+
+
+}

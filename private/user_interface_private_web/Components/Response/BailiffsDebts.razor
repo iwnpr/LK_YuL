@@ -1,0 +1,246 @@
+﻿@if (Response.Descendants("BailiffsServiceDebtInfo").Any())
+        {
+<div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+    <div class="status-popup__item-arrow dropdown-arrow">
+        <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+            @*transition: 0.3s;*@
+            <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+        </svg>
+    </div>
+    <div class="status-popup__item-title">Информация о долгах физического лица</div>
+</div>
+<div class="@(!_show ? "hidden" : "")">
+    <div class="document__caption">Итоговая информация</div>
+    <table class="status__table table">
+        <thead style="background: #eaedf3;">
+            <tr>
+                <td>Наименование</td>
+                <td>Значение</td>
+            </tr>
+        </thead>
+        <tbody style="background: #fff;">
+            <tr>
+                <td>Всего долгов</td>
+                <td>
+                    @(
+                        Response.Descendants("Debts")?.FirstOrDefault()?.Attribute("Count")?.Value ?? "0"
+                        )
+                </td>
+            </tr>
+            <tr>
+                <td>Общая сумма</td>
+                <td>
+                    @(
+                        Response.Descendants("Debts")?.FirstOrDefault()?.Attribute("Amount")?.Value ?? "0"
+                        )
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+        @foreach (var _item in Response.Descendants("BailiffsServiceDebtInfo").FirstOrDefault()?.Descendants("Debt").ToList() ?? new())
+    {
+        <div class="document__caption">
+            <span class="document__table-icon">
+                Исполнительное производство
+            </span>
+        </div>
+
+        <table class="status__table table">
+            <thead style="background: #eaedf3;">
+                <tr>
+                    <td>Наименование</td>
+                    <td>Значение</td>
+                </tr>
+            </thead>
+            <tbody style="background: #fff;">
+                <tr>
+                    <td>Фамилия, имя, отчество, дата рождения</td>
+                    <td>
+                        @(
+                            _item.Element("Person")?.Attribute("LastName")?.Value ?? "-"
+                            )
+                        @(
+                            _item.Element("Person")?.Attribute("FirstName")?.Value ?? "-"
+                            )
+                        @(
+                            _item.Element("Person")?.Attribute("MiddleName")?.Value ?? "-"
+                            ),
+                        @(
+                            _item.Element("Person")?.Attribute("BirthDate")?.Value ?? "-"
+                            )
+                    </td>
+                </tr>
+                @if (_item.Element("Document") is not null)
+                {
+                    <tr>
+                        <td>Документ</td>
+                        <td>
+                            @(
+                                _item.Element("Document")?.Attribute("Series")?.Value
+                                ) @(
+                              _item.Element("Document")?.Attribute("Number")?.Value
+                              )
+                        </td>
+                    </tr>
+                }
+                @foreach (var _element in _item.Descendants("ExecutoryProcess") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td>Запись исполнительного производства</td>
+                        <td>
+                            @(
+                                _element.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Дата исполнительного производства</td>
+                        <td>
+                            @(
+                                _element.Attribute("Date")?.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                }
+                @foreach (var _element in _item.Descendants("ExecutiveDocument") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td>Реквизиты исполнительного документа</td>
+                        <td>
+                            @(
+                                _element.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Дата исполнительного документа</td>
+                        <td>
+                            @(
+                                _element.Attribute("Date")?.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                }
+                @foreach (var _element in _item.Descendants("Payment") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td>Информация о предмете исполнения</td>
+                        <td>
+                            @(
+                                _element.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Сумма предмета исполнения</td>
+                        <td>
+                            @(
+                                _element.Attribute("Amount")?.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Причина предмета исполнения</td>
+                        <td>
+                            @(
+                                _element.Attribute("Reason")?.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Штраф ШПИ</td>
+                        <td>
+                            @(
+                                _element.Attribute("Fine")?.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Начальная сумма задолженности</td>
+                        <td>
+                            @(
+                                _element.Attribute("Initial")?.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                }
+                @foreach (var _element in _item.Descendants("ExecutoryProcessCancellation") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td>Дата, причина завершения исполнительного производства</td>
+                        <td>
+                            @(
+                                _element.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Дата завершения исполнительного производства</td>
+                        <td>
+                            @(
+                                _element.Attribute("Date")?.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Основание завершения исполнительного производства</td>
+                        <td>
+                            @(
+                                _element.Attribute("Reason")?.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                }
+                @foreach (var _element in _item.Descendants("DepartmentAddress") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td>Информация об отделе судебных приставов</td>
+                        <td>
+                            @(
+                                _element.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                }
+                @foreach (var _element in _item.Descendants("Bailiff") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td>Судебный пристав-исполнитель</td>
+                        <td>
+                            @(
+                                _element.Value ?? "-"
+                                )
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @*</div>*@
+    }
+</div>
+        }
+        else if (Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getBailiffsServiceDebtInfo")?.Value.Equals("true") ?? false)
+        {
+<div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+    <div class="status-popup__item-arrow dropdown-arrow">
+        <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+            @*transition: 0.3s;*@
+            <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+        </svg>
+    </div>
+    <div class="status-popup__item-title">Информация о долгах физического лица</div>
+</div>
+<div class="@(!_show ? "hidden" : "")">
+    <span style="margin: 10px;">
+        Информация не найдена
+    </span>
+</div>
+        }
+
+
+@code {
+    [Parameter] public XDocument Request { get; set; } = new XDocument(new XElement("REQUEST"));
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+    private bool _show = false;
+}

@@ -1,0 +1,281 @@
+﻿@layout PrintFormLayout
+@page "/print_request/{Id}"
+@using System.Security.Cryptography.X509Certificates
+@using Org.BouncyCastle.Asn1.Pkcs
+@using Org.BouncyCastle.Pkcs
+@using System.Security.Cryptography
+@using Org.BouncyCastle.OpenSsl;
+
+@attribute [Authorize]
+
+<PageTitle>Форма запроса на сертификат</PageTitle>
+
+@if (_request is not null)
+{
+    <main class="main">
+        <div class="document__content">
+            <!-- Страница 1-->
+            <div class="document__item">
+                <div class="document__logo"> <img src="img/logo.svg" alt=""></div>
+                <div class="document__top">
+                    <h1 class="document__title document__title--h1">Запрос на сертификат</h1>
+                </div>
+                <div class="document__info">
+                    <div class="document__info-left">
+                        <div class="document__info-text">Исх. <strong>№@_request.Id</strong> от <strong>@_request.Inserted.ToString("dd.MM.yyyy") г.</strong></div>
+                    </div>
+                    <div class="document__info-right">Руководителю Удостоверяющего Центра ООО «БКИ КредитИнфо»</div>
+                </div>
+                <div class="document__address">107061, г. Москва, Преображенская площадь, д. 8, тел. +7 (495) 609-64-24</div>
+                <h2 class="document__title document__title--h2 document__title--red">Заявка на создание сертификата проверки подлинности клиента посредством запроса в формате PKCS #10</h2>
+                <h3 class="document__caption">Сведения о клиенте</h3>
+                <div class="document__list">
+                    <div class="document__list-item">
+                        <table class="document__list-content">
+                            <tbody>
+                                <tr>
+                                    <td class="document__list-icon"><img src="img/house.svg" alt=""></td>
+                                    <td class="document__columns">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="document__column">
+                                                        <div class="document__row">
+                                                            <div class="document__row-title">Индентификатор клиента:</div>
+                                                            <div class="document__row-text">@_user!.OrganizationId</div>
+                                                        </div>
+                                                        <div class="document__row">
+                                                            <div class="document__row-title">Название организации:</div>
+                                                            <div class="document__row-text">@_user.Organization.FullName</div>
+                                                        </div>
+                                                        <div class="document__row">
+                                                            <div class="document__row-title">Краткое название организации:</div>
+                                                            <div class="document__row-text">@_user.Organization.ShortName</div>
+                                                        </div>
+                                                        <div class="document__row">
+                                                            <div class="document__row-item">
+                                                                <div class="document__row-title">ИНН организации:</div>
+                                                                <div class="document__row-text">@_user.Organization.Itn</div>
+                                                            </div>
+                                                            <div class="document__row-item">
+                                                                <div class="document__row-title">ОГРН организации:</div>
+                                                                <div class="document__row-text">@_user.Organization.Psrn</div>
+                                                            </div>
+                                                            <div class="document__row-item">
+                                                                <div class="document__row-title">ОКПО организации:</div>
+                                                                <div class="document__row-text">@_user.Organization.OKPO</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <h3 class="document__caption">Пользователь клиента</h3>
+                <div class="document__list">
+                    <div class="document__list-item">
+                        <table class="document__list-content">
+                            <tbody>
+                                <tr>
+                                    <td class="document__list-icon"><img src="img/person.svg" alt=""></td>
+                                    <td class="document__columns">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="document__column">
+                                                        <div class="document__row">
+                                                            <div class="document__row-item">
+                                                                <div class="document__row-title">Идентификатор Пользователя:</div>
+                                                                <div class="document__row-text">@_user.Id</div>
+                                                            </div>
+                                                            <div class="document__row-item">
+                                                                <div class="document__row-title">Имя: </div>
+                                                                <div class="document__row-text">@_user.LastName @_user.FirstName</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <h3 class="document__caption">Сведения из запроса на сертификат</h3>
+                <div class="document__list">
+                    <div class="document__list-item">
+                        <table class="document__list-content">
+                            <tbody>
+                                <tr>
+                                    <td class="document__list-icon"><img src="img/stamp.svg" alt=""></td>
+                                    <td class="document__columns">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="document__column">
+                                                        <div class="document__row">
+                                                            <div class="document__row-title">Идентификатор запроса:</div>
+                                                            <div class="document__row-text">@_request.Id</div>
+                                                        </div>
+                                                        <div class="document__row">
+                                                            <div class="document__row-title">Субъект запроса:</div>
+                                                            <div class="document__row-text">@_info!.Subject</div>
+                                                        </div>
+                                                        <div class="document__row">
+                                                            <div class="document__row-title">Криптографический алгоритм:</div>
+                                                            <div class="document__row-text">(@_info.SubjectPublicKeyInfo.Algorithm.Algorithm.Id)</div>
+                                                        </div>
+                                                        <div class="document__row">
+                                                            <div class="document__row-title">Идентификатор ключа:</div>
+                                                            <div class="document__row-text">@_info?.Attributes?.FirstOrDefault(attr => (attr?.ToString()?.Contains("2.5.29.14") ?? false))?.ToString()?.Split("2.5.29.14, #0414")?.LastOrDefault()?.Substring(0, 40)</div>
+                                                        </div>
+                                                        <div class="document__row">
+                                                            <div class="document__row-title">Открытый ключ:</div>
+                                                            <div class="document__row-text">@_publicKey</div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <h3 class="document__caption">Текст запроса на сертификат в формате «base64»</h3>
+                <div class="document__list">
+                    <div class="document__list-item">
+                        <table class="document__list-content">
+                            <tbody>
+                                <tr>
+                                    <td class="document__list-icon"><img src="img/list.svg" alt=""></td>
+                                    <td class="document__columns">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="document__column">
+                                                        <div class="document__row">
+                                                            <div class="document__row-report">@XDocument.Parse(_request.RequestData).Root!.Value</div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="document__bottom">
+                    <div class="document__bottom-left">
+                        <div class="document__bottom-text">исп. @(_user.FirstName[0]). @_user.LastName</div>
+                        <div class="document__bottom-text">тел. @(_user.Phone ?? "")</div>
+                    </div>
+                    <div class="document__bottom-right">
+                        <div class="document__bottom-name">Пользователь клиента  (владелец сертификата): <strong>@(_user.FirstName[0]). @_user.LastName</strong></div>
+                        <hr>
+                        <div class="document__bottom-name">Администратор Клиента (уполномоченное лицо): <strong>______________________</strong></div>
+                        <div class="document__bottom-sign">
+                            <div class="document__bottom-position">Руководитель подразделения безопасностиx</div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+}
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    /// <summary>
+    /// Пользователь
+    /// </summary>
+    private DBUser? _user;
+
+    /// <summary>
+    /// Запрос на сертификат их БД
+    /// </summary>
+    private DBCertificate? _request;
+
+    /// <summary>
+    /// Информация о запросе сертификата
+    /// </summary>
+    private CertificationRequestInfo? _info;
+
+    /// <summary>
+    /// Открытый ключ клю
+    /// </summary>
+    private string _publicKey = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //Получаем данные пользователя
+        try
+        {
+            ProtectedBrowserStorageResult<string> _userJson = await _session.GetAsync<string>("User");
+
+            if (!_userJson.Success)
+            {
+                _navigator.NavigateTo("/");
+                return;
+            }
+            else
+            {
+                _user = JsonSerializer.Deserialize<DBUser>(_userJson.Value!);
+            }
+        }
+        catch
+        {
+            _user = null;
+            _navigator.NavigateTo("/");
+            return;
+        }
+
+        if (!int.TryParse(Id, out _))
+        {
+            _navigator.NavigateTo("404");
+            return;
+        }
+
+        //Получаем запрос на сертификат
+        _request = await _crtMngr.GetAsync(int.Parse(Id), _user!.Id);
+
+        if (_request is null)
+        {
+            _navigator.NavigateTo("404");
+            return;
+        }
+
+        byte[] _arr = Convert.FromBase64String(XDocument.Parse(_request.RequestData).Root!.Value.Replace("-----BEGIN NEW CERTIFICATE REQUEST-----", "").Replace("-----END NEW CERTIFICATE REQUEST-----", ""));
+        Pkcs10CertificationRequest _pkcs = new(_arr);
+
+        _info = _pkcs.GetCertificationRequestInfo();
+
+        var _key = _info.SubjectPublicKeyInfo.PublicKey.ToString().ToUpper();
+
+        _publicKey = StringTo(_key.Substring(7, _key.Length - 7));
+
+        await _jsr.InvokeVoidAsync("AddStyle");
+
+    }
+
+    private string StringTo(string value)
+    {
+        return string.Join(" ", value.Select((x, i) => i)
+                   .Where(i => i % 2 == 0)
+                      .Select(i => value.Substring(i, value.Length - i >= 2 ? 2 : value.Length - i)));
+
+    }
+
+}

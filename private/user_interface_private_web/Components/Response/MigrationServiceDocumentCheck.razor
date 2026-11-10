@@ -1,0 +1,102 @@
+﻿@if (Response.Descendants("MigrationServiceDocumentCheck").Any())
+        {
+<div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+    <div class="status-popup__item-arrow dropdown-arrow">
+        <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+            @*transition: 0.3s;*@
+            <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+        </svg>
+    </div>
+    <div class="status-popup__item-title">Рейтинг сервиса ФМС</div>
+</div>
+<div class="@(!_show ? "hidden" : "")">
+    @{
+        _xElement = Response.Descendants("MigrationServiceDocumentCheck").FirstOrDefault();
+    }
+    <div class="document__caption">
+        <span class="document__table-icon">
+            <img class="image_icon" src="img/doc-id.svg" alt="">Проверка паспорта в ФМС
+        </span>
+    </div>
+    <table class="status__table table">
+        <thead style="background: #eaedf3;">
+            <tr>
+                <td>Наименование</td>
+                <td>Значение</td>
+            </tr>
+        </thead>
+        <tbody style="background: #fff;">
+            <tr>
+                <td>Реквизиты паспорта</td>
+                <td>
+                    @(
+                        _xElement?.Element("Document")?.Attribute("Series")?.Value ?? "-"
+                        ) @(
+                      _xElement?.Element("Document")?.Attribute("Number")?.Value
+                      )
+                </td>
+            </tr>
+            <tr>
+                <td>Сведения из ФМС</td>
+                <td>
+                    @(
+                        _dictionary.DocumentStatus[_xElement?.Element("DocumentStatus")?.Attribute("Id")?.Value ?? "-"]
+                        )
+                </td>
+            </tr>
+            <tr>
+                <td>Реквизиты физического лица</td>
+                <td>
+                    @(
+                        _xElement?.Element("Person")?.Attribute("LastName")?.Value ?? "-"
+                        )
+                    @(
+                        _xElement?.Element("Person")?.Attribute("FirstName")?.Value ?? "-"
+                        )
+                    @(
+                        _xElement?.Element("Person")?.Attribute("MiddleName")?.Value ?? "-"
+                        ),
+                    @(
+                        _xElement?.Element("Person")?.Attribute("BirthDate")?.Value ?? "-"
+                        )
+                </td>
+            </tr>
+            <tr>
+                <td>Проверка связки + документ (ФНС)</td>
+                <td>
+                    @(
+                        _dictionary.DocumentStatus[_xElement?.Element("DocumentStatus")?.Attribute("Id")?.Value ?? "-"]
+                        )
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+        }
+        else if (!Request?.Root?.Element("BODY")?.Element("RequestAttributes")?.Element("ResponseCapabilities")?.Attribute("getMigrationServiceDocumentCheck")?.Value.Equals("0") ?? false)
+        {
+<div class="status-popup__item-top" @onclick="@(() => _show = !_show)">
+    <div class="status-popup__item-arrow dropdown-arrow">
+        <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show ? "180" : "360")deg);">
+            @*transition: 0.3s;*@
+            <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+        </svg>
+    </div>
+    <div class="status-popup__item-title">Рейтинг сервиса ФМС</div>
+</div>
+<div class="@(!_show ? "hidden" : "")">
+    <span style="margin: 10px;">
+        Информация не найдена
+    </span>
+</div>
+        }
+
+
+@code {
+    [Parameter] public XDocument Request { get; set; } = new XDocument(new XElement("REQUEST"));
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+    private bool _show = false;
+    private XElement? _xElement;
+
+}

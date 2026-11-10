@@ -1,0 +1,53 @@
+﻿<div class="documentation-develop__item">
+    <div class="documentation-develop__item-img">
+        <picture>
+            <source srcset="/img/documentation/@(Icon).webp" type="image/webp" />
+            <source srcset="/img/documentation/@(Icon).png" type="image/png" /><img src="/img/documentation/@(Icon).png" alt="lazy" />
+        </picture>
+    </div>
+    <div class="documentation-develop__item-info">
+        <div class="documentation-develop__item-doc">
+            <div class="documentation-develop__item-icon">
+                <svg class="ico ico-color-scheme">
+                    <use xlink:href="img/sprite-color.svg#ico-color-scheme"></use>
+                </svg>
+            </div>
+            @if (Directory.Exists(Folder))
+            {
+                _documents = Directory.GetFiles(Folder).ToList();
+            }
+            else
+            {
+                _documents = new();
+            }
+            <div class="documentation-develop__item-text">
+                @SchemeDescription (
+                @foreach (var _file in _documents)
+                {
+                    <a href="@(_file.Replace("wwwroot", string.Empty).Replace("\\", "/"))">@($"{Path.GetFileName(_file)}")</a>
+                    if (!_documents.IndexOf(_file).Equals(_documents.Count - 1))
+                    {
+                        <span>, </span>
+                    }
+                }
+                )
+            </div>
+        </div>
+        <div class="documentation-develop__item-doc">
+            <div class="documentation-develop__item-icon">
+                <svg class="ico ico-color-colors">
+                    <use xlink:href="img/sprite-color.svg#ico-color-colors"></use>
+                </svg>
+            </div>
+            <div class="documentation-develop__item-text">Порядок выполнения запросов</div>
+        </div>
+    </div>
+</div>
+
+@code{
+    private List<string> _documents { get; set; } = new();
+    [Parameter] public string Folder { get; set; } = string.Empty;
+    [Parameter] public string SchemeDescription { get; set; } = string.Empty;
+    [Parameter] public string Icon { get; set; } = string.Empty;
+
+}                    

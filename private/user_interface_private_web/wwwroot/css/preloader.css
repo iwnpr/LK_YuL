@@ -1,0 +1,82 @@
+/* Подложка белого цвета */
+.ciloader {
+	position: fixed;
+	width: 100%;
+	left: 0;
+	top: 0;
+	z-index: 12;
+	height: 100vh;
+	background: #fff;
+	margin: 95px 0px 0px 305px;
+}
+
+/* Подложка для прелоадера */
+.cipage-preloader {
+	top: calc(50% - 47px);
+	margin: -50px 0 0 -50px;
+	height: 100px;
+	width: 100px;
+	left: calc(50% - 152px);
+	position: absolute;
+	-webkit-animation: 100s linear infinite heartbeat;
+	//animation: 100s linear infinite heartbeat;
+	animation: heartbeat 1.4s linear infinite;
+	-webkit-transform: rotate(360deg);
+	-ms-transform: rotate(360deg);
+	transform: rotate(360deg);
+	z-index: 4;
+}
+
+/* Буква i в лого */
+.i_char {
+	margin: -52px 0 0 -52px;
+	fill: none;
+	stroke: #E73747;
+	stroke-width: 5.1944;
+	stroke-linecap: round;
+	stroke-miterlimit: 10.7768;
+}
+
+/* Кружок */
+.circle {
+	margin: -50px 0 0 -50px;
+	position: absolute;
+	fill: none;
+	stroke: #E73747;
+	stroke-width: 5.8087;
+	stroke-linecap: round;
+	stroke-miterlimit: 10.7768;
+}
+
+/* Анимация */
+@keyframes heartbeat {
+	0% {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+
+	10% {
+		-webkit-transform: scale(1.1);
+		transform: scale(1.1);
+	}
+
+	20% {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+
+	80% {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+
+	90% {
+		-webkit-transform: scale(1.1);
+		transform: scale(1.1);
+	}
+
+	100% {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+}

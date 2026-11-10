@@ -1,0 +1,393 @@
+﻿@page "/user-certificates"
+@using Org.BouncyCastle.Pkcs
+@attribute [Authorize]
+
+<PageTitle>Сертификаты пользователя</PageTitle>
+
+<CommentWindow InfoComment=_comment />
+<CascadingValue Name="Disabled" Value="_disabled">
+    <CertificateWindow Show="_popupShow" Request=_certificateRequest OnExecute=SendRequestAsync OnClose="@(() => _popupShow = false)" />
+</CascadingValue>
+<CascadingValue Name="Disabled" Value="_disabled">
+    <QuestionWindow Question="_question" OnAccept=CancelCertificateAsync />
+</CascadingValue>
+
+<section class="certificates">
+    <div class="l-content">
+        <h1 class="certificates__title title title--h1">Сертификаты</h1>
+        <div class="certificates__items">
+            <a class="certificates__item" @onclick=CreateNewRequest>
+                <div class="certificates__item-icon">
+                    <svg class="ico ico-mono-new-request">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-new-request"></use>
+                    </svg>
+                </div>
+                <div class="certificates__item-text">Новый запрос</div>
+            </a>
+            @* <a class="certificates__item" href="@($"{_configuration.GetSection("Links:CA").Value}/get-ca-cert.ashx")" download="ca.cer" target="_blank"> *@
+            <a class="certificates__item" @onclick="@(() => GetCertificateCA(false))">
+                <div class="certificates__item-icon">
+                    <svg class="ico ico-mono-download">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-download"></use>
+                    </svg>
+                </div>
+                <div class="certificates__item-text">Скачать текущий сертификат УЦ</div>
+            </a>
+            @* <a class="certificates__item" href="/files/CA.crl"> *@
+            <a class="certificates__item" @onclick="@(() => GetCertificateCA(true))">
+                <div class="certificates__item-icon">
+                    <svg class="ico ico-mono-list-icon">
+                        <use xlink:href="img/sprite-mono.svg#ico-mono-list-icon"></use>
+                    </svg>
+                </div>
+                <div class="certificates__item-text">Текущий список отозванных сертификатов УЦ</div>
+            </a>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Дата запроса</td>
+                    <td>Владелец</td>
+                    <td>Статус</td>
+                    <td>Действия</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var _cert in _certificates)
+                    {
+                <tr>
+                    <td>@_cert.Id</td>
+                    <td>@_cert.Inserted</td>
+                    <td>@_cert.Owner</td>
+                    <td>@_cert.Status.GetEnumDescription()</td>
+                    <td>
+                        <div class="table__icons">
+                            <div class="table__icon" @onclick="@(() => _jsr.InvokeVoidAsync("open", $"/print_request/{_cert.Id}", "_blank"))">
+                                <svg class="ico ico-mono-print">
+                                    <use xlink:href="img/sprite-mono.svg#ico-mono-print"></use>
+                                    <title>Печать запроса</title>
+                                </svg>
+                            </div>
+                            @if (_cert.Status.Equals(DBCertificateStatus.issued))
+    {
+                            <div class="table__icon" @onclick="@(() => SaveCertificateAsync(_cert.Id))">
+                                <svg class="ico ico-mono-upload">
+                                    <use xlink:href="img/sprite-mono.svg#ico-mono-upload"></use>
+                                    <title>Загрузить сертификат</title>
+                                </svg>
+                            </div>
+    }
+                            @if (_cert.Status.Equals(DBCertificateStatus.requested))
+    {
+                            <div class="table__icon" @onclick="@(() => ShowQuestionWindow(_cert.Id))">
+                                <svg class="ico ico-mono-setup">
+                                    <use xlink:href="img/sprite-mono.svg#ico-mono-setup"></use>
+                                    <title>Отменить сертификат</title>
+                                </svg>
+                            </div>
+    }
+                        </div>
+                    </td>
+                </tr>
+}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@code {
+    [CascadingParameter(Name = "Disabled")] public bool _disabled { get; set; } = false;
+
+/// <summary>
+/// Коллекция сертификатов пользователя
+/// </summary>
+private List<DBCertificate> _certificates = new();
+
+/// <summary>
+/// Пользователь
+/// </summary>
+private DBUser? _user;
+
+/// <summary>
+/// Информациооное окно
+/// </summary>
+private Comment _comment = new(false, string.Empty, string.Empty, string.Empty);
+
+/// <summary>
+/// Окно с вопросом
+/// </summary>
+private Comment _question = new(false, string.Empty, string.Empty, string.Empty);
+
+/// <summary>
+/// Запрос на сертификат
+/// </summary>
+private RequestCertificate _certificateRequest = new();
+
+/// <summary>
+/// Результат обработки
+/// </summary>
+private Answer _error = new(-1, "Ошибка обработки");
+
+/// <summary>
+/// Отображение окна запроса сертификата
+/// </summary>
+private bool _popupShow = false;
+
+/// <summary>
+/// Инициализация компонента
+/// </summary>
+/// <returns></returns>
+protected override async Task OnInitializedAsync()
+{
+    //Получаем данные пользователя
+    try
+    {
+    ProtectedBrowserStorageResult<string> _userJson = await _session.GetAsync<string>("User");
+
+    if (!_userJson.Success)
+    {
+        _user = null;
+    }
+    else
+    {
+        _user = JsonSerializer.Deserialize<DBUser>(_userJson.Value!);
+    }
+    }
+    catch
+    {
+    _user = null;
+    }
+
+    if (_user is null)
+    {
+    _navigator.NavigateTo("/");
+    return;
+    }
+
+    //Получаем список запросов на сертификаты
+    _certificates = await _crtMngr.GetListAsync(_user!.Id);
+
+    // Формируем данные для запроса сертификата
+    _certificateRequest = new()
+    {
+        Name = $"{_user.LastName} {_user.FirstName}{(_user.MiddleName == null ? String.Empty : " " + _user.MiddleName)}",
+        Code = "RU",
+        City = "Москва",
+        Email = _user.Email,
+        Organization = _user.Organization.ShortName,
+        OrganizationId = _user.OrganizationId,
+        UserId = _user.Id,
+        IsBase64 = false
+    };
+}
+
+/// <summary>
+/// Открытие модального окна для данных сертификата
+/// </summary>
+/// <returns></returns>
+private void CreateNewRequest()
+{
+    //Данные для запроса сертификата
+    _certificateRequest = new RequestCertificate
+    {
+        Name = $"{_user!.LastName} {_user.FirstName}{(_user.MiddleName == null ? String.Empty : " " + _user.MiddleName)}",
+        Code = "RU",
+        City = "Москва",
+        Email = _user.Email,
+        Organization = _user.Organization.ShortName,
+        OrganizationId = _user.OrganizationId,
+        UserId = _user.Id,
+
+    };
+
+    //Открываем модальное окно
+    _popupShow = true;
+}
+
+/// <summary>
+/// Формирование запроса на сертификат и загрузка в таблицу
+/// </summary>
+/// <returns></returns>
+private async Task SendRequestAsync()
+{
+    _disabled = true;
+
+    if (!_certificateRequest.IsBase64)
+    {
+    //Формируем строку с данными пользователя для сертификата
+    string sDistinguishedName = string.Empty;
+
+    if (!string.IsNullOrEmpty(_certificateRequest.Name)) sDistinguishedName = $"{_certificateRequest.Name};";
+
+    if (!string.IsNullOrEmpty(_certificateRequest.Email)) sDistinguishedName += $"{_certificateRequest.Email};";
+
+    if (!string.IsNullOrEmpty(_certificateRequest.Organization)) sDistinguishedName += $"{_certificateRequest.Organization};";
+
+    if (!string.IsNullOrEmpty(_certificateRequest.Code)) sDistinguishedName += $"{_certificateRequest.Code};";
+
+    if (!string.IsNullOrEmpty(_certificateRequest.City)) sDistinguishedName += $"{_certificateRequest.City};";
+
+    //ИНН
+    sDistinguishedName += $"{_user!.Organization.Itn};";
+    //ОГРН
+    sDistinguishedName += $"{_user!.Organization.Psrn}";
+
+    //Создаем запрос на серификат
+    try
+    {
+        _error = await _jsr.InvokeAsync<Answer>("GetCertificateRequestData", sDistinguishedName, "");
+    }
+    catch
+    {
+        _error = new(300, "Ошибка обработки запроса в js методе");
+    }
+
+    //Не удалось создать сертификат
+    if (!_error.Code.Equals(200))
+    {
+        _comment = new(true, "error", "Ошибка создания запроса сертификата!", _error.Message);
+        _disabled = false;
+        return;
+    }
+
+    _certificateRequest.Data = Environment.NewLine + System.Uri.UnescapeDataString(_error.Message);
+    }
+
+    try
+    {
+    byte[] _arr = Convert.FromBase64String(_certificateRequest.Data.Replace("-----BEGIN NEW CERTIFICATE REQUEST-----", "").Replace("-----END NEW CERTIFICATE REQUEST-----", "").Replace("-----BEGIN CERTIFICATE-----", "").Replace("-----END CERTIFICATE-----", ""));
+    Pkcs10CertificationRequest _pkcs = new(_arr);
+    }
+    catch
+    {
+    _comment = new(true, "error", "Ошибка создания запроса сертификата!", "Запрос на сертификат имеет некорректный формат!");
+    _disabled = false;
+    return;
+    }
+
+    _certificateRequest.Data = _certificateRequest.Data.Replace("-----BEGIN CERTIFICATE-----", "-----BEGIN NEW CERTIFICATE REQUEST-----").Replace("-----END CERTIFICATE-----", "-----END NEW CERTIFICATE REQUEST-----");
+    _certificateRequest.NaturalPersonId = _user!.NaturalPersonId;
+    _certificateRequest.LegalPersonId = _user.Organization.LegalPersonId;
+
+    //Сохраняем запрос в БД
+    _error = await _crtMngr.InsertAsync(_certificateRequest);
+
+    //Ошибка при сохранении запроса
+    if (!_error.Code.Equals(200))
+    {
+    _comment = new Comment(true, "error", "Ошибка создания запроса сертификата!", _error.Message);
+    _disabled = false;
+    return;
+    }
+
+    _comment = new Comment(true, "ok", "Запрос на сертификат успешно создан!", "Сертификат будет доступен после подтверждения администратором Бюро");
+
+    List<NotificationTo> _recipients = new();
+
+    _recipients.AddRange(_configuration.GetSection("Support").Get<List<NotificationTo>>() ?? new());
+
+    EmailMessage _message = new()
+    {
+        Body = $"В личном кабинете ООО \"БКИ КредитИнфо\" пользователь {_user.Login} ({_user.Organization.ShortName}) сформировал новый запрос на сертификат",
+        Subject = "Запрос на сертификат",
+        BodySubject = "Запрос на сертификат",
+        Sender = "noreply@bki-ci.ru",
+        Correspondents = _recipients.Select(r => new EmailCorrespondent() { CorrespondentName = r.UserName, Email = r.Email, SendingType = "to" }).ToList(),
+        TemplateName = "MailSimpleTpl"
+    };
+
+    _error = await _sender.SendEmailAsync(_message);
+
+    //Получаем список запросов на сертификаты
+    _certificates = await _crtMngr.GetListAsync(_user!.Id);
+
+    _certificateRequest.Data = string.Empty;
+
+    _popupShow = false;
+
+    _disabled = false;
+}
+
+/// <summary>
+/// Отмена запроса на сертификат
+/// </summary>
+/// <returns>Результат отмены запроса</returns>
+private async Task CancelCertificateAsync()
+{
+    _disabled = true;
+
+    //Получаем идентификатор сертификата
+    int _certId = (await _session.GetAsync<int>("Certificate")).Value;
+
+    //Отменяем сертификат
+    _error = await _crtMngr.CancelCertificateRequestAsync(_certId);
+
+    //Формируем модальное окно для пользователя
+    _comment = _error.Code.Equals(200) ? new Comment(true, "ok", "Отмена запроса сертификата", _error.Message) : new Comment(true, "error", "Ошибка!", _error.Message);
+
+    _question.Show = false;
+
+    //Получаем список запросов на сертификаты
+    _certificates = await _crtMngr.GetListAsync(_user!.Id);
+
+    _disabled = false;
+}
+
+/// <summary>
+/// Загрузка сертификата
+/// </summary>
+/// <param name="id"></param>
+/// <returns></returns>
+private async Task SaveCertificateAsync(int id)
+{
+    //Запрос сертификата
+    DBCertificate? _cert = await _crtMngr.GetAsync(id, _user!.Id);
+
+    //Ошибка при сохранении сертификата
+    if (_cert is null)
+    {
+    _comment = new Comment(true, "error", "Ошибка загрузки сертификата", _error.Message);
+    return;
+    }
+
+    //Сохраняем сертификат
+    await _jsr.InvokeVoidAsync("SaveStringToFile", XDocument.Parse(_cert.Сertificate ?? "<certificate>").Root!.Value.ToString(), $"cert_{id}.cer");
+
+}
+
+/// <summary>
+/// Запрос на отмену запроса на сертификат
+/// </summary>
+/// <param name="id">Идентификатор сертификата</param>
+/// <returns></returns>
+private async Task ShowQuestionWindow(int id)
+{
+    //Читаем идентификатор запроса из сессии
+    await _session.SetAsync("Certificate", id);
+
+    //Отображаем запрос на отмену сертификата
+    _question = new Comment(true, "warning", "Отмена запроса сертификата", "Отменить запрос сертификата?");
+}
+
+/// <summary>
+/// Получение сертификата ЦС и список отзыва
+/// </summary>
+/// <param name="isCLR">Если true, то список отзыва</param>
+/// <returns></returns>
+private async Task GetCertificateCA(bool isCLR)
+{
+    string _url = $"{_configuration.GetSection("Links:CS").Value}/{(isCLR ? "certcrl.crl?Type=base&Renewal=0&Enc=b64" : "certnew.cer?ReqID=CACert&Renewal=0&Enc=b64")}";
+
+    _error = await _sender.SendStringAsync(_url, "GET", string.Empty);
+
+    if (!_error.Code.Equals(200))
+    {
+    _comment = new(true, "error", "Ошибка Центра сертификации!", "При подключении к центру сертификации произошла ошибка!");
+    return;
+    }
+
+    await _jsr.InvokeVoidAsync("SaveStringToFile", _error.Message, isCLR ? "ca.crl" : "ca.cer");
+}
+
+}

@@ -1,0 +1,2062 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="4.0">
+	<xs:element name="Document">
+		<xs:annotation>
+			<xs:documentation>
+				<version>5.07</version>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="source" type="tSource"/>
+				<xs:element name="number_of_subjects" type="xs:nonNegativeInteger"/>		
+				<xs:element name="number_of_blocks_group" type="xs:nonNegativeInteger"/>	
+				<xs:element name="subject" type="tSubject" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="outgoing_date_time" type="tDateTime" use="required"/>
+			<xs:attribute name="outgoing_reg_num" type="xs:string" use="required"/>
+			<xs:attribute name="prev_outgoing_reg_num" type="xs:string" use="optional"/>
+			<xs:attribute name="prev_outgoing_date_time" type="tDateTime" use="optional"/>		
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="tSource">
+		<xs:sequence>
+			<xs:element name="itn" type="xs:string"/>
+			<xs:element name="psrn" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tSubject">
+		<xs:sequence>
+			<xs:element name="blocks_group" type="tBlocksGroup" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tBlocksGroup">
+		<xs:sequence>
+			<xs:element name="event">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="tEventCode">
+							<xs:attribute name="event_date" type="tBirthDate" use="required"/>	
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="operation" type="tOperation"/>
+			<xs:choice>
+				<xs:element name="add_individual" type="tAddIndividual"/>								<!--Титульная часть физ лица-->
+				<xs:element name="add_legal_entity" type="tAddLegalEntity"/>							<!--Титульная часть юридического лица-->				
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="add_individual_changed" type="tAddIndividualChanged" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="add_legal_entity_changed" type="tAddLegalEntityChanged" minOccurs="0" maxOccurs="1"/>
+			</xs:choice>
+			<xs:element name="add_main" type="tAddMain" minOccurs="0" maxOccurs="1"/>									<!--Основная часть-->
+			<xs:element name="add_main_changed" type="tAddMainChanged" minOccurs="0" maxOccurs="unbounded"/>			<!--Основная часть д/коррекции и аннуляции-->
+			<xs:element name="add_private" type="tAddPrivate"/>															<!--Закрытая (дополнит) часть-->
+			<xs:element name="add_private_changed" type="tAddPrivateChanged" minOccurs="0" maxOccurs="unbounded"/>		<!--Закрытая (дополнит) часть д/коррекции и аннуляции-->
+			<xs:element name="add_info" type="tAddInfo" minOccurs="0" maxOccurs="1"/>									<!--Инф часть-->
+			<xs:element name="add_info_changed" type="tAddInfoChanged" minOccurs="0" maxOccurs="unbounded"/>			<!--Инф часть д/коррекции и аннуляции-->
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="tOperation">
+		<xs:sequence>
+			<xs:element name="operation_code" type="tOperationCode"/>
+			<xs:element name="comment" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--
+  ************************************************************************************************************************
+	  MAIN LOGICAL TYPES
+  ************************************************************************************************************************
+-->
+	<!--Титульная часть КИ ФЛ -->
+	<xs:complexType name="tAddIndividual">
+		<xs:sequence>
+			<xs:element name="i_full_name" type="tFullName"/>										<!--блок 1-->
+			<xs:element name="i_old_full_name" type="tOldFullName" maxOccurs="unbounded"/>			<!--блок 2-->
+			<xs:element name="i_birth_date_place" type="tibDatePlace"/>								<!--блок 3-->
+			<xs:element name="i_identity_doc" type="tIdentityDoc" maxOccurs="unbounded"/>			<!--блок 4-->
+			<xs:element name="i_old_identity_doc" type="tOldIdentityDoc" maxOccurs="unbounded"/>	<!--блок 5-->
+			<xs:element name="i_reg_num" type="tRegNum" minOccurs="0" maxOccurs="1"/>				<!--блок 6 -->
+			<xs:element name="i_snils" type="tSNILS" minOccurs="0" maxOccurs="1"/>					<!--блок 7 -->
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tAddIndividualChanged">
+		<xs:sequence>
+			<xs:element name="i_full_name" type="tFullName" minOccurs="0"/>										<!--блок 1-->
+			<xs:element name="i_old_full_name" type="tOldFullName" minOccurs="0" maxOccurs="unbounded"/>		<!--блок 2-->
+			<xs:element name="i_birth_date_place" type="tibDatePlace" minOccurs="0"/>							<!--блок 3-->
+			<xs:element name="i_identity_doc" type="tIdentityDoc" minOccurs="0" maxOccurs="unbounded"/>			<!--блок 4-->
+			<xs:element name="i_old_identity_doc" type="tOldIdentityDoc" minOccurs="0" maxOccurs="unbounded"/>	<!--блок 5-->
+			<xs:element name="i_reg_num" type="tRegNum" minOccurs="0" maxOccurs="1"/>							<!--блок 6 -->
+			<xs:element name="i_snils" type="tSNILS" minOccurs="0" maxOccurs="1"/>								<!--блок 7 -->
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!-- Блок 1-->
+	<xs:complexType name="tFullName">
+		<xs:sequence>
+			<xs:element name="surname" type="StrUnlimName"/>
+			<xs:element name="name" type="StrUnlimName"/>
+			<xs:element name="patronymic" type="StrUnlimName" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- Блок 2-->
+	<xs:complexType name="tOldFullName">
+		<xs:sequence>
+			<xs:element name="i_full_name" type="tFullName" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="new_name_issue_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="old_name" type="tLogical" use="required"/>
+	</xs:complexType>
+	<!-- Блок 3-->
+	<xs:complexType name="tibDatePlace">
+		<xs:sequence>
+			<xs:element name="birth_date" type="tBirthDate"/>
+			<xs:element name="country_code" type="Str3"/>
+			<xs:element name="birth_place" type="Str2000" minOccurs="0"/> 			<!--Изменена обязательность-->
+		</xs:sequence>
+	</xs:complexType>
+	<!-- Блок 4-->
+	<xs:complexType name="tIdentityDoc">
+		<xs:sequence>
+			<xs:element name="citizenship" type="tSitizenship"/>
+			<xs:element name="identity_doc_data" type="tiIdentityDocData"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="tSitizenship">
+		<xs:sequence>
+			<xs:element name="country_code" type="Str3"/>
+			<xs:element name="another_country_name" type="StrUnlimRusLat" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tiIdentityDocData">
+		<xs:sequence>
+			<xs:group ref="gIdentityDocData"/>
+			<xs:element name="d_expired_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:group name="gIdentityDocData">
+		<xs:sequence>
+			<xs:element name="d_code" type="tDocCode"/>
+			<xs:element name="d_other_name" type="StrUnlimComma" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="d_series" type="StrUnlimHyphen" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="d_number" type="xs:string"/>
+			<xs:element name="d_issue_date" type="tDate"/>
+			<xs:element name="d_authority" type="Str2000" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="d_department_code" type="tDepartmentCode" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:group>
+	
+	<!-- Блок 5-->
+	<xs:complexType name="tOldIdentityDoc">
+		<xs:sequence>
+			<xs:element name="citizenship" type="tSitizenship" minOccurs="0"/>
+			<xs:element name="identity_doc_data" type="tiIdentityDocData" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="old_identity_doc" type="tLogical" use="required"/>
+	</xs:complexType>
+	
+	<!--Блок 6 -->
+	<xs:complexType name="tRegNum">
+		<xs:sequence>
+			<xs:element name="i_itn" type="tInfoITN" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="i_psrn" type="tInfoSRN" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="special_tax_mode" type="tLogical" minOccurs="0"/>							
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="tInfoITN">
+		<xs:sequence>
+			<xs:element name="itn_code" type="tITNCode"/>
+			<xs:element name="itn" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="tInfoSRN">
+		<xs:sequence>
+			<xs:element name="psrn_code" type="tPSRNCode"/>
+			<xs:element name="psrn" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 7-->
+	<xs:simpleType name="tSNILS">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\d{3}[-]\d{3}[-]\d{3}[\s]\d{2})|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!--*************************************************************************************************************************-->
+	<!--Титульная часть КИ ЮЛ -->
+	<xs:complexType name="tAddLegalEntity">
+		<xs:sequence>
+			<xs:element name="le_name" type="tLeName"/>												<!--блок 1-->
+			<xs:element name="le_address_and_contacts" type="tAddressAndContacts"/>					<!--блок 2-->
+			<xs:element name="le_reg_num" type="tleRegNum" minOccurs="0" maxOccurs="1"/>			<!--блок 3-->
+			<xs:element name="le_itn" type="tInfoITN" maxOccurs="unbounded"/>						<!--блок 4-->
+			<xs:element name="le_reorganization" type="tReorganization" maxOccurs="unbounded"/>		<!--блок 5-->
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tAddLegalEntityChanged">
+		<xs:sequence>
+			<xs:element name="le_name" type="tLeName" minOccurs="0"/>													<!--блок 1-->
+			<xs:element name="le_address_and_contacts" type="tAddressAndContacts" minOccurs="0"/>						<!--блок 2-->
+			<xs:element name="le_reg_num" type="tleRegNum" minOccurs="0" maxOccurs="1"/>								<!--блок 3-->
+			<xs:element name="le_itn" type="tInfoITN" minOccurs="0" maxOccurs="unbounded"/>								<!--блок 4-->
+			<xs:element name="le_reorganization" type="tReorganization" minOccurs="0" maxOccurs="unbounded"/>			<!--блок 5-->
+		</xs:sequence>
+	</xs:complexType>
+	<!--Блок 1 -->
+	<xs:complexType name="tLeName">
+		<xs:complexContent>
+			<xs:extension base="tName">
+				<xs:sequence>
+					<xs:element name="name_changed" type="tLogical"/>												
+					<xs:element name="old_full_name" type="Str2000" minOccurs="0" maxOccurs="1"/>					
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="tName">
+		<xs:sequence>
+			<xs:element name="full_name" type="Str2000"/>
+			<xs:element name="short_name" type="Str2000"/>
+			<xs:element name="other_name" type="Str2000" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Блок 2 -->
+	<xs:complexType name="tAddressAndContacts">
+		<xs:sequence>
+			<xs:element name="le_address">
+				<xs:complexType>
+					<xs:group ref="gAddress"/>
+				</xs:complexType>
+			</xs:element>		
+			<xs:element name="le_contacts" type="tContacts" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Блок 3 -->
+	<xs:complexType name="tleRegNum">
+		<xs:sequence>
+			<xs:element name="le_psrn" type="tInfoSRN" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="lei" type="tLEI" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Блок 4-->
+	<xs:complexType name="tleITN">
+		<xs:sequence>
+			<xs:element name="itn_code" type="tITNCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="itn" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Блок 5 -->
+	<xs:complexType name="tReorganization">
+		<xs:sequence>
+			<xs:element name="reorganized" type="tLogical"/>
+			<xs:element name="full_name" type="Str2000" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="short_name" type="Str2000" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="le_psrn" type="tInfoSRN" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="reorganization_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Основная часть-->
+	<xs:complexType name="tAddMain">
+		<xs:sequence>
+			<xs:element name="i_reg_address" type="tRegAddress" minOccurs="0" maxOccurs="1"/>										<!--блок 8-->
+			<xs:element name="i_actual_address" type="tActualAddress" minOccurs="0" maxOccurs="1"/>									<!--блок 9-->
+			<xs:element name="i_contacts" type="tContacts" minOccurs="0" maxOccurs="1"/>											<!--блок 10-->
+			<xs:element name="i_individual_entrpreneur_reg" type="tIndividualEntrpreneurReg" minOccurs="0" maxOccurs="1"/>			<!--блок 11-->
+			<xs:element name="i_legal_capacity" type="tLegalCapacity" minOccurs="0" maxOccurs="1"/>									<!---блок 12-->
+			<xs:element name="bankruptcy" type="tBankruptcy" minOccurs="0" maxOccurs="1"/>											<!--блок 13 совп с блоком 6 у ЮЛ-->
+			<xs:element name="obligation_excemption_because_of_bankruptcy" type="tObligationExcemption" minOccurs="0" maxOccurs="1"/>			<!--блок 14 совп с блоком 7 у ЮЛ-->
+			<xs:element name="i_credit_rating" type="tCreditRating" minOccurs="0" maxOccurs="1"/>									<!--блок 15-->
+			<!--<xs:element name="le_transferring_rights_and_obligations" type="tTransferringRightsObligation" minOccurs="0" maxOccurs="unbounded"/>	<!{1}**блок 8 у ЮЛ**{1}>-->
+			<xs:element name="credit_score" type="tCreditScore" minOccurs="0" maxOccurs="1"/>										<!--блок 16 совп с блоком 9 у ЮЛ-->
+			<xs:element name="deal_id" type="tDealId" minOccurs="0" maxOccurs="1"/>													<!--блок 17 совп с блоком 10 у ЮЛ-->
+			<xs:element name="credit_deal" type="tCreditDeal" minOccurs="0" maxOccurs="1"/>											<!--Блок 18 совп с блоком 11 у ЮЛ-->
+			<xs:element name="credit_sum" type="tCreditSum" minOccurs="0" maxOccurs="unbounded"/>									<!--Блок 19 совп с блоком 12 у ЮЛ-->
+			<xs:element name="joint_debtor" type="tJointDebtor" minOccurs="0" maxOccurs="1"/>										<!--Блок 20 совп с блоком 13 у ЮЛ -->
+			<xs:element name="payment_conditions" type="tPaymentConditions" minOccurs="0" maxOccurs="1"/>							<!--Блок 21 совп с блоком 14 у ЮЛ -->
+			<xs:element name="i_credit_total_sum" type="tCreditTotalSum" minOccurs="0" maxOccurs="1"/>								<!--Блок 22 -->
+			<xs:element name="credit_contract_change" type="tCreditContractChange" minOccurs="0" maxOccurs="unbounded"/>			<!--Блок 23 совп с блоком 15 ЮЛ-->
+			<xs:element name="funding_transfer_info" type="tFundingTransferInfo" minOccurs="0" maxOccurs="unbounded"/>				<!--Блок 24 совп с блоком 16 ЮЛ-->
+			<xs:element name="credit_debt" type="tCreditDebt" minOccurs="0" maxOccurs="1"/>											<!--Блок 25 совп с блоком 17 ЮЛ-->
+			<xs:element name="credit_urgent_debt" type="tCreditUrgentDebt" minOccurs="0" maxOccurs="1"/>							<!--Блок 26 совп с блоком 18 ЮЛ -->
+			<xs:element name="credit_overdue_debt" type="tCreditOverdueDebt" minOccurs="0" maxOccurs="1"/>							<!-- блок 27 совп с блоком 19 ЮЛ-->
+			<xs:element name="making_payment" type="tMakingPayment" minOccurs="0" maxOccurs="1"/>									<!--Блок 28 совп с блоком 20 ЮЛ-->
+			<xs:element name="i_amp" type="tAMP" minOccurs="0" maxOccurs="1"/>														<!--Блок 29-->
+			<xs:element name="non-money_obligation_of_src" type="tObligationSrc" minOccurs="0" maxOccurs="unbounded"/>				<!--Блок 30 совп с блоком 21 ЮЛ -->
+			<xs:element name="non-money_obligation_of_sub" type="tObligationSub" minOccurs="0" maxOccurs="unbounded"/>				<!--Блок 31 совп с блоком 22 ЮЛ-->
+			<xs:element name="pledge" type="tPledge" minOccurs="0" maxOccurs="unbounded"/>											<!--Блок 32 совп с блоком 23 ЮЛ -->
+			<xs:element name="surety" type="tSurety" minOccurs="0" maxOccurs="unbounded"/>											<!--Блок 33 совп с блоком 24 ЮЛ-->
+			<xs:element name="independent_guarantee" type="tIndependentGuarantee" minOccurs="0" maxOccurs="unbounded"/>				<!--Блок 34 совп с блоком 25 ЮЛ-->
+			<xs:element name="insurance_of_pledge_subject" type="tInsurancePS" minOccurs="0" maxOccurs="unbounded"/>				<!--Блок 35 совп с блоком 26 ЮЛ-->
+			<xs:element name="obligation_repayment_against_pledge" type="tObligationRepayment" minOccurs="0" maxOccurs="1"/>		<!--Блок 36 совп с блоком 27 ЮЛ-->
+			<xs:element name="paid_sum_reimbursement" type="tPaidSumReimbursement" minOccurs="0" maxOccurs="1"/>					<!--Блок 37 совп с блоком 28 ЮЛ-->
+			<xs:element name="obligation_termination" type="tObligationTerm" minOccurs="0" maxOccurs="1"/>							<!--Блок 38 совп с блоком 29 ЮЛ-->
+			<xs:element name="litigation" type="tLitigation" minOccurs="0" maxOccurs="unbounded"/>									<!--Блок 39 совп с блоком 30 ЮЛ-->
+			<xs:element name="i_amp_qcb" type="tAMPQCB" minOccurs="0" maxOccurs="1"/>												<!--Блок 40-->
+			<xs:element name="bankruptcy_proceedings" type="tSourceLiquidation" minOccurs="0" maxOccurs="1"/>						<!-- Блок 41 совп с блоком 31 ЮЛ-->
+			<xs:element name="source_liquidation" type="tSourceLiquidation" minOccurs="0" maxOccurs="1"/>							<!--Блок 42 совп с блоком 32 ЮЛ-->
+			<xs:element name="debt_collection" type="tDebtCollection" minOccurs="0" maxOccurs="1"/>									<!--Блок 43 совп с блоком 33 ЮЛ-->
+		<!-- 	<xs:element name="obligation_info_request" type="tObligationRequest" minOccurs="0" maxOccurs="1"/>						Блок 44 совп с блоком 34 ЮЛ-->
+			<xs:element name="obligation_info_transfer_termination" type="tTransferTermination" minOccurs="0" maxOccurs="1"/>		<!--Блок 45 совп с блоком 35 ЮЛ-->
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Основная часть измененная-->
+	<xs:complexType name="tAddMainChanged">
+		<xs:sequence>
+			<xs:element name="i_reg_address" type="tRegAddress" minOccurs="0" maxOccurs="1"/>										<!--блок 8-->
+			<xs:element name="i_actual_address" type="tActualAddress" minOccurs="0" maxOccurs="1"/>									<!--блок 9-->
+			<xs:element name="i_contacts" type="tContacts" minOccurs="0" maxOccurs="1"/>											<!--блок 10-->
+			<xs:element name="i_individual_entrpreneur_reg" type="tIndividualEntrpreneurReg" minOccurs="0" maxOccurs="1"/>			<!--блок 11-->
+			<xs:element name="i_legal_capacity" type="tLegalCapacity" minOccurs="0" maxOccurs="1"/>									<!---блок 12-->
+			<xs:element name="bankruptcy" type="tBankruptcy" minOccurs="0" maxOccurs="1"/>											<!--блок 13 совп с блоком 6 у ЮЛ-->
+			<xs:element name="obligation_excemption_because_of_bankruptcy" type="tObligationExcemption" minOccurs="0" maxOccurs="1"/>			<!--блок 14 совп с блоком 7 у ЮЛ-->
+			<xs:element name="i_credit_rating" type="tCreditRating" minOccurs="0" maxOccurs="1"/>									<!--блок 15-->
+			<!--<xs:element name="le_transferring_rights_and_obligations" type="tTransferringRightsObligation" minOccurs="0" maxOccurs="unbounded"/>	<!{1}**блок 8 у ЮЛ**{1}>-->
+			<xs:element name="credit_score" type="tCreditScore" minOccurs="0" maxOccurs="1"/>										<!--блок 16 совп с блоком 9 у ЮЛ-->
+			<xs:element name="deal_id" type="tDealId" minOccurs="0"/>																<!--блок 17 совп с блоком 10 у ЮЛ-->
+			<xs:element name="credit_deal" type="tCreditDeal" minOccurs="0" maxOccurs="1"/>											<!--Блок 18 совп с блоком 11 у ЮЛ-->
+			<xs:element name="credit_sum" type="tCreditSum" minOccurs="0" maxOccurs="unbounded"/>									<!--Блок 19 совп с блоком 12 у ЮЛ-->
+			<xs:element name="joint_debtor" type="tJointDebtor" minOccurs="0" maxOccurs="1"/>										<!--Блок 20 совп с блоком 13 у ЮЛ -->
+			<xs:element name="payment_conditions" type="tPaymentConditions" minOccurs="0" maxOccurs="1"/>							<!--Блок 21 совп с блоком 14 у ЮЛ -->
+			<xs:element name="i_credit_total_sum" type="tCreditTotalSum" minOccurs="0" maxOccurs="1"/> 								<!--Блок 22 -->
+			<xs:element name="credit_contract_change" type="tCreditContractChange" minOccurs="0" maxOccurs="unbounded"/>			<!--Блок 23 совп с блоком 15 ЮЛ-->
+			<xs:element name="funding_transfer_info" type="tFundingTransferInfo" minOccurs="0" maxOccurs="unbounded"/>				<!--Блок 24 совп с блоком 16 ЮЛ-->
+			<xs:element name="credit_debt" type="tCreditDebt" minOccurs="0" maxOccurs="1"/>											<!--Блок 25 совп с блоком 17 ЮЛ-->
+			<xs:element name="credit_urgent_debt" type="tCreditUrgentDebt" minOccurs="0" maxOccurs="1"/>							<!--Блок 26 совп с блоком 18 ЮЛ -->
+			<xs:element name="credit_overdue_debt" type="tCreditOverdueDebt" minOccurs="0" maxOccurs="1"/>							<!-- блок 27 совп с блоком 19 ЮЛ-->
+			<xs:element name="making_payment" type="tMakingPayment" minOccurs="0" maxOccurs="1"/>									<!--Блок 28 совп с блоком 20 ЮЛ-->
+			<xs:element name="i_amp" type="tAMP" minOccurs="0" maxOccurs="1"/>														<!--Блок 29-->
+			<xs:element name="non-money_obligation_of_src" type="tObligationSrc" minOccurs="0" maxOccurs="unbounded"/>				<!--Блок 30 совп с блоком 21 ЮЛ -->
+			<xs:element name="non-money_obligation_of_sub" type="tObligationSub" minOccurs="0" maxOccurs="unbounded"/>				<!--Блок 31 совп с блоком 22 ЮЛ-->
+			<xs:element name="pledge" type="tPledge" minOccurs="0" maxOccurs="unbounded"/>											<!--Блок 32 совп с блоком 23 ЮЛ -->
+			<xs:element name="surety" type="tSurety" minOccurs="0" maxOccurs="unbounded"/>											<!--Блок 33 совп с блоком 24 ЮЛ-->
+			<xs:element name="independent_guarantee" type="tIndependentGuarantee" minOccurs="0" maxOccurs="unbounded"/>				<!--Блок 34 совп с блоком 25 ЮЛ-->
+			<xs:element name="insurance_of_pledge_subject" type="tInsurancePS" minOccurs="0" maxOccurs="unbounded"/>				<!--Блок 35 совп с блоком 26 ЮЛ-->
+			<xs:element name="obligation_repayment_against_pledge" type="tObligationRepayment" minOccurs="0" maxOccurs="1"/>		<!--Блок 36 совп с блоком 27 ЮЛ-->
+			<xs:element name="paid_sum_reimbursement" type="tPaidSumReimbursement" minOccurs="0" maxOccurs="1"/>					<!--Блок 37 совп с блоком 28 ЮЛ-->
+			<xs:element name="obligation_termination" type="tObligationTerm" minOccurs="0" maxOccurs="1"/>							<!--Блок 38 совп с блоком 29 ЮЛ-->
+			<xs:element name="litigation" type="tLitigation" minOccurs="0" maxOccurs="unbounded"/>									<!--Блок 39 совп с блоком 30 ЮЛ-->
+			<xs:element name="i_amp_qcb" type="tAMPQCB" minOccurs="0" maxOccurs="unbounded"/>										<!--Блок 40-->
+			<xs:element name="bankruptcy_proceedings" type="tSourceLiquidation" minOccurs="0" maxOccurs="1"/>						<!-- Блок 41 совп с блоком 31 ЮЛ-->
+			<xs:element name="source_liquidation" type="tSourceLiquidation" minOccurs="0" maxOccurs="1"/>							<!--Блок 42 совп с блоком 32 ЮЛ-->
+			<xs:element name="debt_collection" type="tDebtCollection" minOccurs="0" maxOccurs="1"/>									<!--Блок 43 совп с блоком 33 ЮЛ-->
+		<!-- 	<xs:element name="obligation_info_request" type="tObligationRequest" minOccurs="0" maxOccurs="1"/>						Блок 44 совп с блоком 34 ЮЛ-->
+			<xs:element name="obligation_info_transfer_termination" type="tTransferTermination" minOccurs="0" maxOccurs="1"/>		<!--Блок 45 совп с блоком 35 ЮЛ-->
+		</xs:sequence>
+		<xs:attribute name="event" type="tEventCode"/>							
+		<xs:attribute name="event_date" type="tBirthDate"/>						
+		<xs:attribute name="event_id" type="xs:integer"/>						
+	</xs:complexType>
+	
+	<!--Блок 8 ФЛ-->
+	<xs:complexType name="tRegAddress">
+		<xs:sequence>
+			<xs:element name="reg_address_code" type="tAddressCode"/>
+			<xs:element name="address" type="tAddress" minOccurs="0" maxOccurs="1"/> 
+			<xs:element name="reg_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="reg_authority_name" type="tCourtName" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="reg_authority_code" type="tDepartmentCode" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tAddress">
+		<xs:sequence>
+			<xs:element name="index" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:group ref="gAddress"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:group name="gAddress">
+		<xs:sequence>
+			<xs:element name="country_code" type="Str3"/>
+			<xs:element name="another_country_name" type="StrUnlimRusLat" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="fias_num" type="tFIASNum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="locality_code" type="Str11" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="other_locality_name" type="Str2000" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="street" type="Str2000" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="house" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ownership" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="housing" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="building" type="Str2000" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="apartment" type="Str2000" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:group>
+	
+	<!--Блок 9 ФЛ-->
+	<xs:complexType name="tActualAddress">
+		<xs:sequence>
+			<xs:element name="address" type="tAddress" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="actual_address_dif" type="tLogical" use="required"/>
+	</xs:complexType>
+	
+	<!--Блок 10 ФЛ-->
+	<xs:complexType name="tContacts">
+		<xs:sequence>
+			<xs:element name="phone" type="tPhone" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="email" type="tEmail" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tPhone">
+		<xs:sequence>
+			<xs:element name="phone_num" type="tPhoneNum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="phone_comment" type="tPhoneCommentCode" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 11 ФЛ-->
+	<xs:complexType name="tIndividualEntrpreneurReg">
+		<xs:sequence>
+			<xs:element name="ie_psrn" type="tInfoSRN" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ie_reg_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="individual_entrpreneur" type="tLogical" use="required"/>
+	</xs:complexType>
+	<!--Блок 12 ФЛ-->
+	<xs:complexType name="tLegalCapacity">
+		<xs:sequence>
+			<xs:element name="legal_capacity_code" type="tCapacityCode"/>
+			<xs:choice minOccurs="0" maxOccurs="1">
+				<xs:element name="incapacity_judgement" type="tJudgementInfo" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="legal_capacity_judgement" type="tJudgementInfo" minOccurs="0" maxOccurs="1"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="tJudgementInfo">
+		<xs:sequence>
+			<xs:element name="judgement_date" type="tDate"/>
+			<xs:element name="judgement_num" type="StrUnlimDot"/>	<!--Новый тип-->
+			<xs:element name="court_name" type="tCourtName"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Блок 13 ФЛ = блок 6 ЮЛ-->
+	<xs:complexType name="tBankruptcy">
+		<xs:sequence>
+			<xs:element name="bankruptcy_stage_code" type="tBankruptcyStageCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="bankruptcy_case_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="publication_link" type="tUrl" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="illegal_actions" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="illegal_actions_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="fictitious_bankruptcy" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="fictitious_bankruptcy_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="additional_info" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="bankruptcy_case" type="tLogical" use="required"/>
+	</xs:complexType>
+	
+	<!--Блок 14 ФЛ = блок 7 ЮЛ-->
+	<xs:complexType name="tObligationExcemption">
+		<xs:sequence>
+			<xs:element name="settlements_complete_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="obligation_excemption" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="obligation_excemption_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="obligation_restoration_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="settlements_complete" type="tLogical" use="required"/>
+	</xs:complexType>
+	
+	<!--Блок 15 ФЛ -->
+	<xs:complexType name="tCreditRating">
+		<xs:sequence>
+			<xs:element name="rating_value" type="Str1_4" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="calculation_date" type="tDate"/>  <!--minOccurs="0" maxOccurs="1"-->
+			<xs:element name="rating_factor" type="tRatingFactor" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="no_calculation_reason_code" type="tNoCalculationCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="no_calculation_other_reason" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="tRatingFactor">
+		<xs:sequence>
+			<xs:element name="factor_code" type="tFactorCode"/>
+			<xs:element name="factor_share" type="Str3_6"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 16 ФЛ = блок 9 ЮЛ-->
+	<xs:complexType name="tCreditScore">
+		<xs:sequence>
+			<xs:element name="credit_score_value" type="Str1_4"/>
+			<xs:element name="credit_score_date" type="tDate" minOccurs="0"/>		<!--Изменена обязательность-->
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 17 ФЛ = блок 10 ЮЛ-->
+	<xs:complexType name="tDealId">									
+		<xs:sequence>
+			<xs:element name="uid" type="tUIdDeal" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="deal_num" type="Str2000" minOccurs="0" maxOccurs="1"/>		
+		</xs:sequence>
+	</xs:complexType>
+		
+	<!--Блок 18 ФЛ = блок 11 ЮЛ-->
+	<xs:complexType name="tCreditDeal">
+		<xs:sequence>
+			<xs:element name="deal_participation_code" type="tParticipationCode"/>
+			<xs:element name="deal_date" type="tDate"/>
+			<xs:element name="deal_type" type="tDealTypeCode"/>
+			<xs:element name="credit_type" type="tCreditTypeCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="credit_purpose_code" type="tCreditPurposeCode" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="consumer_credit" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="payment_card" type="tLogical"/>
+			<xs:element name="obligation_after_novation" type="tLogical"/>
+			<xs:element name="money_obligation_of_src" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="money_obligation_of_sub" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="obligation_expiration_date" type="tDate"/>
+			<xs:element name="creditor_type" type="tCreditorTypeCode" minOccurs="0" maxOccurs="1"/>			
+			<xs:element name="obligation_as_getting_partial_rights" type="tLogical"/>						
+			<xs:element name="credit_line" type="tLogical"/>												
+			<xs:element name="credit_line_type" type="tCreditLineCode" minOccurs="0" maxOccurs="1"/> 		
+			<xs:element name="floating_interest_rate" type="tLogical"/>										
+			<xs:element name="partial_rights_transfered" type="tLogical"/>									
+			<xs:element name="partial_rights_transfered_uid" type="tUIdDeal" minOccurs="0" maxOccurs="1"/>	
+			<xs:element name="obligation_date" type="tDate" minOccurs="0" maxOccurs="1"/>					
+		</xs:sequence>
+	</xs:complexType>
+	<!--Блок 19 ФЛ = блок 12 ЮЛ-->
+	<xs:complexType name="tCreditSum">
+		<xs:sequence>
+			<xs:element name="obligation_sum" type="tSum"/>
+			<xs:element name="obligation_currency" type="tCurrency"/>
+			<xs:element name="secured_obligation_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="secured_obligation_currency" type="tCurrency" minOccurs="0" maxOccurs="1"/>	
+			<xs:element name="secured_obligation_type" type="tDealTypeCode" minOccurs="0" maxOccurs="1"/>	
+			<xs:element name="calculation_date" type="tDate" minOccurs="0" maxOccurs="1"/>					
+			<xs:element name="secured_obligation_uid" type="tUIdDeal" minOccurs="0" maxOccurs="1"/>			
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 20 ФЛ = блок 13 ЮЛ-->
+	<xs:complexType name="tJointDebtor">
+		<xs:sequence>
+			<xs:element name="joint_debtor_quantity" type="Integer3" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="joint_debtor_exist" type="tLogical" use="required"/>
+	</xs:complexType>
+	
+	<!--Блок 21 ФЛ = блок 14 ЮЛ-->
+	<xs:complexType name="tPaymentConditions">
+		<xs:sequence>
+			<xs:element name="next_principal_payment_sum" type="tSum"/>
+			<xs:element name="next_principal_payment_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="next_interest_payment_sum" type="tSum" maxOccurs="1"/>
+			<xs:element name="next_interest_payment_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="payment_frequency_code" type="tPaymentFrequencyCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="card_payment_sum_min" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="free_period_begin_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="free_period_end_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="interest_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 22 ФЛ -->
+	<xs:complexType name="tCreditTotalSum">
+		<xs:sequence>
+			<xs:element name="total_sum_percent" type="Str3_8" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="total_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="total_sum_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 23 ФЛ = блок 15 ЮЛ-->
+	<xs:complexType name="tCreditContractChange">
+		<xs:sequence>
+			<xs:element name="cc_change_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="cc_change_code" type="tChangeCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="cc_special_change_code" type="tSpecialChangeCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="cc_other_change" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="cc_change_date_into_force" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="cc_change_expiration_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="cc_change_termination_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="cc_change_termination_reason_code" type="tChangeTerminationCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="currency_conversation_rate" type="tRate" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="contract_changed" type="tLogical" use="required"/>
+	</xs:complexType>
+	
+	<!--Блок 24 ФЛ = блок 16 ЮЛ-->
+	<xs:complexType name="tFundingTransferInfo">															
+		<xs:sequence>
+			<xs:element name="funding_date" type="tDate" minOccurs="0"/>
+			<xs:element name="tranche_number" type="xs:positiveInteger" minOccurs="0" maxOccurs="1"/>				
+		</xs:sequence>
+	</xs:complexType>
+
+	<!--Блок 25 ФЛ = блок 17 ЮЛ-->
+	<xs:complexType name="tCreditDebt">
+		<xs:sequence>
+			<xs:element name="debt_sum_on_funding_date" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="calculation_last_payment" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="debt_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="debt_sum_principal" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="interest_debt_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="other_debt_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="calculation_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="unconfirmed_grace_period" type="tLogical" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="debt" type="tLogical" use="required"/>
+	</xs:complexType>
+	<!--Блок 26 ФЛ = блок 18 ЮЛ-->
+	<xs:complexType name="tCreditUrgentDebt">
+		<xs:sequence>
+			<xs:element name="urgent_debt_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="calculation_last_payment" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ud_sum" type="tSum"/>
+			<xs:element name="ud_sum_principal" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="interest_ud_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="other_ud_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="calculation_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Блок 27 ФЛ = блок 19 ЮЛ-->
+	<xs:complexType name="tCreditOverdueDebt">
+		<xs:sequence>
+			<xs:element name="overdue_debt_date" type="tDate" minOccurs="0"/>
+			<xs:element name="calculation_last_payment" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="od_sum" type="tSum" minOccurs="1"/>
+			<xs:element name="od_sum_principal" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="interest_od_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="other_od_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="calculation_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="last_missed_principal_payment_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="last_missed_interest_payment_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Блок 28 ФЛ = блок 20 ЮЛ-->
+	<xs:complexType name="tMakingPayment">
+		<xs:sequence>
+			<xs:element name="last_payment_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<!--обязательность по условию-->
+			<xs:element name="last_payment_sum" type="tSum"/>
+			<xs:element name="last_principal_payment" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="last_interest_payment" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="last_other_payment" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="all_payments_sum" type="tSum" minOccurs="0"/>
+			<xs:element name="all_principal_payments_sum" type="tSum" minOccurs="0"/>
+			<xs:element name="all_interest_payments_sum" type="tSum" minOccurs="0"/>
+			<xs:element name="all_other_payments_sum" type="tSum" minOccurs="0"/>
+			<xs:element name="payments_sum_observance_code" type="tSumObservanceCode"/>
+			<xs:element name="deadline_payments_observance_code" type="tDeadlineObservanceCode"/>
+			<xs:element name="duration_of_overdue" type="Str1_5"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 29 -->
+	<xs:complexType name="tAMP">
+		<xs:sequence>
+			<xs:element name="amp_sum" type="Str1_9" minOccurs="0"/>
+			<xs:element name="amp_calculation_date" type="tDate" minOccurs="0"/> 	<!--Изменена обязательность-->
+		</xs:sequence>
+	</xs:complexType>
+
+	<!--Блок 30 ФЛ = блок 21 ЮЛ-->
+	<xs:complexType name="tObligationSrc">
+		<xs:sequence>
+			<xs:element name="obligation_subject" type="xs:string" minOccurs="0"/>			<!--Изменена обязательность-->
+			<xs:element name="provided_property_code" type="tSubjectCode"/>
+			<xs:element name="property_transfer_date" type="tDate" minOccurs="0"/>
+			<xs:element name="provided_property_id" type="xs:string" minOccurs="0"/>		<!--Изменена обязательность-->			
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 31 ФЛ = блок 22 ЮЛ-->
+	<xs:complexType name="tObligationSub">
+		<xs:sequence>
+			<xs:element name="obligation_subject" type="xs:string" minOccurs="0"/>				<!--Изменена обязательность-->	
+			<xs:element name="obligation_perfomance_order" type="xs:string" minOccurs="0"/>		<!--Изменена обязательность-->	
+			<xs:element name="improper_obligation_perfomance" type="tLogical" minOccurs="0"/>	<!--Изменена обязательность-->	
+			<xs:element name="received_property_code" type="tSubjectCode" minOccurs="0"/>					
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 32 ФЛ = блок 23 ЮЛ-->
+	<xs:complexType name="tPledge">
+		<xs:sequence>
+			<xs:element name="p_subject" type="tSubjectCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="p_subject_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="p_contract_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="p_subject_cost" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="p_subject_currency" type="tCurrency" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="p_subject_valuation_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="p_expiration_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="p_termination_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="p_termination_reason_code" type="tTerminationReasonCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="p_subject_cost_type" type="tSubjectCostCode" minOccurs="0" maxOccurs="1"/>		
+			<xs:element name="p_all_obligations_sum" type="tSum" minOccurs="0" maxOccurs="1"/>					
+			<xs:element name="p_contracts_number" type="xs:integer" minOccurs="0" maxOccurs="1"/>				
+		</xs:sequence>
+		<xs:attribute name="p_exists" type="tLogical" use="required"/>
+	</xs:complexType>
+	
+	<!--Блок 33 ФЛ = блок 24 ЮЛ-->
+	<xs:complexType name="tSurety">
+		<xs:sequence>
+			<xs:element name="s_contract_uid" type="tUIdDeal" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="s_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="s_currency" type="tCurrency" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="s_contract_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="s_expiration_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="s_termination_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="s_termination_reason_code" type="tTerminationReasonCode" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="s_exists" type="tLogical" use="required"/>
+	</xs:complexType>
+
+	<!--Блок 34 ФЛ = блок 25 ЮЛ-->
+	<xs:complexType name="tIndependentGuarantee">
+		<xs:sequence>
+			<xs:element name="ig_uid" type="tUIdDeal" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ig_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ig_currency" type="tCurrency" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ig_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ig_expiration_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ig_termination_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ig_termination_reason_code" type="tTerminationReasonCode" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="ig_exists" type="tLogical" use="required"/>
+	</xs:complexType>
+	
+	<!--Блок 35 ФЛ = блок 26 ЮЛ-->
+	<xs:complexType name="tInsurancePS">
+		<xs:sequence>
+			<xs:element name="ins_payments_limit" type="StrMax12" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ins_payments_currency" type="tCurrency" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="franchise" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ins_start_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ins_expiration_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ins_termination_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ins_termination_reason_code" type="tTerminationReasonCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="p_subject_id" type="xs:string" minOccurs="0" maxOccurs="1"/>							
+		</xs:sequence>
+		<xs:attribute name="ins_exists" type="tLogical" use="required"/>
+	</xs:complexType>
+
+	<!--Блок 36 ФЛ = блок 27 ЮЛ-->
+	<xs:complexType name="tObligationRepayment">
+		<xs:sequence>
+			<xs:element name="code_of_used_pledge" type="tUsedPledgeCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="obligation_repayment_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="obligation_repayment_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="obligation_repayment" type="tLogical" use="required"/>
+	</xs:complexType>
+	
+	<!--Блок 37 ФЛ = блок 28 ЮЛ-->
+	<xs:complexType name="tPaidSumReimbursement">
+		<xs:sequence>
+			<xs:element name="reimbursement_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="sum_paid_by_principal" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="observance_reimbursement_rule" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="calculation_date" type="tDate" minOccurs="0" maxOccurs="1"/>					
+		</xs:sequence>
+		<xs:attribute name="need_paid_sum_reimbursement" type="tLogical" use="required"/>
+	</xs:complexType>
+	
+	<!--Блок 38 ФЛ = блок 29 ЮЛ-->
+	<xs:complexType name="tObligationTerm">
+		<xs:sequence>
+			<xs:element name="ot_reason_code" type="tObligationTerminationCode"/>
+			<xs:element name="ot_date" type="tDate"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 39 ФЛ = блок 30 ЮЛ-->
+	<xs:complexType name="tLitigation">
+		<xs:sequence>
+			<xs:element name="judgement" type="tLogical" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="judgement_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="judgement_number" type="StrUnlimHash" minOccurs="0" maxOccurs="1"/>		<!--Изменен тип--> 
+			<xs:element name="judgement_operative_part" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="judgement_into_force" type="tLogical" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="litigation_exists" type="tLogical" use="required"/>
+	</xs:complexType>
+	<!--Блок 40 -->
+	<xs:complexType name="tAMPQCB">
+		<xs:sequence>
+			<xs:element name="amp_sum" type="Str1_9" minOccurs="0"/>					<!--Изменена обязательность-->
+			<xs:element name="amp_calculation_date" type="tDate" minOccurs="0"/>		<!--Изменена обязательность-->
+			<xs:element name="amp_currency" type="tCurrency"/>
+			<xs:element name="uid" type="tUIdDeal" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="qcb_reg_num" type="tQCBRegNum"/>
+			<xs:element name="info_received_terminated" type="tLogical"/>				
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 41 ФЛ = блок 31 ЮЛ  и Блок 42 ФЛ = блок 32 ЮЛ -->
+	<xs:complexType name="tSourceLiquidation">
+		<xs:sequence>
+			<xs:element name="debt_sum_at_start_date" type="tSum"/>
+			<xs:element name="start_date" type="tDate"/>
+			<xs:element name="debt_sum_at_termination_date" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="termination_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="debt_sum_at_last_payment_date" type="tSum"/>
+			<xs:element name="last_payment_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="creditor_rights_transfered" type="tLogical"/>
+			<xs:element name="obligation_terminated" type="tLogical"/>
+			<xs:element name="obligation_termination_reason_code" type="tObligationTerminationCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="debt_currency" type="tCurrency" minOccurs="0"/>				
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 43 ФЛ = блок 33 ЮЛ-->
+	<xs:complexType name="tDebtCollection">
+		<xs:sequence>
+			<xs:element name="debt_code" type="tDebtCode"/>
+			<xs:element name="debt_collection_judgement" type="tDebtCollectionJudgementInfo"/>					<!--Изменен тип-->
+			<xs:element name="judgement_operative_part" type="xs:string"/>
+			<xs:element name="executive_document_num" type="StrUnlimHash" minOccurs="0" maxOccurs="1"/> 		<!--Изменен тип-->
+			<xs:element name="dc_termination_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="one-time_collection_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="collected_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="calculation_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="periodic_collection_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="payment_frequency_code" type="tPaymentFrequencyCode"/>
+			<xs:element name="debt_collection_currency" type="tCurrency"/>				
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tDebtCollectionJudgementInfo">				<!--Новый тип-->
+		<xs:sequence>
+			<xs:element name="judgement_date" type="tDate"/>
+			<xs:element name="judgement_num" type="StrUnlimHash"/>	
+			<xs:element name="court_name" type="tCourtName"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 45 ФЛ = блок 35 ЮЛ-->
+	<xs:complexType name="tTransferTermination">
+		<xs:sequence>
+			<xs:element name="tt_reason_code" type="tTransferTerminationCode"/>
+			<xs:element name="tt_date" type="tDate"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Закрытая часть-->
+	<xs:complexType name="tAddPrivate">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="1">
+				<xs:element name="src_legal_entity" type="tSRCLegalEntity"/>													<!--Блок 46. Совп с Блоком 36 ЮЛ -->
+				<xs:element name="src_individual" type="tSRCIndividual"/>														<!--Блок 47. Совп с Блоком 37 ЮЛ-->
+				<xs:element name="src_bankruptcy_comissioner" type="tSRCBankruptcyComissioner"/>								<!--Блок 48. Совп  Блоком 38 ЮЛ-->
+			</xs:choice>		
+			<xs:choice minOccurs="0" maxOccurs="1">		
+				<xs:element name="user_legal_entity" type="tUserLegalEntity" minOccurs="0" maxOccurs="1"/>						<!--Блок 49. Совп с Блоком 39 ЮЛ -->
+				<xs:element name="user_individual_entrpreneur" type="tUserIndividualEntrpreneur" minOccurs="0" maxOccurs="1"/>	<!--Блок 50. Совп с Блоком 40 ЮЛ-->
+			</xs:choice>
+			<xs:choice minOccurs="0" maxOccurs="1">
+				<xs:element name="acquirer_legal_entity" type="tAcquirerLegalEntity" minOccurs="0" maxOccurs="1"/>				<!--Блок 51. Совп с Блоком 41 ЮЛ-->
+				<xs:element name="acquirer_individual" type="tAcquirerIndividual" minOccurs="0" maxOccurs="1"/>					<!--Блок 52. Совп с Блоком 42 ЮЛ-->
+			</xs:choice>	
+			<xs:element name="service_company" type="tServiceCompany" minOccurs="0" maxOccurs="1"/>								<!--Блок 53. Совп с Блоком 43 ЮЛ-->
+			<xs:element name="obligation_accounting_info" type="tObligationAccountingInfo" minOccurs="0" maxOccurs="1"/>		<!--Блок 54. Совп с Блоком 44 ЮЛ-->
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tAddPrivateChanged">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="1">
+				<xs:element name="acquirer_legal_entity" type="tAcquirerLegalEntity" minOccurs="0" maxOccurs="1"/>			<!--Блок 51. Совп с Блоком 41 ЮЛ-->
+				<xs:element name="acquirer_individual" type="tAcquirerIndividual" minOccurs="0" maxOccurs="1"/>				<!--Блок 52. Совп с Блоком 42 ЮЛ-->
+			</xs:choice>
+			<xs:element name="service_company" type="tServiceCompany" minOccurs="0" maxOccurs="1"/>							<!--Блок 53. Совп с Блоком 43 ЮЛ-->
+			<xs:element name="obligation_accounting_info" type="tObligationAccountingInfo" minOccurs="0" maxOccurs="1"/>	<!--Блок 54. Совп с Блоком 44 ЮЛ-->
+		</xs:sequence>
+		<xs:attribute name="event_id" type="xs:integer"/>						
+	</xs:complexType>
+		
+	<!--Блок 46 ФЛ = блок 36 ЮЛ-->
+	<xs:complexType name="tSRCLegalEntity">
+		<xs:sequence>
+			<xs:element name="src_code" type="tSourceCode"/>
+			<xs:element name="registered_in_rf" type="tLogical"/>
+			<xs:element name="src_name" type="tName"/>
+			<xs:element name="src_creation_date" type="tDate"/>
+			<xs:element name="src_reg_num" type="tleRegNum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="src_itn" type="tInfoITN"  maxOccurs="unbounded"/>
+			<xs:element name="src_bankruptcy_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="src_bp_termination_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="src_liquidation_start_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="src_liquidation_termination_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="credit_info_date" type="tBirthDate"/>			<!--Изменен тип-->
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 47 ФЛ = блок 37 ЮЛ-->
+	<xs:complexType name="tSRCIndividual">
+		<xs:sequence>
+			<xs:element name="src_name" type="tFullName"/>
+			<!--свернутые показатели -->
+			<xs:element name="src_birth_date_place" type="tbDatePlace"/>
+			<xs:element name="src_identity_doc_data" type="tIdentityDocData">
+				
+			</xs:element>
+			<!--свернутые показатели -->
+			<xs:element name="src_psrn" type="tInfoSRN" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="credit_info_date" type="tBirthDate"/>			<!--Изменен тип-->
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tbDatePlace">
+		<xs:sequence>
+			<xs:element name="birth_date" type="tDate"/>
+			<xs:element name="birth_place" type="Str2000" minOccurs="0"/> <!--Изменена обязательность-->
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="tIdentityDocData">
+		<xs:group ref="gIdentityDocData"/>		
+	</xs:complexType>
+	
+	<!--Блок 48 ФЛ = блок 38 ЮЛ-->
+	<xs:complexType name="tSRCBankruptcyComissioner">
+		<xs:sequence>
+			<xs:element name="src_name" type="tFullName"/>
+			<xs:element name="src_birth_date_place" type="tbDatePlace"/>
+			<xs:element name="self-regulatory_organization_name" type="Str2000"/>		<!--Изменена обязательность-->
+			<xs:element name="self-regulatory_organization_address" type="StrUnlimRus_1" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="src_approval_date" type="tDate"/>
+			<xs:element name="date_powers_termination_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="src_itn" type="tInfoITN" maxOccurs="unbounded"/>	
+			<xs:element name="src_snils" type="tSNILS"/>
+			<xs:element name="credit_info_date" type="tBirthDate"/>			<!--Изменен тип-->
+		</xs:sequence>
+	</xs:complexType>
+	<!--Блок 49 ФЛ = блок 39 ЮЛ-->
+	<xs:complexType name="tUserLegalEntity">
+		<xs:sequence>
+			<xs:element name="user_code" type="tUserCode"/>
+			<xs:element name="registered_in_rf" type="tLogical"/>
+			<xs:element name="user_name" type="tName"/>
+			<xs:element name="user_reg_num" type="tleRegNum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="user_itn" type="tInfoITN"  maxOccurs="unbounded"/> 
+			<xs:element name="change_monitoring" type="tLogical"/>
+			<xs:element name="change_monitoring_start_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="obligation_info_request" type="tObligationRequest"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="tObligationRequest">
+		<xs:sequence>
+			<xs:element name="code_requested_info" type="tRequestedCode"/>
+			<xs:element name="info_provision_date" type="tDate"/>
+			<xs:element name="request_date" type="tDate"/>
+			<xs:element name="request_purpose_code" type="tRequestPurposeCode"/>
+			<xs:element name="other_request_purpose" type="Str2000" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="obligation_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="obligation_currency" type="tCurrency" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType> 
+	<!--Блок 50 ФЛ = блок 40 ЮЛ-->
+	<xs:complexType name="tUserIndividualEntrpreneur">
+		<xs:sequence>
+			<xs:element name="user_name" type="tFullName"/>
+			<xs:element name="user_birth_date_place" type="tbDatePlace"/>
+			<xs:element name="user_itn" type="tInfoITN"  maxOccurs="unbounded"/>	
+			<xs:element name="user_psrn" type="tInfoSRN" minOccurs="0" maxOccurs="1"/>				
+			<xs:element name="user_snils" type="tSNILS"/>
+			<xs:element name="user_identity_doc_data" type="tIdentityDocData"/>
+			<xs:element name="change_monitoring" type="tLogical"/>
+			<xs:element name="change_monitoring_start_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="obligation_info_request" type="tObligationRequest"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 51 ФЛ = блок 41 ЮЛ-->
+	<xs:complexType name="tAcquirerLegalEntity">
+		<xs:sequence>
+			<xs:element name="acquirer_code" type="tAcquirerCode"/>
+			<xs:element name="registered_in_rf" type="tLogical"/>
+			<xs:element name="acquirer_name" type="tName"/>
+			<xs:element name="acquirer_reg_num" type="tleRegNum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="acquirer_itn" type="tInfoITN"  maxOccurs="unbounded"/>	
+			<xs:element name="acquirer_date" type="tDate"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 52 ФЛ = блок 42 ЮЛ-->
+	<xs:complexType name="tAcquirerIndividual">
+		<xs:sequence>
+			<xs:element name="acquirer_name" type="tFullName"/>
+			<xs:element name="acquirer_birth_date_place" type="tbDatePlace"/>
+			<xs:element name="acquirer_itn" type="tInfoITN" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="acquirer_snils" type="tSNILS" minOccurs="0"/>
+			<xs:element name="acquirer_identity_doc_data" type="tIdentityDocData"/>
+			<xs:element name="acquirer_date" type="tDate"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 53 ФЛ = блок 43 ЮЛ-->
+	<xs:complexType name="tServiceCompany">
+		<xs:sequence>
+			<xs:element name="registered_in_rf" type="tLogical"/>
+			<xs:element name="company_name" type="tName"/>
+			<xs:element name="company_psrn" type="tInfoSRN" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="company_itn" type="tInfoITN"  maxOccurs="1"/>	
+			<xs:element name="contract_start_date" type="tDate"/>
+			<xs:element name="contract_expiration_date" type="tDate" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="issuer_name" type="Str2000" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="issuer_reg_number" type="tInfoSRN"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 54 ФЛ = блок 44 ЮЛ-->
+	<xs:complexType name="tObligationAccountingInfo">					
+		<xs:sequence>
+			<xs:element name="obligation_accounting" type="tLogical"/>
+			<xs:element name="interest_rate" type="Str4_7"/>					
+			<xs:element name="obligation_sum_off-balance" type="tSum" minOccurs="0" maxOccurs="1"/>					
+			<xs:element name="state_support" type="tLogical"/>                                     					
+			<xs:element name="state_support_program" type="xs:string" minOccurs="0" maxOccurs="1"/>					
+		</xs:sequence>
+	</xs:complexType>
+		
+	<!--Информационная часть-->
+	<xs:complexType name="tAddInfo">
+		<xs:sequence>
+			<xs:element name="credit_application" type="tCreditApplication" minOccurs="0" maxOccurs="1"/>			<!--Блок 55. Совп с Блоком 45 ЮЛ -->
+			<xs:element name="credit_participation" type="tCreditParticipation" minOccurs="0" maxOccurs="1"/>		<!--Блок 56. Совп с Блоком 46 ЮЛ-->
+			<xs:element name="credit_refusal" type="tCreditRefusal" minOccurs="0" maxOccurs="1"/>					<!--Блок 57. Совп с Блоком 47 ЮЛ-->
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Информационная часть измененная-->
+	<xs:complexType name="tAddInfoChanged">
+		<xs:sequence>
+			<xs:element name="credit_application" type="tCreditApplication" minOccurs="0" maxOccurs="1"/>			<!--Блок 55. Совп с Блоком 45 ЮЛ -->
+			<xs:element name="credit_participation" type="tCreditParticipation" minOccurs="0" maxOccurs="1"/>		<!--Блок 56. Совп с Блоком 46 ЮЛ-->
+			<xs:element name="credit_refusal" type="tCreditRefusal" minOccurs="0" maxOccurs="1"/>					<!--Блок 57. Совп с Блоком 47 ЮЛ-->
+		</xs:sequence>
+		<xs:attribute name="event_id" type="xs:integer"/>						
+	</xs:complexType>
+	
+	<!--Блок 55 ФЛ = блок 45 ЮЛ-->
+	<xs:complexType name="tCreditApplication">
+		<xs:sequence>
+			<xs:element name="credit_participation_code" type="tParticipationCode"/>
+			<xs:element name="ca_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ca_currency" type="tCurrency" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ca_uid" type="tUIdApplication"/>	
+			<xs:element name="ca_date" type="tDate"/>
+			<xs:element name="src_code" type="tSourceCode"/>
+			<xs:element name="ca_way_code" type="tWayCode"/>
+			<xs:element name="ca_expiration_date" type="tDate" minOccurs="0"/>						<!--Изменена обязательность-->
+			<xs:element name="ca_consideration_expiration_date" type="tDate" minOccurs="0"/>   		<!--Изменена обязательность-->       		
+			<xs:element name="credit_purpose_code" type="tCreditPurposeCode" minOccurs="0" maxOccurs="unbounded"/>                  
+			<xs:element name="ca_consideration_status" type="tConsiderationStatusCode"/>	
+			<xs:element name="ca_consideration_status_date" type="tDate"/>                  
+			<xs:element name="ca_type" type="tApplicationCode"/>                            
+			<xs:element name="ca_num" type="Str2000" minOccurs="0" maxOccurs="1"/>          
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 55 ФЛ измененный = блок 45 ЮЛ измененный-->
+	<xs:complexType name="tCreditApplicationChanged">
+		<xs:sequence>
+			<xs:element name="credit_participation_code" type="tParticipationCode" minOccurs="0"/>
+			<xs:element name="ca_sum" type="tSum" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ca_currency" type="tCurrency" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ca_uid" type="tUIdApplication" minOccurs="0"/>	
+			<xs:element name="ca_date" type="tDate" minOccurs="0"/>
+			<xs:element name="src_code" type="tSourceCode" minOccurs="0"/>
+			<xs:element name="ca_way_code" type="tWayCode" minOccurs="0"/>
+			<xs:element name="ca_expiration_date" type="tDate" minOccurs="0"/>
+			<xs:element name="ca_consideration_expiration_date" type="tDate" minOccurs="0"/>          		
+			<xs:element name="credit_purpose_code" type="tCreditPurposeCode" minOccurs="0" maxOccurs="unbounded"/>                 
+			<xs:element name="ca_consideration_status" type="tConsiderationStatusCode" minOccurs="0"/>		
+			<xs:element name="ca_consideration_status_date" type="tDate" minOccurs="0"/>                    
+			<xs:element name="ca_type" type="tApplicationCode" minOccurs="0"/>                              
+			<xs:element name="ca_num" type="Str2000" minOccurs="0" maxOccurs="1"/>               
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 56 ФЛ = блок 46 ЮЛ-->
+	<xs:complexType name="tCreditParticipation">
+		<xs:sequence>
+			<xs:element name="credit_participation_code" type="tParticipationCode"/>
+			<xs:element name="credit_type" type="tCreditTypeCode" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="credit_uid" type="tUIdDeal" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="funding_date" type="tDate" minOccurs="0"/>
+			<xs:element name="overdue_more_90_days" type="tLogical"/>
+			<xs:element name="obligation_terminated" type="tLogical"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 57 ФЛ = блок 47 ЮЛ-->
+	<xs:complexType name="tCreditRefusal">
+		<xs:sequence>
+			<xs:element name="refuse_date" type="tDate"/>
+			<xs:element name="refuse_reason_code" type="tRefuseReasonCode" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--
+  ************************************************************************************************************************
+	 ADDITIONAL LOGICAL TYPES
+  ************************************************************************************************************************
+-->
+	<xs:simpleType name="StrUnlimRusLat">
+		<xs:restriction base="Str2000">
+			<xs:pattern value="([\s]{0,}[А-ЯЁ]{1,}[А-ЯЁ\s-]{0,})|([\s-]{0,}[A-Z]{1,}[A-Z\s-]{0,})"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tDate">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\d{2}[.]\d{2}[.]\d{4})|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tBirthDate">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{2}[.]\d{2}[.]\d{4}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Str3">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="StrUnlimComma">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([A-Z\s,]{1,})|([А-ЯЁ\s,]{1,})"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tLogical">
+		<xs:restriction base="xs:integer">
+			<xs:pattern value="[0,1]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tDepartmentCode">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\d{3}[-]\d{3})|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Str11">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{11}|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tFIASNum">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tPhoneNum">
+		<xs:annotation>
+			<xs:documentation>
+			+[1-3 цифры]([1-5 цифр])[3-9 цифр]	или
+			[1-3 цифры][1-5 цифр][3-9 цифр]
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([+]\d{1,3}[(]\d{1,5}[)]\d{3,9})|(\d{1,3}\d{1,5}\d{3,9})"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tEmail">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="256"/>
+			<xs:pattern value="((?!\.)[\-0-9A-za-z\.\+_]+(?&lt;!\.)|[\-0-9А-Яа-яёЁ\+\._]+(?&lt;!\.))@((?!\.)[\-0-9A-Za-z\+\.]+|(?!\.)[\-0-9А-Яа-яёЁ\+\.]+)\.([-A-Za-z0-9\+\.]{2,}(?&lt;!\.)|[-А-Яа-яёЁ0-9\+\.]{2,}(?&lt;!\.))"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="StrUnlimSlash">
+		<xs:restriction base="Str2000">
+			<xs:pattern value="[A-Za-z0-9()\-/]{1,}|[А-Яа-я0-9()\-/]{1,}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="StrUnlimDot">			<!--New-->
+		<xs:restriction base="Str2000">
+			<xs:pattern value="[A-Za-z0-9\.()\-/]{1,}|[А-Яа-я0-9\.()\-/]{1,}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="StrUnlimHash">			<!--New-->
+		<xs:restriction base="Str2000">
+			<xs:pattern value="[A-Za-z0-9()\-/#]{1,}|[А-Яа-я0-9()\-/#]{1,}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Str1_4">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{1,4}|[-]"/> 
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Str3_6">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{1,3}[,]\d{1,2}|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Str4_7">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{1,4}[,]\d{1,2}|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tSum">				<!--Изменена макс длина ЦЧ-->
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\d{1,15},\d{2})|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tCurrency">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z]{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Integer3">
+		<xs:restriction base="xs:positiveInteger">
+			<xs:maxInclusive value="999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Str3_8">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{1,4}[,]\d{1,3}|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tRate">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{1,4},\d{1,4}|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Str1_5">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{1,5}|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Str1_9">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{1,9}|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="StrMax12">
+		<xs:restriction base="xs:integer">
+			<xs:pattern value="\d{1,12}|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tLEI">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z0-9]{20}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="StrUnlimHyphen">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-ZА-Я0-9\-]{1,}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tCourtName">
+		<xs:restriction base="Str2000">
+			<xs:pattern value="([-A-Z0-9№\s()“”\\/]{1,})|([-А-ЯЁ0-9№\s()“”\\/]{1,})"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="StrUnlimRus_1">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[А-ЯЁ0-9\s,.\-/]{1,}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tUrl">
+		<xs:restriction base="Str2000">
+			<xs:pattern value="((http(s))://)?[a-zA-Z\d@:%._\+~#=]{2,}[^-]\.[a-z]{2,}([-a-zA-Z\d@:%_\+.~#?/=]*)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tDateTime">
+		<xs:restriction base="xs:string">
+			<xs:length value="19"/>
+			<xs:pattern value="\d{2}[.]\d{2}[.]\d{4}[ ]\d{2}[:]\d{2}[:]\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!--<xs:simpleType name="StrUnlimName">
+		<xs:restriction base="Str2000">
+			<xs:pattern value="([\s-]{0,}[А-ЯЁ]{1,}[А-ЯЁ.*\s\-\(\)`']{0,})|([\s\-]{0,}[A-Z]{1,}[A-Z.*\s\-\(\)`']{0,})"/>
+		</xs:restriction>
+	</xs:simpleType>-->
+	
+	<!--<xs:simpleType name="StrUnlimSurname">	
+		<xs:restriction base="Str2000">
+			<xs:pattern value="([\s]{0,}[А-ЯЁ]{1,}[А-ЯЁ.*\s\-\(\)`']{0,})|([\s\-]{0,}[A-Z]{1,}[A-Z.*\s\-\(\)`']{0,})|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>-->
+	
+	<xs:simpleType name="StrUnlimName">	
+		<xs:restriction base="Str2000">
+			<xs:pattern value="([\s]{0,}[А-ЯЁ]{1,}[А-ЯЁ.*\s\-\(\)`']{0,})|([\s\-]{0,}[A-Z]{1,}[A-Z.*\s\-\(\)`']{0,})|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tUIdDeal">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[\da-fA-F]{8}-([\da-fA-F]{4}-)(1[\da-fA-F]{3}-)([8-9a-bA-B][\da-fA-F]{3}-)[\da-fA-F]{12}-[\da-fA-F]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tUIdApplication">		
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([\da-fA-F]{8}-([\da-fA-F]{4}-)(1[\da-fA-F]{3}-)([8-9a-bA-B][\da-fA-F]{3}-)[\da-fA-F]{12}-[\da-fA-F])|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="Str2000">				
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="2000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tQCBRegNum">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{13}|[-]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tEventCode">					
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1.1"/>
+			<xs:enumeration value="1.2"/>
+			<xs:enumeration value="1.3"/>
+			<xs:enumeration value="1.4.0.1"/>
+			<xs:enumeration value="1.4.0.2"/>
+			<xs:enumeration value="1.4.0.3"/>
+			<xs:enumeration value="1.4.1"/>
+			<xs:enumeration value="1.5"/>
+			<xs:enumeration value="1.6"/>
+			<xs:enumeration value="1.7"/>
+			<xs:enumeration value="1.8"/>
+			<xs:enumeration value="1.9"/>
+			<xs:enumeration value="1.10"/>
+			<xs:enumeration value="1.11"/>
+			<xs:enumeration value="1.12"/>
+			<xs:enumeration value="1.13"/>
+			<xs:enumeration value="1.14"/>
+			<xs:enumeration value="1.15"/>
+			<xs:enumeration value="2.1.1"/>
+			<xs:enumeration value="2.1.2"/>
+			<xs:enumeration value="2.2.0.1"/>
+			<xs:enumeration value="2.2.0.2"/>
+			<xs:enumeration value="2.2.1.1"/>			
+			<xs:enumeration value="2.2.1.2"/>			
+			<xs:enumeration value="2.3.1"/>
+			<xs:enumeration value="2.3.2"/>
+			<xs:enumeration value="2.4"/>
+			<xs:enumeration value="2.5.1"/>
+			<xs:enumeration value="2.5.2"/>
+			<xs:enumeration value="2.6"/>
+			<xs:enumeration value="2.7"/>
+			<xs:enumeration value="2.8.1"/>
+			<xs:enumeration value="2.8.2"/>
+			<xs:enumeration value="2.8.3"/>
+			<xs:enumeration value="2.9.1"/>
+			<xs:enumeration value="2.9.2"/>
+			<xs:enumeration value="2.9.3"/>
+			<xs:enumeration value="2.10"/>
+			<xs:enumeration value="2.11"/>			
+			<xs:enumeration value="2.11.1.1"/>		
+			<xs:enumeration value="2.11.1.2"/>		
+			<xs:enumeration value="2.11.2.1"/>      
+			<xs:enumeration value="2.11.2.2"/>      
+			<xs:enumeration value="2.12"/>          
+			<xs:enumeration value="3.1"/>           
+			<xs:enumeration value="3.2"/>           
+			<xs:enumeration value="3.3"/>           
+			<xs:enumeration value="3.4"/>           
+			<xs:enumeration value="3.5"/>           
+			<xs:enumeration value="4.1"/>           
+			<xs:enumeration value="4.2"/>           
+			<xs:enumeration value="4.3"/>           
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tOperationCode">
+		<!--<xs:annotation>
+			<xs:documentation>
+				A - ИФКИ направляет КИ о субъекте, его отдельном обязательстве или обращении СКИ к ИФКИ впервые
+				B - КИ изменяется/дополняется
+				C - исправляется ош. в КИ или предоставляется непринятая бюро КИ
+				D - аннулируются сведения		
+			</xs:documentation>
+		</xs:annotation>-->
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="A"/>
+			<xs:enumeration value="B"/>
+			<xs:enumeration value="C.1"/>              
+			<xs:enumeration value="C.2"/>                      
+			<xs:enumeration value="D.1"/>              
+			<xs:enumeration value="D.2"/>              
+			<xs:enumeration value="D.3"/>              
+			<xs:enumeration value="D.4"/>              
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tDocCode">
+		<xs:restriction base="xs:decimal">
+			<xs:enumeration value="21"/>
+			<xs:enumeration value="22.1"/>
+			<xs:enumeration value="22.2"/>
+			<xs:enumeration value="22.3"/>
+			<xs:enumeration value="23"/>
+			<xs:enumeration value="24"/>
+			<xs:enumeration value="25"/>
+			<xs:enumeration value="26"/>
+			<xs:enumeration value="27"/>
+			<xs:enumeration value="28"/>
+			<xs:enumeration value="31"/>
+			<xs:enumeration value="32"/>
+			<xs:enumeration value="35"/>
+			<xs:enumeration value="37"/>
+			<xs:enumeration value="38"/>
+			<xs:enumeration value="39"/>		
+			<xs:enumeration value="999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tITNCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tPSRNCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tAddressCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tCapacityCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tBankruptcyStageCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="12"/>
+			<xs:enumeration value="13"/>
+			<xs:enumeration value="14"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tFactorCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="9"/>		
+			<xs:enumeration value="10"/>    
+			<xs:enumeration value="11"/>    
+			<xs:enumeration value="12"/>    
+			<xs:enumeration value="13"/>    
+			<xs:enumeration value="14"/>    
+			<xs:enumeration value="15"/>    
+			<xs:enumeration value="16"/>    
+			<xs:enumeration value="17"/>    
+			<xs:enumeration value="18"/>    
+			<xs:enumeration value="19"/>    
+			<xs:enumeration value="20"/>    
+			<xs:enumeration value="21"/>    
+			<xs:enumeration value="22"/>    
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tNoCalculationCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tParticipationCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tDealTypeCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>		
+			<xs:enumeration value="7"/>     
+			<xs:enumeration value="8"/>     
+			<xs:enumeration value="9"/>     
+			<xs:enumeration value="10"/>    
+			<xs:enumeration value="11"/>    
+			<xs:enumeration value="12"/>    
+			<xs:enumeration value="13"/>    
+			<xs:enumeration value="99"/>    
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tCreditTypeCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>		
+			<xs:enumeration value="10"/>    
+			<xs:enumeration value="11"/>    
+			<xs:enumeration value="12"/>    
+			<xs:enumeration value="13"/>    
+			<xs:enumeration value="14"/>    
+			<xs:enumeration value="15"/>    
+			<xs:enumeration value="16"/>    
+			<xs:enumeration value="17"/>    
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tCreditPurposeCode">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2.1"/>
+			<xs:enumeration value="2.2"/>
+			<xs:enumeration value="2.3"/>
+			<xs:enumeration value="2.4"/>
+			<xs:enumeration value="2.5"/>
+			<xs:enumeration value="2.6"/>
+			<xs:enumeration value="2.7"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4.1"/>
+			<xs:enumeration value="4.2"/>
+			<xs:enumeration value="4.3"/>
+			<xs:enumeration value="4.4"/>
+			<xs:enumeration value="4.5"/>
+			<xs:enumeration value="4.6"/>
+			<xs:enumeration value="4.7"/>
+			<xs:enumeration value="4.8"/>
+			<xs:enumeration value="4.9"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="12"/>
+			<xs:enumeration value="13"/>
+			<xs:enumeration value="14"/>
+			<xs:enumeration value="15"/>
+			<xs:enumeration value="16.1"/>
+			<xs:enumeration value="16.2"/>
+			<xs:enumeration value="16.3"/>
+			<xs:enumeration value="17"/>
+			<xs:enumeration value="18"/>
+			<xs:enumeration value="19"/>
+			<xs:enumeration value="20"/>		
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tPaymentFrequencyCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tChangeCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tSpecialChangeCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="12"/>
+			<xs:enumeration value="13"/>
+			<xs:enumeration value="14"/>
+			<xs:enumeration value="15"/>
+			<xs:enumeration value="16"/>
+			<xs:enumeration value="17"/>
+			<xs:enumeration value="18"/>
+			<xs:enumeration value="19"/>
+			<xs:enumeration value="20"/>		
+			<xs:enumeration value="21"/>        
+			<xs:enumeration value="22"/>        
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tChangeTerminationCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tSumObservanceCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tDeadlineObservanceCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tSubjectCode">
+		<xs:restriction base="xs:string">		
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="1.1"/>
+			<xs:enumeration value="1.2"/>
+			<xs:enumeration value="1.3"/>
+			<xs:enumeration value="1.4"/>
+			<xs:enumeration value="1.5"/>
+			<xs:enumeration value="1.6"/>
+			<xs:enumeration value="1.7"/>
+			<xs:enumeration value="1.8"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="2.1"/>
+			<xs:enumeration value="2.2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="3.1"/>
+			<xs:enumeration value="3.2"/>
+			<xs:enumeration value="3.3"/>
+			<xs:enumeration value="3.4"/>
+			<xs:enumeration value="3.5"/>
+			<xs:enumeration value="3.6"/>
+			<xs:enumeration value="3.7"/>
+			<xs:enumeration value="3.8"/>
+			<xs:enumeration value="3.9"/>
+			<xs:enumeration value="3.10"/>
+			<xs:enumeration value="3.11"/>
+			<xs:enumeration value="3.12"/>
+			<xs:enumeration value="3.99"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="4.1"/>
+			<xs:enumeration value="4.2"/>
+			<xs:enumeration value="4.99"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="5.1"/>
+			<xs:enumeration value="5.2"/>
+			<xs:enumeration value="5.3"/>
+			<xs:enumeration value="5.4"/>
+			<xs:enumeration value="5.5"/>
+			<xs:enumeration value="5.6"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="6.1"/>
+			<xs:enumeration value="6.2"/>
+			<xs:enumeration value="6.3"/>
+			<xs:enumeration value="6.4"/>
+			<xs:enumeration value="6.5"/>
+			<xs:enumeration value="6.6"/>
+			<xs:enumeration value="6.7"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="7.1"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="8.1"/>
+			<xs:enumeration value="8.2"/>
+			<xs:enumeration value="8.3"/>
+			<xs:enumeration value="8.4"/>
+			<xs:enumeration value="8.5"/>
+			<xs:enumeration value="8.6"/>
+			<xs:enumeration value="8.7"/>
+			<xs:enumeration value="8.8"/>
+			<xs:enumeration value="8.9"/>
+			<xs:enumeration value="8.10"/>
+			<xs:enumeration value="8.11"/>
+			<xs:enumeration value="8.99"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="9.1"/>
+			<xs:enumeration value="9.2"/>
+			<xs:enumeration value="9.3"/>
+			<xs:enumeration value="9.4"/>
+			<xs:enumeration value="9.5"/>
+			<xs:enumeration value="9.6"/>
+			<xs:enumeration value="9.7"/>
+			<xs:enumeration value="9.8"/>
+			<xs:enumeration value="9.9"/>
+			<xs:enumeration value="9.99"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="10.1"/>
+			<xs:enumeration value="10.2"/>
+			<xs:enumeration value="10.3"/>
+			<xs:enumeration value="10.4"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="11.1"/>
+			<xs:enumeration value="11.2"/>
+			<xs:enumeration value="11.3"/>
+			<xs:enumeration value="11.4"/>
+			<xs:enumeration value="11.5"/>
+			<xs:enumeration value="11.6"/>
+			<xs:enumeration value="11.99"/>
+			<xs:enumeration value="12"/>
+			<xs:enumeration value="12.1"/>
+			<xs:enumeration value="12.2"/>
+			<xs:enumeration value="13"/>
+			<xs:enumeration value="13.1"/>
+			<xs:enumeration value="14"/>
+			<xs:enumeration value="14.1"/>
+			<xs:enumeration value="15"/>
+			<xs:enumeration value="15.1"/>
+			<xs:enumeration value="15.2"/>
+			<xs:enumeration value="15.3"/>
+			<xs:enumeration value="15.4"/>
+			<xs:enumeration value="15.99"/>
+			<xs:enumeration value="16"/>
+			<xs:enumeration value="16.1"/>
+			<xs:enumeration value="17"/>
+			<xs:enumeration value="17.1"/>
+			<xs:enumeration value="18"/>
+			<xs:enumeration value="18.1"/>
+			<xs:enumeration value="18.2"/>
+			<xs:enumeration value="18.3"/>
+			<xs:enumeration value="18.99"/>
+			<xs:enumeration value="19"/>
+			<xs:enumeration value="19.1"/>
+			<xs:enumeration value="19.2"/>
+			<xs:enumeration value="19.3"/>
+			<xs:enumeration value="19.4"/>		
+			<xs:enumeration value="19.99"/>
+			<xs:enumeration value="20"/>
+			<xs:enumeration value="20.1"/>
+			<xs:enumeration value="20.2"/>
+			<xs:enumeration value="20.3"/>
+			<xs:enumeration value="20.99"/>
+			<xs:enumeration value="21"/>		
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tTerminationReasonCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tSuretyTerminationCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tUsedPledgeCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tObligationTerminationCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="12"/>
+			<xs:enumeration value="13"/>
+			<xs:enumeration value="14"/>
+			<xs:enumeration value="15"/>
+			<xs:enumeration value="16"/>		
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tDebtCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tRequestedCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tRequestPurposeCode">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="1.1"/>		
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="12"/>
+			<xs:enumeration value="13"/>
+			<xs:enumeration value="13.1"/>		
+			<xs:enumeration value="14"/>
+			<xs:enumeration value="14.1"/>		
+			<xs:enumeration value="15"/>
+			<xs:enumeration value="16"/>
+			<xs:enumeration value="17"/>
+			<xs:enumeration value="18"/>
+			<xs:enumeration value="19"/>
+			<xs:enumeration value="20"/>
+			<xs:enumeration value="21"/>
+			<xs:enumeration value="22"/>
+			<xs:enumeration value="23"/>
+			<xs:enumeration value="24"/>
+			<xs:enumeration value="25"/>
+			<xs:enumeration value="26"/>
+			<xs:enumeration value="27"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tTransferTerminationCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>			
+			<xs:enumeration value="5"/>         
+			<xs:enumeration value="6"/>         
+			<xs:enumeration value="7"/>         
+			<xs:enumeration value="8"/>         
+			<xs:enumeration value="9"/>         
+			<xs:enumeration value="99"/>        
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tSourceCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="12"/>
+			<xs:enumeration value="13"/>
+			<xs:enumeration value="14"/>
+			<xs:enumeration value="15"/>
+			<xs:enumeration value="16"/>
+			<xs:enumeration value="17"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tWayCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="6"/>			
+			<xs:enumeration value="7"/>         
+			<xs:enumeration value="8"/>         
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tRefuseReasonCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tUserCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tAcquirerCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tPhoneCommentCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tCreditLineCode">		
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tSubjectCostCode">		
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tApplicationCode">			
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tConsiderationStatusCode">						
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tCreditorTypeCode">					
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+		</xs:restriction>
+	</xs:simpleType>
+		
+</xs:schema>

@@ -1,0 +1,120 @@
+﻿<table class="status__table table">
+    <thead>
+        <tr>
+            <td>Статус</td>
+            <td>Дата/время запроса</td>
+            <td>Субъект</td>
+            <td>Организация</td>
+            <td>Пользователь</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var _request in Requests)
+        {
+        <tr @onclick="@(() => _jsr.InvokeVoidAsync("open", $"{_navMngr.BaseUri}{Url}/{_request.Id}", "_blank"))">
+            <td>
+                @switch (_request.Status)
+                {
+                    case RequestStatus.done:
+                        <div class="status__icon checked"></div>
+                        ; break;
+                    case RequestStatus.attention:
+                        <div class="status__icon attention"></div>
+                        ; break;
+                    case RequestStatus.in_process:
+                        <div class="status__icon inprocess"></div>
+                        ; break;
+                    case RequestStatus.error:
+                        <div class="status__icon cancel"></div>
+                        ; break;
+                }
+            </td>
+            <td>@_request.Inserted</td>
+            <td>@_request.Subject</td>
+            <td>@_request.Organization</td>
+            <td>@_request.User</td>
+        </tr>
+        }
+        <tr>
+            <td colspan="5">
+                <div class="pagination">
+                    <div class="table__icons">
+                        <div class="table__icon" @onclick="@(() => PreviousPage())">
+                            <svg class="ico ico-mono-edit" style="width: 0.8em !important;">
+                                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                                <title>Назад</title>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="table__icons">
+                        <div class="table__icon">
+                            <svg class="ico ico-mono-registration" @onclick="@(() => NextPage())" style="transform: rotate(180deg);width: 0.8em !important;">
+                                <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                                <title>Вперед</title>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<AuthorizeView Roles="organization, users, certificates">
+    <Authorized>
+        @{
+                _isAdmin = true;
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Parameter] public List<RequestRecord> Requests { get; set; } = new();
+    [Parameter] public string Url { get; set; } = string.Empty;
+    [Parameter] public RequestType Type { get; set; }
+    [Parameter] public int UserId { get; set; } = -1;
+
+    private bool _isAdmin = false;
+
+    int _page = 0;
+    int _pageSize = 20;
+    private bool _disabled = false;
+
+
+    private async Task PreviousPage()
+    {
+        if (!_disabled)
+        {
+            _page = _page > 0 ? _page - 1 : 0;
+
+            Requests = await GetRequests();
+
+            _disabled = true;
+        }
+
+        _disabled = false;
+    }
+
+    private async Task NextPage()
+    {
+        if (!_disabled)
+        {
+            _page = Requests.Count() == _pageSize ? _page + 1 : _page;
+            Requests = await GetRequests();
+        }
+
+        _disabled = false;
+    }
+
+    private async Task<List<RequestRecord>> GetRequests()
+    {
+        return Type switch
+        {
+            RequestType.bureau => await _requestMngr.GetListAsync<DBRequestOfBureau>(UserId, _page, _isAdmin) ?? new List<RequestRecord>(),
+            RequestType.check => await _requestMngr.GetListAsync<DBRequestCheckContractsByUser>(UserId, _page, _isAdmin) ?? new List<RequestRecord>(),
+            RequestType.government => await _requestMngr.GetListAsync<DBRequestForGovernmentByUser>(UserId, _page, _isAdmin) ?? new List<RequestRecord>(),
+            RequestType.qbch => await _requestMngr.GetListAsync<DBRequestOfQBCH>(UserId, _page, _isAdmin) ?? new List<RequestRecord>(),
+            _ => new()
+        };
+    }
+}

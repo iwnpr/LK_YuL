@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="upload_results">
+		<xs:annotation>
+			<xs:documentation>Извещение о принятии/непринятии кредитной информации</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="upload_result" type="tUploadResult" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="tUploadResult">
+		<xs:sequence>
+			<xs:element name="code" type="tUploadCode"/>
+			<xs:element name="in_doc_data" type="tDocData"/>
+			<xs:element name="out_doc_data" type="tDocData"/>
+			<xs:element name="reg_date_time" type="tDateTime"/>
+			<xs:element name="number_of_subjects" type="xs:integer"/>
+			<xs:element name="number_of_blocks_group" type="xs:integer"/>
+			<xs:element name="flc_results" type="tFLCResults" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="file_name" type="xs:string" use="required"/>
+		<xs:attribute name="schema_version" type="tVersion" use="required"/>
+	</xs:complexType>
+	
+	<xs:simpleType name="tUploadCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="tDocData">
+		<xs:sequence>
+			<xs:element name="reg_num" type="xs:string"/>
+			<xs:element name="date_time" type="tDateTime"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:simpleType name="tDateTime">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{2}[.]\d{2}[.]\d{4}[ ]\d{2}[:]\d{2}[:]\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="tFLCResults">
+		<xs:sequence>
+			<xs:element name="blocks_group" type="tBlocksGroup" minOccurs="1" maxOccurs="unbounded"/> 
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="tBlocksGroup">
+		<xs:sequence>
+			<!--<xs:element name="error_list" type="tErrorList"/> -->
+			<xs:element name="error" type="tError" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="num" type="xs:integer"/>
+		<xs:attribute name="id" type="xs:string"/>
+		<xs:attribute name="uid" type="xs:string"/>
+	</xs:complexType>	
+	
+	<!--<xs:complexType name="tErrorList">
+		<xs:sequence>
+			<xs:element name="error" type="tError" minOccurs="1" maxOccurs="unbounded"/> 
+		</xs:sequence>
+	</xs:complexType>-->
+	
+	<xs:complexType name="tError">
+		<xs:sequence>
+			<!--<xs:element name="error_code" type="tErrorCode"/>-->
+			<xs:element name="param_name" type="xs:string" minOccurs="0"/> 
+			<xs:element name="param_path" type="xs:string" minOccurs="0"/> 
+			<xs:element name="param_description" type="xs:string" minOccurs="0"/> 
+			<xs:element name="add_explanation" type="xs:string" minOccurs="0"/> 
+		</xs:sequence>
+		<xs:attribute name="code" type="tErrorCode" use="required"/>
+		<xs:attribute name="description" type="xs:string" use="required"/>
+	</xs:complexType>
+	
+	<xs:simpleType name="tVersion">
+		<xs:restriction base="xs:decimal">
+			<xs:pattern value="\d{2}[.]\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	 
+	<xs:simpleType name="tErrorCode">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="113"/>
+			<xs:enumeration value="201"/>
+			<xs:enumeration value="203"/>
+			<xs:enumeration value="204"/>
+			<xs:enumeration value="205"/>
+			<xs:enumeration value="206"/>
+			<xs:enumeration value="207"/>
+			<xs:enumeration value="208"/>
+			<xs:enumeration value="209"/>
+			<xs:enumeration value="210"/>
+			<xs:enumeration value="211"/>
+			<xs:enumeration value="212"/>
+			<xs:enumeration value="213"/>
+			<xs:enumeration value="214"/>
+			<xs:enumeration value="215"/>
+			<xs:enumeration value="216"/>
+			<!--<xs:enumeration value="217"/>-->
+			<!--<xs:enumeration value="218"/>-->
+			<xs:enumeration value="219"/>
+			<xs:enumeration value="220"/>
+			<xs:enumeration value="221"/>
+			<xs:enumeration value="222"/>
+			<xs:enumeration value="223"/>
+			<xs:enumeration value="224"/>
+			<xs:enumeration value="225"/>
+			<xs:enumeration value="226"/>
+			<xs:enumeration value="227"/>
+			<xs:enumeration value="228"/>
+			<xs:enumeration value="229"/>
+			<xs:enumeration value="230"/>
+			<!--<xs:enumeration value="231"/>-->
+			<xs:enumeration value="232"/>
+			<xs:enumeration value="233"/>
+			<xs:enumeration value="234"/>
+			<xs:enumeration value="235"/>
+			<xs:enumeration value="236"/>
+			<!--<xs:enumeration value="237"/>-->
+			<!--<xs:enumeration value="238"/>-->
+			<!--<xs:enumeration value="239"/>-->
+			<!--<xs:enumeration value="240"/>-->
+			<!--<xs:enumeration value="241"/>-->
+			<!--<xs:enumeration value="242"/>-->
+			<xs:enumeration value="243"/>
+			<!--<xs:enumeration value="244"/>-->
+			<!--<xs:enumeration value="245"/>-->
+			<!--<xs:enumeration value="246"/>-->
+			<xs:enumeration value="247"/>
+			<xs:enumeration value="248"/>
+			<xs:enumeration value="249"/>
+			<!--<xs:enumeration value="250"/>-->
+			<!--<xs:enumeration value="251"/>-->
+			<xs:enumeration value="252"/>
+			<xs:enumeration value="253"/>
+			<xs:enumeration value="254"/>
+			<xs:enumeration value="255"/>
+			<!--<xs:enumeration value="256"/>-->
+			<xs:enumeration value="257"/>
+			<xs:enumeration value="258"/>
+			<xs:enumeration value="259"/>
+			<xs:enumeration value="260"/>
+			<xs:enumeration value="261"/>
+			<xs:enumeration value="264"/>
+			<xs:enumeration value="265"/>
+			<xs:enumeration value="266"/>
+			<xs:enumeration value="267"/>					
+			<xs:enumeration value="270"/>
+			<xs:enumeration value="273"/>
+			<xs:enumeration value="274"/>
+			<xs:enumeration value="275"/>
+			<!--<xs:enumeration value="278"/>-->
+			<xs:enumeration value="279"/>  
+			<xs:enumeration value="280"/>
+			<xs:enumeration value="281"/>
+			<!--<xs:enumeration value="282"/>-->
+			<xs:enumeration value="283"/>
+			<!--<xs:enumeration value="284"/>-->
+			<xs:enumeration value="285"/>
+			<!--<xs:enumeration value="286"/>-->
+			<!--<xs:enumeration value="287"/>-->
+			<xs:enumeration value="288"/>	
+			<xs:enumeration value="289"/>
+			<xs:enumeration value="290"/>
+			<xs:enumeration value="291"/>
+			<xs:enumeration value="292"/>
+			<xs:enumeration value="293"/>
+			<xs:enumeration value="294"/>
+			<xs:enumeration value="295"/>
+			<xs:enumeration value="296"/>
+			<xs:enumeration value="297"/>
+			<!--<xs:enumeration value="298"/>-->
+			<xs:enumeration value="299"/>
+			<xs:enumeration value="300"/>
+			<xs:enumeration value="301"/>
+			<xs:enumeration value="302"/>
+			<xs:enumeration value="303"/>
+			<xs:enumeration value="304"/>
+			<xs:enumeration value="305"/>
+			<xs:enumeration value="306"/>
+			<xs:enumeration value="307"/>
+			<xs:enumeration value="308"/>
+			<xs:enumeration value="309"/>
+			<xs:enumeration value="310"/>
+			<xs:enumeration value="311"/>
+			<xs:enumeration value="312"/>
+			<xs:enumeration value="313"/>
+			<xs:enumeration value="314"/>
+			<xs:enumeration value="315"/>
+			<!--<xs:enumeration value="316"/>-->
+			<xs:enumeration value="317"/>
+			<xs:enumeration value="318"/>
+			<xs:enumeration value="319"/>
+			<!--<xs:enumeration value="320"/>
+			<xs:enumeration value="321"/>
+			<xs:enumeration value="322"/>-->
+			<xs:enumeration value="323"/> 	
+			<xs:enumeration value="324"/> 	<!--New-->
+			<xs:enumeration value="325"/> 	<!--New-->
+			<xs:enumeration value="326"/> 	<!--New-->
+			<xs:enumeration value="327"/> 	<!--New-->
+			<xs:enumeration value="328"/> 	<!--New-->
+			<xs:enumeration value="329"/> 	<!--New-->
+			<xs:enumeration value="330"/> 	<!--New-->
+			<xs:enumeration value="331"/> 	<!--New-->
+			<xs:enumeration value="332"/> 	<!--New-->
+			<xs:enumeration value="333"/> 	<!--New-->
+			<xs:enumeration value="334"/> 	<!--New-->
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

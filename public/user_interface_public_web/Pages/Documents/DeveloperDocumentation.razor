@@ -1,0 +1,213 @@
+﻿@page "/developer-documentation"
+@attribute [Authorize(Roles = "documentation")]
+
+<PageTitle>Документация разработчика</PageTitle>
+
+<section class="documentation-develop">
+    <div class="l-content">
+        <h1 class="documentation-develop__title title title--h1">Документация разработчика</h1>
+
+        <div class="status-popup__item-top" @onclick="@(() => _show["services"] = !_show["services"])">
+            <div class="status-popup__item-arrow dropdown-arrow">
+                <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show["services"] ? "180" : "360")deg);">
+                    <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                </svg>
+            </div>
+            <div class="status-popup__item-title">Сервисы Бюро</div>
+        </div>
+        <br />
+        @if (_show["services"])
+        {
+            @* <div class="caption">Сервисы Бюро</div> *@
+
+            <div class="documentation-develop__caption">
+                <a class="documentation__item" download href="@($"documents/developer_documentation/Инструкция по подключению к сервису А2А.pdf")">
+                    <div class="documentation-develop__caption-icon">
+                        <svg class="ico ico-color-pdf">
+                            <use xlink:href="img/sprite-color.svg#ico-color-pdf"></use>
+                        </svg>
+                    </div>
+                    <div class="documentation-develop__caption-text">Инструкция по подключению к сервису А2А</div>
+                </a>
+            </div>
+
+            <SelectionList ValuesList="_documentation.MajorPlatforms"
+                           SelectionValue="@_documentation.CurrentMajorPlatform"
+                           OnChange="@((_value) => _documentation.Update(_value, _documentation.CurrentMinorPlatform, _documentation.CurrentMajorUpload, _documentation.CurrentMinorUpload))" />
+
+            @if (_documentation.MinorPlatforms.Any())
+            {
+                <SelectionList ValuesList="_documentation.MinorPlatforms"
+                               SelectionValue="@_documentation.CurrentMinorPlatform"
+                               OnChange="@((_value) => _documentation.Update(_documentation.CurrentMajorPlatform, _value, _documentation.CurrentMajorUpload, _documentation.CurrentMinorUpload))" />
+            }
+
+            @if (Directory.Exists($"{_documentation.PlatformPath}\\{_documentation.CurrentMajorPlatform}\\{_documentation.CurrentMinorPlatform}\\request"))
+            {
+                <SchemeWithDescriptionDirectory Folder="@($"{_documentation.PlatformPath}\\{_documentation.CurrentMajorPlatform}\\{_documentation.CurrentMinorPlatform}\\request")"
+                                                SchemeDescription="Схема (XSD) XML-документа запроса"
+                                                Icon="checked" />
+            }
+
+            @if (Directory.Exists($"{_documentation.PlatformPath}\\{_documentation.CurrentMajorPlatform}\\{_documentation.CurrentMinorPlatform}\\response"))
+            {
+                <SchemeWithDescriptionDirectory Folder="@($"{_documentation.PlatformPath}\\{_documentation.CurrentMajorPlatform}\\{_documentation.CurrentMinorPlatform}\\response")"
+                                                SchemeDescription="Схема (XSD) XML-документа ответа"
+                                                Icon="checked" />
+            }
+
+
+            @if (Directory.Exists($"{_documentation.PlatformPath}\\{_documentation.CurrentMajorPlatform}\\{_documentation.CurrentMinorPlatform}\\batch"))
+            {
+                <div class="documentation-develop__text documentation-develop__text--grey">Пакетный запрос/ответ — только для платформы 3.00</div>
+                <div class="documentation-develop__caption">
+                    <div class="documentation-develop__caption-icon">
+                        <svg class="ico ico-color-pdf">
+                            <use xlink:href="img/sprite-color.svg#ico-color-pdf"></use>
+                        </svg>
+                    </div>
+                    <div class="documentation-develop__caption-text">Описание сервиса пакетный запрос</div>
+                </div>
+
+                @if (Directory.Exists($"{_documentation.PlatformPath}\\{_documentation.CurrentMajorPlatform}\\{_documentation.CurrentMinorPlatform}\\batch\\request"))
+                {
+                    <SchemeWithDescriptionDirectory Folder="@($"{_documentation.PlatformPath}\\{_documentation.CurrentMajorPlatform}\\{_documentation.CurrentMinorPlatform}\\batch\\request")"
+                                                    SchemeDescription="Схема (XSD) XML-документа запроса"
+                                                    Icon="search-batch" />
+                }
+
+                @if (Directory.Exists($"{_documentation.PlatformPath}\\{_documentation.CurrentMajorPlatform}\\{_documentation.CurrentMinorPlatform}\\batch\\response"))
+                {
+                    <SchemeWithDescriptionDirectory Folder="@($"{_documentation.PlatformPath}\\{_documentation.CurrentMajorPlatform}\\{_documentation.CurrentMinorPlatform}\\batch\\response")"
+                                                    SchemeDescription="Схема (XSD) XML-документа запроса"
+                                                    Icon="search-batch" />
+                }
+            }
+        }
+
+        <div class="status-popup__item-top" @onclick="@(() => _show["uploads"] = !_show["uploads"])">
+            <div class="status-popup__item-arrow dropdown-arrow">
+                <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show["uploads"] ? "180" : "360")deg);">
+                    <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                </svg>
+            </div>
+            <div class="status-popup__item-title">Загрузка информации в Бюро</div>
+        </div>
+        <br />
+        @if (_show["uploads"])
+        {
+
+            <SelectionList ValuesList="_documentation.MajorUploads"
+                           SelectionValue="@_documentation.CurrentMajorUpload"
+                           OnChange="@((_value) => _documentation.Update(_documentation.CurrentMajorPlatform, _documentation.CurrentMinorPlatform, _value, _documentation.CurrentMinorUpload))" />
+
+            @if (_documentation.MinorUploads.Any())
+            {
+                <SelectionList ValuesList="_documentation.MinorUploads"
+                               SelectionValue="@_documentation.CurrentMinorUpload"
+                               OnChange="@((_value) => _documentation.Update(_documentation.CurrentMajorPlatform, _documentation.CurrentMinorPlatform, _documentation.CurrentMajorUpload, _value))" />
+            }
+
+            @foreach (var _document in (Directory.Exists($"{_documentation.UploadPath}\\{_documentation.CurrentMajorUpload}\\{_documentation.CurrentMinorUpload}") ? Directory.GetFiles($"{_documentation.UploadPath}\\{_documentation.CurrentMajorUpload}\\{_documentation.CurrentMinorUpload}").ToList() : new()))
+            {
+                <div class="documentation-develop__caption">
+                    <a class="documentation__item" download href="@($"documents/developer_documentation/upload/{_documentation.CurrentMajorUpload}\\{_documentation.CurrentMinorUpload}\\{Path.GetFileName(_document)}")">
+                        <div class="documentation-develop__caption-icon">
+
+                            @if (_document.Contains(".doc") || _document.Contains(".docx"))
+                            {
+                                <svg class="ico ico-color-word">
+                                    <use xlink:href="img/sprite-color.svg#ico-color-word"></use>
+                                </svg>
+                            }
+                            @if (_document.Contains(".pdf"))
+                            {
+                                <svg class="ico ico-color-pdf">
+                                    <use xlink:href="img/sprite-color.svg#ico-color-pdf"></use>
+                                </svg>
+                            }
+                        </div>
+                        <div class="documentation-develop__caption-text">@Path.GetFileNameWithoutExtension(_document)</div>
+                    </a>
+                </div>
+            }
+
+            <SchemeWithDescriptionDirectory Folder="@($"{_documentation.UploadPath}\\{_documentation.CurrentMajorUpload}\\{_documentation.CurrentMinorUpload}\\xsd")"
+                                            SchemeDescription="Схема (XSD) XML-документа выгрузки"
+                                            Icon="db-new" />
+
+            <div class="documentation-develop__text documentation-develop__text--grey">Извещение о получении | отклонении файлов</div>
+
+            <SchemeWithDescriptionDirectory Folder="@($"{_documentation.UploadPath}\\{_documentation.CurrentMajorUpload}\\{_documentation.CurrentMinorUpload}\\tickets\\registration")"
+                                            SchemeDescription="Схема (XSD) XML-документа получения | отклонения выгрузки"
+                                            Icon="checklist" />
+
+            <div class="documentation-develop__text documentation-develop__text--grey">Извещение о принятии | непринятии файлов</div>
+
+            <SchemeWithDescriptionDirectory Folder="@($"{_documentation.UploadPath}\\{_documentation.CurrentMajorUpload}\\{_documentation.CurrentMinorUpload}\\tickets\\upload")"
+                                            SchemeDescription="Схема (XSD) XML-документа принятия | непринятия выгрузки"
+                                            Icon="checklist" />
+        }
+
+        @* <div class="status-popup__item-top" @onclick="@(() => _show["triggers"] = !_show["triggers"])">
+            <div class="status-popup__item-arrow dropdown-arrow">
+                <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show["triggers"] ? "180" : "360")deg);">
+                    <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
+                </svg>
+            </div>
+            <div class="status-popup__item-title">Сервис "Триггеры"</div>
+        </div>
+        <br /> *@
+       @*  @if (_show["triggers"])
+        {
+            <div class="documentation-develop__caption">
+                <a class="documentation__item" download href="@($"documents/developer_documentation/triggers/Триггеры_Руководство_по_подключению_1_0_0.pdf")">
+                    <div class="documentation-develop__caption-icon">
+                        <svg class="ico ico-color-pdf">
+                            <use xlink:href="img/sprite-color.svg#ico-color-pdf"></use>
+                        </svg>
+                    </div>
+                    <div class="documentation-develop__caption-text">Руководство по подключению</div>
+                </a>
+            </div>
+
+            <SchemeWithDescriptionDirectory Folder="@($"{_path}\\triggers\\xsd")"
+                                            SchemeDescription="Схема (XSD) XML-документа установки"
+                                            Icon="db-new" />
+
+            
+        } *@
+    </div>
+</section>
+
+
+@code {
+    /// <summary>
+    /// Документация
+    /// </summary>
+    private Documentation _documentation = null!;
+
+    private Dictionary<string, bool> _show = new Dictionary<string, bool>()
+    {
+        {"services", false },
+        {"uploads", false },
+        //{"triggers", false },
+    };
+
+    /// <summary>
+    /// Путь к документации
+    /// </summary>
+    string _path = string.Empty;
+
+
+    /// <summary>
+    /// Инициализация страницы
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        // Путь до документации из конфигурации
+        _path = $"{_configuration.GetSection("Documentation:Developer").Value!}";
+
+        _documentation = new(_path);
+    }
+}

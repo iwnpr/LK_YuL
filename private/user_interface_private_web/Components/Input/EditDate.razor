@@ -1,0 +1,26 @@
+﻿<input type="text" class="@(!(DateTime.TryParse(_value, out _) || _value.Equals("-")) ? " invalid" : "" )" 
+           @bind-value="@Entity" placeholder="01.01.2000" />
+
+@code {
+    private string _value = string.Empty;
+
+    [Parameter] public string Placeholder { get; set; } = string.Empty;
+
+    //Значение Input
+    [Parameter]
+    public string Entity
+    {
+        get => _value;
+        set
+        {
+            if (_value == value) { return; }
+            _value = value;
+            OnValueChanged.InvokeAsync(value);
+        }
+    }
+
+    //Событие при изменении (вызывается в родителе)
+    [Parameter]
+    public EventCallback<string> OnValueChanged { get; set; }
+
+}

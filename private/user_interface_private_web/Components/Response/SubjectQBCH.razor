@@ -1,0 +1,37 @@
+﻿<div class="document__caption">
+    <span class="document_table-icon"><img class="image_icon" src="img/Loans.svg" alt="">Параметры запроса </span>
+</div>
+
+<table class="status__table table">
+    <thead style="background: #eaedf3;">
+        <tr>
+            <td>Тип запроса</td>
+            <td>Фамилия, имя, отчество</td>
+            <td>Дата рождения</td>
+            <td>Документ</td>
+            <td>Действия</td>
+        </tr>
+    </thead>
+    <tbody style="background: #fff;">
+        <tr>
+            <td>@(Request?.Root?.Attribute("ТипЗапроса")?.Value?.Equals("1") ?? true ? "Запрос в ООО КредитИнфо" : "Запрос ко всем КБКИ")</td>
+            <td>@(Request?.Root?.Element("Запрос")?.Element("Субъект")?.Element("ФИО")?.Element("Фамилия")?.Value ?? "-") @(Request?.Root?.Element("Запрос")?.Element("Субъект")?.Element("ФИО")?.Element("Имя")?.Value ?? "-") @(Request?.Root?.Element("Запрос")?.Element("Субъект")?.Element("ФИО")?.Element("Отчество")?.Value ?? "")</td>
+            <td style="text-align:center !important;">@(Request?.Root?.Element("Запрос")?.Element("Субъект")?.Element("ДатаРождения")?.Value?.ToRussianDate() ?? "-")</td>
+            <td style="text-align:center !important;">@(Request?.Root?.Element("Запрос")?.Element("Субъект")?.Element("ДокументЛичности")?.Element("Серия")?.Value ?? "") @(Request?.Root?.Element("Запрос")?.Element("Субъект")?.Element("ДокументЛичности")?.Element("Номер")?.Value ?? "-")</td>
+            <td style="text-align:center !important;">
+                <div class="table__icons">
+                    <div class="table__icon" @onclick="@(async () => await _jsr.InvokeVoidAsync("SaveStringToFile", Request?.ToString(), $"request_{Request?.Root?.Attribute("ИдентификаторЗапроса")?.Value ?? ""}.xml"))">
+                        <svg class="ico ico-mono-edit">
+                            <use xlink:href="img/sprite-mono.svg#ico-mono-upload"></use>
+                            <title>Скачать</title>
+                        </svg>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+@code {
+    [Parameter] public XDocument Request { get; set; } = new XDocument(new XElement("ЗапросСведенийОПлатежах"));
+}

@@ -1,0 +1,33 @@
+﻿<CascadingAuthenticationState>
+    <CascadingValue Value="User" Name="User">
+        <Router AppAssembly="@typeof(App).Assembly">
+            <Found Context="routeData">
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                    <NotAuthorized>
+                        @{
+                            _navigator.NavigateTo("/");
+                        }
+                    </NotAuthorized>
+                    <Authorizing>
+                        Авторизация...
+                    </Authorizing>
+                </AuthorizeRouteView>
+                <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+            </Found>
+            <NotFound>
+                @{
+                    _navigator.NavigateTo("/404", false);
+                }
+            </NotFound>
+        </Router>
+    </CascadingValue>
+</CascadingAuthenticationState>
+
+@code {
+    [Parameter] public ConnectionParameters User { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await _session.SetAsync("Connection", JsonSerializer.Serialize(User));
+    }
+}

@@ -1,0 +1,1280 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.1">
+  <xs:include schemaLocation="entity-types-response.xsd"/>
+
+  <xs:complexType name="tReport">
+    <xs:sequence>
+      <xs:element name="TitlePart" type="tTitlePart"/>
+      <xs:element name="MainPart" type="tMainPart" minOccurs="0"/>
+	  <xs:element name="InformationalPart" type="tInformationalPart" minOccurs="0"/>
+      <!--<xs:element name="InformationalPartOld" type="tInformationalPartOld" minOccurs="0"/>-->
+	  <xs:element name="AdditionalPart" type="tAdditionalPart" minOccurs="0"/>
+      <xs:element name="ReportSummary" type="tReportSummary" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="tTitlePart">
+    <xs:choice>
+      <xs:element name="NaturalPersonSubject">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Title" type="tPersonTitle" maxOccurs="unbounded"/>
+            <xs:element name="PersonalInformation" type="tPersonalInformation" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="IdentificationDocument" type="tNaturalPersonIdentificationDocumentInfo" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+	  
+      <xs:element name="LegalPersonSubject">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Title" type="tLegalTitleExt" maxOccurs="unbounded"/>
+			<xs:element name="RestructuredTitle" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="tLegalTitleExt">
+							<xs:attribute name="IsNameChangedFlag" type="xs:boolean"/>
+							<xs:attribute name="ReorganizationDate" type="tDate"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+            <xs:element name="AddressInfo" type="tLegalAddressInfo" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AddressOld" type="tAddressInfoOld" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Phone" type="tPhoneInfo" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="EMail" type="tEMail" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="tPersonalInformation">
+    <xs:attribute name="IndividualTaxpayerNumber" type="tITN"/>
+	<xs:attribute name="ForeignTaxpayerNumber" type="tStr50"/>
+	<xs:attribute name="SpecialTaxMode" type="tBinaryFlag"/>			<!--New-->
+	<xs:attribute name="PSRN" type="tPSRN"/>
+	<xs:attribute name="ForeignRegNumber" type="tStr1000"/>
+    <xs:attribute name="PensionNumber" type="tStr15"/>
+    <xs:attribute name="BirthPlace" type="tStr1000"/>
+	<xs:attribute name="BirthCountryCode" type="tNumStr3"/>
+	<xs:attribute name="BirthCountryName" type="xs:string"/>													 
+    <xs:attribute name="ActualityDate" type="tDate"/>
+    <xs:attribute name="CreationDate" type="tDate"/>
+    <xs:attribute name="OwnerID" type="xs:integer"/>
+  </xs:complexType>
+
+  <xs:complexType name="tPersonTitle">
+    <xs:attribute name="LastName" type="tStr60" use="required"/>
+    <xs:attribute name="FirstName" type="tStr60" use="required"/>
+    <xs:attribute name="MiddleName" type="tStr60"/>
+    <xs:attribute name="isOldName" type="xs:boolean"/>
+	<xs:attribute name="DateOfDocWChangedName" type="tDate"/>
+    <xs:attribute name="BirthDate" type="tDate" use="required"/>
+    <xs:attribute name="ActualityDate" type="tDate"/>
+    <xs:attribute name="CreationDate" type="tDate"/>
+    <xs:attribute name="OwnerID" type="xs:integer"/>
+  </xs:complexType>
+
+  <xs:complexType name="tLegalTitleExt">
+    <xs:all>
+      <xs:element name="Name" type="tLegalName" minOccurs="0"/>
+      <xs:element name="IndividualTaxpayerNumber" type="tITN" minOccurs="0"/>
+      <xs:element name="PrimaryStateRegistrationNumber" type="tPSRN" minOccurs="0"/>
+      <xs:element name="ForeignID" type="tStr50" minOccurs="0"/>
+	  <xs:element name="ForeignRegNumber" type="tStr1000" minOccurs="0"/>
+	  <xs:element name="LEI" type="tStr50" minOccurs="0"/>
+    </xs:all>
+    <xs:attribute name="ActualityDate" type="tDate"/>
+    <xs:attribute name="CreationDate" type="tDate"/>
+    <xs:attribute name="OwnerID" type="xs:integer"/>
+  </xs:complexType>
+
+  <xs:complexType name="tMainPart">
+    <xs:sequence>
+      <xs:element name="AddressInfo" type="tAddressInfo" minOccurs="0" maxOccurs="unbounded"/>
+	  <xs:element name="AddressOld" type="tAddressInfoOld" minOccurs="0" maxOccurs="unbounded"/>
+	  <xs:element name="Phone" type="tPhoneInfo" minOccurs="0" maxOccurs="unbounded"/>
+	  <xs:element name="EMail" type="tEMail" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="IndividualEntrepreneur" type="tIndividualEntrepreneurInfo" minOccurs="0" maxOccurs="unbounded"/>
+      
+	  <xs:element name="Incapacity" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="IncapacityCourtInfo" type="tCourtInfo" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+          <xs:attribute name="Status" type="xs:integer" use="required"/>
+          <xs:attribute name="ActualityDate" type="tDate"/>
+          <xs:attribute name="CreationDate" type="tDate"/>
+          <xs:attribute name="OwnerID" type="xs:integer"/>
+        </xs:complexType>
+      </xs:element>
+      
+	  <xs:element name="Bankruptcy" minOccurs="0" maxOccurs="unbounded">	<!-- Блок 13 ФЛ = блок 6 ЮЛ -->
+		<xs:complexType>
+			<xs:attribute name="StageCode" type="xs:integer" use="required"/>
+			<xs:attribute name="CaseDate" type="tDate"/>
+			<xs:attribute name="PublicationLink" type="tLink"/>
+			<xs:attribute name="IllegalActions" type="tBinaryFlag" use="required"/>
+			<xs:attribute name="IllegalActionsDate" type="tDate"/>
+			<xs:attribute name="FictitiousBankruptcy" type="tBinaryFlag" use="required"/>
+			<xs:attribute name="FictitiousBankruptcyDate" type="tDate"/>
+			<xs:attribute name="AdditionalInfo" type="xs:string"/>
+			<xs:attribute name="ActualityDate" type="tDate"/>
+			<xs:attribute name="CreationDate" type="tDate"/>
+			<xs:attribute name="OwnerID" type="xs:integer"/>
+		</xs:complexType>
+	  </xs:element>
+	  
+	<!--  <xs:element name="BankruptcyOld" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="EFRSBData" type="tEFRSBData" minOccurs="0" />
+            <xs:element name="BankruptcyCourtInfo" type="tCourtInfo"  maxOccurs="unbounded"/>
+          </xs:sequence>
+          <xs:attribute name="Status" type="xs:integer"/>
+          <xs:attribute name="StatusText" type="xs:string"/>
+          <xs:attribute name="ActualityDate" type="tDate"/>
+          <xs:attribute name="CreationDate" type="tDate"/>
+          <xs:attribute name="OwnerID" type="xs:integer"/>
+        </xs:complexType>
+      </xs:element>-->
+	  
+	  <xs:element name="CompletionOfSettlements" minOccurs="0" maxOccurs="unbounded"> <!-- Блок 14 ФЛ = блок 7 ЮЛ-->
+        <xs:complexType>
+          <xs:attribute name="CompletionOfSettlementsDate" type="tDate"/>
+          <xs:attribute name="ObligationsExcemptionFlag" type="tBinaryFlag"/>
+          <xs:attribute name="ObligationsExcemptionDate" type="tDate"/>
+          <xs:attribute name="ObligationsRestorationDate" type="tDate"/>
+		  <xs:attribute name="ActualityDate" type="tDate"/>
+		  <xs:attribute name="CreationDate" type="tDate"/>
+		  <xs:attribute name="OwnerID" type="xs:integer"/>
+        </xs:complexType>
+      </xs:element>
+	  
+	  <xs:element name="CreditRating" minOccurs="0" maxOccurs="unbounded"> <!-- Блок 15 ФЛ -->
+        <xs:complexType>
+			<xs:sequence>
+				<xs:element name="RatingFactor" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="FactorCode" type="xs:integer"/>
+						<xs:attribute name="FactorShare" type="xs:decimal"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Value" type="xs:integer"/>
+			<xs:attribute name="CalculationDate" type="tDate"/>
+			<xs:attribute name="NoCalculationReasonCode" type="xs:integer"/>
+			<xs:attribute name="NoCalculationOtherReason" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+	  
+	  <xs:element name="CreditScore" minOccurs="0" maxOccurs="unbounded"> <!-- Блок 16 ФЛ = блок 9 ЮЛ -->
+        <xs:complexType>
+          <xs:attribute name="Value" type="xs:integer"/>
+          <xs:attribute name="CalculationDate" type="tDate"/>
+        </xs:complexType>
+      </xs:element>
+	  
+	  <xs:element name="CreditContractRecord" minOccurs="0" maxOccurs="unbounded">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="CreditDeal" type="tCreditDeal" minOccurs="0" maxOccurs="unbounded"/>	<!--Блок 18 ФЛ = блок 11 ЮЛ-->
+				<xs:element name="CreditSum" type="tCreditSum" minOccurs="0" maxOccurs="unbounded"/>		<!--Блок 19 ФЛ = блок 12 ЮЛ-->
+				<xs:element name="PaymentConditions" type="tPaymentConditions" minOccurs="0" maxOccurs="unbounded"/>	<!--Блок 21 ФЛ = блок 14 ЮЛ-->
+				<xs:element name="CreditTotalSum" type="tCreditTotalSum" minOccurs="0" maxOccurs="unbounded"/>		<!--Блок 22 ФЛ -->
+				<xs:element name="CreditContractChange" type="tCreditContractChange" minOccurs="0" maxOccurs="unbounded"/>	<!--Блок 23 ФЛ = блок 15 ЮЛ-->
+				<xs:element name="FundingTransferInfo" type="tFundingTransferInfo" minOccurs="0" maxOccurs="unbounded"/>	<!--New Блок 24 ФЛ = блок 16 ЮЛ-->
+				<xs:element name="CreditDebt" type="tCreditDebt" minOccurs="0" maxOccurs="unbounded"/>						<!--Блок 25 ФЛ = блок 17 ЮЛ-->
+				<xs:element name="CreditUrgentDebt" type="tCreditUrgentDebt" minOccurs="0" maxOccurs="unbounded"/>	<!--Блок 26 ФЛ = блок 18 ЮЛ-->
+				<xs:element name="CreditOverdueDebt" type="tCreditOverdueDebt" minOccurs="0" maxOccurs="unbounded"/>	<!--Блок 27 ФЛ = блок 19 ЮЛ-->
+				<xs:element name="MakingPayment" type="tMakingPayment" minOccurs="0" maxOccurs="unbounded"/>			<!--Блок 28 ФЛ = блок 20 ЮЛ-->
+				<xs:element name="AMP"  minOccurs="0" maxOccurs="unbounded">											<!--Блок 29 -->
+					<xs:complexType>
+						<xs:attribute name="PaymentId" type="xs:integer"/>
+						<xs:attribute name="AMPSum" type="xs:decimal"/>
+						<xs:attribute name="AMPCalculationDate" type="tDate"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="AMPQCB"  type="tAMPQCB" minOccurs="0" maxOccurs="unbounded"/>										<!--Блок 40 ФЛ -->
+				<xs:element name="ObligationSrc" type="tObligationSrc" minOccurs="0" maxOccurs="unbounded"/>		<!--Блок 30 ФЛ = блок 21 ЮЛ-->
+				<xs:element name="ObligationSub" type="tObligationSub" minOccurs="0" maxOccurs="unbounded"/>		<!--Блок 31 ФЛ = блок 22 ЮЛ-->
+				<xs:element name="Pledge" type="tPledge" minOccurs="0" maxOccurs="unbounded"/>					<!--Блок 32 ФЛ = блок 23 ЮЛ-->
+				<xs:element name="Surety" type="tSurety" minOccurs="0" maxOccurs="unbounded"/>					<!--Блок 33 ФЛ = блок 24 ЮЛ-->
+				<xs:element name="IndependentGuarantee" type="tIndependentGuarantee" minOccurs="0" maxOccurs="unbounded"/>	<!--Блок 34 ФЛ = блок 25 ЮЛ-->
+				<xs:element name="PledgeInsurance" type="tPledgeInsurance" minOccurs="0" maxOccurs="unbounded"/>	<!--Блок 35 ФЛ = блок 26 ЮЛ-->
+				<xs:element name="ObligationRepayment" type="tObligationRepayment" minOccurs="0" maxOccurs="unbounded"/>		<!--Блок 36 ФЛ = блок 27 ЮЛ-->
+				<xs:element name="PaidSumReimbursement" type="tPaidSumReimbursement" minOccurs="0" maxOccurs="unbounded"/>	<!--Блок 37 ФЛ = блок 28 ЮЛ-->
+				<xs:element name="ObligationTerm" minOccurs="0" maxOccurs="unbounded">				<!--Блок 38 ФЛ = блок 29 ЮЛ-->
+					<xs:complexType>
+						<xs:attribute name="TerminationReasonCode" type="xs:integer" use="required"/>
+						<xs:attribute name="TerminationDate" type="tDate"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Litigation" type="tLitigation" minOccurs="0" maxOccurs="unbounded"/>	<!--Блок 39 ФЛ = блок 30 ЮЛ-->
+				
+				<xs:element name="SourceBankruptcy" type="tSourceLiquidation" minOccurs="0" maxOccurs="unbounded"/>	<!--Блок 41 ФЛ = блок 31 ЮЛ -->
+				<xs:element name="SourceLiquidation" type="tSourceLiquidation" minOccurs="0" maxOccurs="unbounded"/>	<!-- Блок 42 ФЛ = блок 32 ЮЛ -->
+				<xs:element name="ProcessingTermination" type="tProcessingTermination" minOccurs="0" maxOccurs="unbounded"/>	<!-- Блок 45 ФЛ = блок 35 ЮЛ -->
+				<xs:element name="ObligationAccountingInfo" type="tObligationAccountingInfo" minOccurs="0" maxOccurs="unbounded"/>	<!--Блок 54 ФЛ = блок 44 ЮЛ-->
+			</xs:sequence>
+			<xs:attribute name="CreditContractUID" type="xs:string"/> <!--Блок 17 ФЛ = блок 10 ЮЛ-->
+			<xs:attribute name="CreditContractNum" type="xs:string"/>	<!--New-->
+			<xs:attribute name="NumberOfJointDebtors" type="xs:integer"/>	<!--Блок 20 ФЛ = блок 13 ЮЛ-->
+			<!--<xs:attribute name="TransferOfFundingDate" type="tDate"/>	<!{1}**Блок 24 ФЛ = блок 16 ЮЛ**{1}>-->
+			<!--<xs:attribute name="ObligationAccounting" type="tBinaryFlag"/>	<!{1}**Блок 54 ФЛ = блок 44 ЮЛ**{1}>-->
+			<xs:attribute name="LastUpdateInfoDate" type="tDate"/>					<!--New-->
+			<xs:attribute name="OwnerID" type="xs:integer"/>
+			<xs:attribute name="AcquirerID" type="xs:integer"/>
+			<xs:attribute name="ServiceOrganizationID" type="xs:integer"/>
+		</xs:complexType>
+	  </xs:element>
+	   
+	  <xs:element name="DebtCollectionRecord" minOccurs="0" maxOccurs="unbounded">		<!--Блок 43 ФЛ = блок 33 ЮЛ-->
+		<xs:complexType>
+			<xs:attribute name="DebtCode" type="xs:integer" use="required"/>
+			<xs:attribute name="JudgementDate" type="tDate"/>
+			<xs:attribute name="JudgementNum" type="xs:string"/> 
+			<xs:attribute name="CourtName" type="xs:string"/>		
+			<xs:attribute name="JudgementOperativePart" type="xs:string"/>
+			<xs:attribute name="ExecutiveDocumentNum" type="xs:string"/> 
+			<xs:attribute name="TerminationDate" type="tDate"/>
+			<xs:attribute name="One-timeCollectionSum" type="xs:decimal"/>
+			<xs:attribute name="CollectedSum" type="xs:decimal"/>
+			<xs:attribute name="CalculationDate" type="tDate"/>
+			<xs:attribute name="PeriodicCollectionSum" type="xs:decimal"/>
+			<xs:attribute name="PaymentFrequencyCode" type="xs:integer" use="required"/>
+			<xs:attribute name="DebtCollectionCurrency" type="tStr3"/>				<!--New-->
+			<xs:attribute name="ActualityDate" type="tDate"/>
+			<xs:attribute name="OwnerID" type="xs:integer"/>
+		</xs:complexType>
+	</xs:element>
+	  
+    <!--  <xs:element name="CreditContractRecordOld" minOccurs="0" maxOccurs="unbounded"> 
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="tCreditContractRecordOld"/>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>-->
+      <!--<xs:element name="SuretyContractRecord" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="tSuretyContractRecord"/>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>-->
+      <!--<xs:element name="BankGuaranteeRecord" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="tBankGuaranteeRecord"/>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>-->
+     <!-- <xs:element name="DebtObligationRecord" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="tDebtObligationRecord"/>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>-->
+      <xs:element name="Summary" type="tMainSummary" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+	<xs:complexType name="tInformationalPart">
+		<xs:sequence>
+				<xs:element name="CreditApplication" minOccurs="0" maxOccurs="unbounded">	<!--Блок 55 ФЛ = блок 45 ЮЛ-->
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CreditRefusal" minOccurs="0"> 	<!--Блок 57 ФЛ = блок 47 ЮЛ-->
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="RefuseReasonCode" type="xs:integer" minOccurs="1" maxOccurs="unbounded"/>
+									</xs:sequence>
+									<xs:attribute name="RefuseDate" type="tDate"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+							<xs:attribute name="ParticipationCode" type="xs:integer" use="required"/>
+							<xs:attribute name="CreditApplicationSum" type="xs:decimal"/>
+							<xs:attribute name="CreditApplicationCurrency" type="tStr3"/>
+							<xs:attribute name="CreditApplicationUid" type="xs:string"/>
+							<xs:attribute name="CreditApplicationDate" type="tDate"/>
+							<xs:attribute name="SourceCode" type="xs:integer" use="required"/>	
+							<xs:attribute name="WayCode" type="xs:integer" use="required"/>	
+							<xs:attribute name="CreditApplicationExpirationDate" type="tDate"/>
+							<xs:attribute name="CreditApplicationConsiderationDate" type="tDate"/>          				<!--New-->
+							<xs:attribute name="CreditPurposeCode" type="xs:decimal"/>                  					<!--New-->
+							<xs:attribute name="CreditApplicationConsiderationStatus" type="xs:integer"/>					<!--New-->	
+							<xs:attribute name="CreditApplicationConsiderationStatusDate" type="tDate"/>                    <!--New-->
+							<xs:attribute name="CreditApplicationMethodType" type="xs:integer"/>                            <!--New-->
+							<xs:attribute name="CreditApplicationNum" type="xs:string"/>                					<!--New-->
+							<xs:attribute name="ActualityDate" type="tDate"/>
+							<xs:attribute name="OwnerID" type="xs:integer"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CreditParticipation" minOccurs="0" maxOccurs="unbounded">	<!--Блок 56 ФЛ = блок 46 ЮЛ-->
+					<xs:complexType>
+						<xs:attribute name="ParticipationCode" type="xs:integer" use="required"/>
+						<xs:attribute name="CreditTypeCode" type="xs:integer"/>
+						<xs:attribute name="CreditContractUID" type="xs:string"/>		
+						<xs:attribute name="TransferOfFundingDate" type="tDate"/>
+						<xs:attribute name="OverdueMore90Days" type="tBinaryFlag" use="required"/>
+						<xs:attribute name="ObligationTerminated" type="tBinaryFlag" use="required"/>
+						<xs:attribute name="ActualityDate" type="tDate"/>
+						<xs:attribute name="OwnerID" type="xs:integer"/>
+						<xs:attribute name="AcquirerID" type="xs:integer"/>
+					</xs:complexType>
+				</xs:element>	
+			</xs:sequence>
+	</xs:complexType>
+	
+	<!--<xs:complexType name="tInformationalPartOld">
+		<xs:sequence>
+		<xs:element name="CreditEvent" minOccurs="0" maxOccurs="unbounded">
+			<xs:complexType>
+			<xs:attribute name="CreditContractID" type="xs:integer"/>
+			<xs:attribute name="StageID" type="xs:integer" use="required"/>
+			<xs:attribute name="StageCaption" type="xs:string"/>
+			<xs:attribute name="EventDate" type="tDate" use="required"/>
+			<xs:attribute name="Number" type="xs:string"/>
+			<xs:attribute name="CreditType" type="xs:integer"/>
+			<xs:attribute name="CreditTypeCaption" type="xs:string"/>
+			<xs:attribute name="TypeID" type="xs:integer"/>
+			<xs:attribute name="TypeCaption" type="tStr255"/>
+			<xs:attribute name="RequestMethodID" type="xs:integer"/>
+			<xs:attribute name="RequestMethodCaption" type="tStr255"/>
+			<xs:attribute name="ApprovalDate" type="tDate"/>
+			<xs:attribute name="ApprovalExpirationDate" type="tDate"/>
+			<xs:attribute name="ActualityDate" type="tDate"/>
+			<xs:attribute name="OwnerID" type="xs:integer"/>
+			<xs:attribute name="SourceTypeID" type="xs:integer"/>
+			<xs:attribute name="SourceTypeCaption" type="tStr255"/>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="SuretyEvent" minOccurs="0" maxOccurs="unbounded">
+			<xs:complexType>
+			<xs:attribute name="SuretyContractID" type="xs:integer"/>
+			<xs:attribute name="StageID" type="xs:integer" use="required"/>
+			<xs:attribute name="StageCaption" type="xs:string"/>
+			<xs:attribute name="EventDate" type="tDate" use="required"/>
+			<xs:attribute name="SuretyNumber" type="tStr50"/>
+			<xs:attribute name="TypeID" type="xs:integer"/>
+			<xs:attribute name="TypeCaption" type="tStr255"/>
+			<xs:attribute name="ActualityDate" type="tDate"/>
+			<xs:attribute name="OwnerID" type="xs:integer"/>
+			<xs:attribute name="SourceTypeID" type="xs:integer"/>
+			<xs:attribute name="SourceTypeCaption" type="tStr255"/>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="RefusalEvent" minOccurs="0" maxOccurs="unbounded">
+			<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RefusalCause" type="tLongReference" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="CreditContractID" type="xs:integer"/>
+			<xs:attribute name="StageID" type="xs:integer" use="required"/>
+			<xs:attribute name="StageCaption" type="xs:string"/>
+			<xs:attribute name="EventDate" type="tDate" use="required"/>
+			<xs:attribute name="RefusalAmount" type="xs:decimal" use="required"/>
+			<xs:attribute name="CurrencyID" type="xs:integer"/>
+			<xs:attribute name="CurrencyCaption" type="tStr5" use="required"/>
+			<xs:attribute name="ActualityDate" type="tDate"/>
+			<xs:attribute name="OwnerID" type="xs:integer"/>
+			<xs:attribute name="SourceTypeID" type="xs:integer"/>
+			<xs:attribute name="SourceTypeCaption" type="tStr255"/>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="DefaultEvent" minOccurs="0" maxOccurs="unbounded">
+			<xs:complexType>
+			<xs:attribute name="CreditContractID" type="xs:integer"/>
+			<xs:attribute name="SuretyContractID" type="xs:integer"/>
+			<xs:attribute name="StageID" type="xs:integer" use="required"/>
+			<xs:attribute name="StageCaption" type="xs:string"/>
+			<xs:attribute name="EventDate" type="tDate"/>
+			<xs:attribute name="PastDueDays" type="xs:integer"/>
+			<xs:attribute name="ActualityDate" type="tDate"/>
+			<xs:attribute name="OwnerID" type="xs:integer"/>
+			<xs:attribute name="SourceTypeID" type="xs:integer"/>
+			<xs:attribute name="SourceTypeCaption" type="tStr255"/>
+			</xs:complexType>
+		</xs:element>
+		</xs:sequence>
+	</xs:complexType>-->
+	
+	<xs:complexType name="tAdditionalPart">
+		<xs:sequence>
+			<xs:element name="SourceLegalEntity" type="tSrcLegalEntity" minOccurs="0" maxOccurs="unbounded"/> 								<!-- Блок 46 ФЛ = блок 36 ЮЛ -->
+			<xs:element name="SourceNaturalPersonEntity" type="tSrcNaturalPersonEntity" minOccurs="0" maxOccurs="unbounded"/>				<!-- Блок 47 ФЛ = блок 37 ЮЛ -->
+			<xs:element name="SourceArbitrationManagerEntity" type="tSrcArbitrationManagerEntity" minOccurs="0" maxOccurs="unbounded"/>		<!-- Блок 48 ФЛ = блок 38 ЮЛ -->
+			<xs:element name="UserLegalEntity" type="tUserLegalEntity" minOccurs="0" maxOccurs="unbounded"/>								<!--Блок 49 ФЛ = блок 39 ЮЛ-->
+			<xs:element name="UserIndividualEntrepreneur" type="tUserIndividualEntrepreneur" minOccurs="0" maxOccurs="unbounded"/>			<!-- Блок 50 ФЛ = блок 40 ЮЛ -->
+			<xs:element name="AcquirerLegalEntity" type="tAcquirerLegalEntity" minOccurs="0" maxOccurs="unbounded"/>						<!-- Блок 51 ФЛ = блок 41 ЮЛ -->
+			<xs:element name="AcquirerNaturalPersonEntity" type="tAcquirerNaturalPersonEntity" minOccurs="0" maxOccurs="unbounded"/>		<!-- Блок 52 ФЛ = блок 42 ЮЛ -->
+			<xs:element name="ServiceOrganization" type="tServiceOrganization" minOccurs="0" maxOccurs="unbounded"/>						<!-- Блок 53 ФЛ = блок 43 ЮЛ -->
+		</xs:sequence>
+	</xs:complexType>
+		
+	<xs:complexType name="tReportSummary">
+		<xs:sequence>
+		<xs:element name="SourceTypes" type="tSourceTypes" minOccurs="0"/>
+		<xs:element name="DisputingInfo" type="tDisputingInfo" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--Блок 18 ФЛ = блок 11 ЮЛ-->
+	<xs:complexType name="tCreditDeal">
+		<xs:sequence>
+			<xs:element name="PurposeCode" type="xs:decimal" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="ParticipationCode" type="xs:integer"/>
+		<xs:attribute name="OpenDate" type="tDate"/>
+		<xs:attribute name="DealTypeCode" type="xs:integer"/>
+		<xs:attribute name="CreditTypeCode" type="xs:integer"/>
+		<xs:attribute name="ConsumerCredit" type="tBinaryFlag"/>
+		<xs:attribute name="PaymentCard" type="tBinaryFlag"/>
+		<xs:attribute name="ContractNovation" type="tBinaryFlag"/>
+		<xs:attribute name="MonetaryObligationOfTheSource" type="tBinaryFlag"/>
+		<xs:attribute name="MonetaryObligationOfTheSubject" type="tBinaryFlag"/>
+		<xs:attribute name="EstimatedCloseDate" type="tDate"/>
+		<xs:attribute name="CreditorType" type="xs:integer"/>											<!--New-->
+		<xs:attribute name="GettingPartialRights" type="tBinaryFlag"/>									<!--New-->
+		<xs:attribute name="CreditLine" type="tBinaryFlag"/>											<!--New-->
+		<xs:attribute name="CreditLineType" type="xs:integer"/> 										<!--New-->
+		<xs:attribute name="FloatingInterestRate" type="tBinaryFlag"/>									<!--New-->
+		<xs:attribute name="PartialRightsTransfered" type="tBinaryFlag"/>								<!--New-->
+		<xs:attribute name="PartialRightsTransferedUid" type="xs:string"/>								<!--New-->
+		<xs:attribute name="ObligationDate" type="tDate"/>								<!--New-->
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+  
+	<!--Блок 19 ФЛ = блок 12 ЮЛ-->
+	<xs:complexType name="tCreditSum">
+		<xs:attribute name="ContractTotal" type="xs:decimal"/>
+		<xs:attribute name="Currency" type="tStr3"/>
+		<xs:attribute name="AmountOfSecuredObligation" type="xs:decimal"/>
+		<xs:attribute name="SecuredObligationCurrency" type="tStr3"/>					<!--New-->
+		<xs:attribute name="SecuredObligationType" type="xs:integer"/>					<!--New-->
+		<xs:attribute name="CalculationDate" type="tDate"/>								<!--New-->
+		<xs:attribute name="SecuredObligationUid" type="xs:string"/>					<!--New-->
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+  
+	<!--Блок 21 ФЛ = блок 14 ЮЛ-->
+	<xs:complexType name="tPaymentConditions">
+		<xs:attribute name="NextPrincipalPaymentSum" type="xs:decimal"/>
+		<xs:attribute name="NextPrincipalPaymentDate" type="tDate"/>
+		<xs:attribute name="NextInterestPaymentSum" type="xs:decimal"/>
+		<xs:attribute name="NextInterestPaymentDate" type="tDate"/>
+		<xs:attribute name="PaymentFrequencyCode" type="xs:integer"/>
+		<xs:attribute name="MinCardPaymentSum" type="xs:decimal"/>
+		<xs:attribute name="FreeOfChargePeriodStartDate" type="tDate"/>
+		<xs:attribute name="FreeOfChargePeriodEndDate" type="tDate"/>
+		<xs:attribute name="ExpirationInterestDate" type="tDate"/>
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+  
+	<!--Блок 22 ФЛ -->
+	<xs:complexType name="tCreditTotalSum">
+		<xs:attribute name="ContractTotalPercents" type="xs:decimal"/>
+		<xs:attribute name="ContractTotalAmount" type="xs:decimal"/>
+		<xs:attribute name="ContractTotalDate" type="tDate"/>
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+  
+	<!--Блок 23 ФЛ = блок 15 ЮЛ-->
+	<xs:complexType name="tCreditContractChange">
+		<xs:attribute name="ChangesDate" type="tDate"/>
+		<xs:attribute name="ChangeCode" type="xs:integer" use="required"/>
+		<xs:attribute name="SpecialChangeCode" type="xs:integer" use="required"/>
+		<xs:attribute name="OtherChange" type="xs:string"/>
+		<xs:attribute name="ChangesStartDate" type="tDate"/>
+		<xs:attribute name="ChangesExpirationDate" type="tDate"/>
+		<xs:attribute name="ChangesTerminationDate" type="tDate"/>
+		<xs:attribute name="ChangesTerminationCode" type="xs:integer"/>
+		<xs:attribute name="CurrencyConversionRate" type="xs:decimal"/>
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+		
+	<!--Блок 24 ФЛ = блок 16 ЮЛ-->
+	<xs:complexType name="tFundingTransferInfo">		<!--New-->
+		<xs:attribute name="TransferOfFundingDate" type="tDate"/>
+		<xs:attribute name="TrancheNumber" type="xs:integer"/>
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+	
+	<!--Блок 25 ФЛ = блок 17 ЮЛ-->
+	<xs:complexType name="tCreditDebt">
+		<xs:attribute name="PaymentId" type="xs:integer" use="required"/>
+		<xs:attribute name="CreditDebtId" type="xs:integer" use="required"/>
+		<xs:attribute name="DebtSumOnFundingDate" type="xs:decimal"/>
+		<xs:attribute name="CalculationByLastPayment" type="tBinaryFlag"/>
+		<xs:attribute name="DebtSum" type="xs:decimal"/>
+		<xs:attribute name="DebtSumPrincipal" type="xs:decimal"/>
+		<xs:attribute name="DebtSumInterest" type="xs:decimal"/>
+		<xs:attribute name="DebtSumOther" type="xs:decimal"/>
+		<xs:attribute name="CalculationDate" type="tDate"/>
+		<xs:attribute name="UnconfirmedGracePeriod" type="tBinaryFlag"/>
+	</xs:complexType>
+  
+	<!--Блок 26 ФЛ = блок 18 ЮЛ-->
+	<xs:complexType name="tCreditUrgentDebt">
+		<xs:attribute name="CreditDebtId" type="xs:integer" use="required"/>
+		<xs:attribute name="UrgentDebtDate" type="tDate"/>
+		<xs:attribute name="CalculationByLastPayment" type="tBinaryFlag"/>
+		<xs:attribute name="UrgentDebtSum" type="xs:decimal"/>
+		<xs:attribute name="UrgentDebtSumPrincipal" type="xs:decimal"/>
+		<xs:attribute name="UrgentDebtSumInterest" type="xs:decimal"/>
+		<xs:attribute name="UrgentDebtSumOther" type="xs:decimal"/>
+		<xs:attribute name="CalculationDate" type="tDate"/>
+	</xs:complexType>
+  
+	<!--Блок 27 ФЛ = блок 19 ЮЛ-->
+	<xs:complexType name="tCreditOverdueDebt">
+		<xs:attribute name="CreditDebtId" type="xs:integer" use="required"/>
+		<xs:attribute name="OverdueDebtDate" type="tDate"/>
+		<xs:attribute name="CalculationByLastPayment" type="tBinaryFlag"/>
+		<xs:attribute name="OverdueDebtSum" type="xs:decimal"/>
+		<xs:attribute name="OverdueDebtSumPrincipal" type="xs:decimal"/>
+		<xs:attribute name="OverdueDebtSumInterest" type="xs:decimal"/>
+		<xs:attribute name="OverdueDebtSumOther" type="xs:decimal"/>
+		<xs:attribute name="CalculationDate" type="tDate"/>
+		<xs:attribute name="LastMissedPrincipalPaymentDate" type="tDate"/>
+		<xs:attribute name="LastMissedInterestPaymentDate" type="tDate"/>
+	</xs:complexType>
+  
+	<!--Блок 28 ФЛ = блок 20 ЮЛ-->
+	<xs:complexType name="tMakingPayment">
+		<xs:attribute name="PaymentId" type="xs:integer"/>
+		<xs:attribute name="LastPaymentDate" type="tDate"/>
+		<xs:attribute name="LastPaymentSum" type="xs:decimal"/>
+		<xs:attribute name="LastPaymentSumPrincipal" type="xs:decimal"/>
+		<xs:attribute name="LastPaymentSumInterest" type="xs:decimal"/>
+		<xs:attribute name="LastPaymentSumOther" type="xs:decimal"/>
+		<xs:attribute name="AllPaymentsSum" type="xs:decimal"/>
+		<xs:attribute name="AllPaymentsSumPrincipal" type="xs:decimal"/>
+		<xs:attribute name="AllPaymentsSumInterest" type="xs:decimal"/>
+		<xs:attribute name="AllPaymentsSumOther" type="xs:decimal"/>
+		<xs:attribute name="PaymentsSumObservanceCode" type="xs:integer" use="required"/>
+		<xs:attribute name="PaymentsDeadlineObservanceCode" type="xs:integer" use="required"/>
+		<xs:attribute name="DurationOfOverdue" type="xs:integer"/>
+	</xs:complexType>
+	
+	<!--Блок 40 ФЛ-->
+	<xs:complexType name="tAMPQCB">
+		<xs:attribute name="AMPSum" type="xs:decimal"/>
+		<xs:attribute name="AMPCalculationDate" type="tDate"/>
+		<xs:attribute name="AMPCurrency" type="tStr3"/>
+		<xs:attribute name="CreditContractUID" type="xs:string"/>
+		<xs:attribute name="QCBRegNumber" type="tPSRN"/>
+		<xs:attribute name="InfoReceivedTerminated" type="xs:integer"/>
+	</xs:complexType>
+	
+	<!--Блок 30 ФЛ = блок 21 ЮЛ-->
+	<xs:complexType name="tObligationSrc">
+		<xs:attribute name="ProvidedPropertyCode" type="xs:decimal" use="required"/>
+		<xs:attribute name="SubjectObligation" type="xs:string"/>
+		<xs:attribute name="ProvisionObject" type="xs:string"/>
+		<xs:attribute name="PropertyTransferDate" type="tDate"/>
+		<xs:attribute name="ProvidedPropertyId" type="xs:string"/>					<!--New-->
+	</xs:complexType>
+	
+	<!--Блок 31 ФЛ = блок 22 ЮЛ-->
+	<xs:complexType name="tObligationSub">
+		<xs:attribute name="SubjectObligation" type="xs:string"/>
+		<xs:attribute name="ProvisionObject" type="xs:string"/>
+		<xs:attribute name="ExecutionOrderOfObligation" type="xs:string"/>
+		<xs:attribute name="ImproperExecutionOfObligation" type="tBinaryFlag" use="required"/>
+		<xs:attribute name="ReceivedPropertyCode" type="xs:decimal"/>					<!--New-->
+	</xs:complexType>
+  
+	<!--Блок 32 ФЛ = блок 23 ЮЛ-->
+	<xs:complexType name="tPledge">
+		<xs:attribute name="PledgeSubjectCode" type="xs:decimal" use="required"/>
+		<xs:attribute name="PledgeSubjectId" type="xs:string"/>
+		<xs:attribute name="PledgeDate" type="tDate"/>
+		<xs:attribute name="PledgeEstimateAmount" type="xs:decimal"/>
+		<xs:attribute name="PledgeCurrency" type="tStr3"/>
+		<xs:attribute name="PledgeEstimateDate" type="tDate"/>
+		<xs:attribute name="AnotherEncumbranceOfThePledgeSubject" type="tBinaryFlag"/>
+		<xs:attribute name="PledgeExpirationDate" type="tDate"/>
+		<xs:attribute name="PledgeTerminationDate" type="tDate"/>
+		<xs:attribute name="PledgeTerminationReason" type="xs:integer"/>
+		<xs:attribute name="PledgeSubjectCostType" type="xs:integer"/>				<!--New-->
+		<xs:attribute name="PledgeAllObligationsSum" type="xs:decimal"/>			<!--New-->
+		<xs:attribute name="PledgeContractsNumber" type="xs:integer"/>				<!--New-->
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+  
+	<!--Блок 33 ФЛ = блок 24 ЮЛ-->
+	<xs:complexType name="tSurety">
+		<xs:attribute name="SuretyContractUID" type="xs:string" use="required"/> 
+		<xs:attribute name="SuretyAmount" type="xs:decimal"/>
+		<xs:attribute name="SuretyCurrency" type="tStr3"/>
+		<xs:attribute name="SuretyContractDate" type="tDate"/>
+		<xs:attribute name="SuretyExpirationDate" type="tDate"/>
+		<xs:attribute name="SuretyTerminationDate" type="tDate"/>
+		<xs:attribute name="SuretyTerminationReason" type="xs:integer"/>
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+	
+	<!--Блок 34 ФЛ = блок 25 ЮЛ-->
+	<xs:complexType name="tIndependentGuarantee">
+		<xs:attribute name="IndependentGuaranteeUID" type="xs:string" use="required"/> 
+		<xs:attribute name="IndependentGuaranteeAmount" type="xs:decimal"/>
+		<xs:attribute name="IndependentGuaranteeCurrency" type="tStr3"/>
+		<xs:attribute name="IndependentGuaranteeDate" type="tDate"/>
+		<xs:attribute name="IndependentGuaranteeExpirationDate" type="tDate"/>
+		<xs:attribute name="IndependentGuaranteeTerminationDate" type="tDate"/>
+		<xs:attribute name="IndependentGuaranteeTerminationReason" type="xs:integer"/>
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+	
+	<!--Блок 35 ФЛ = блок 26 ЮЛ-->
+	<xs:complexType name="tPledgeInsurance">
+		<xs:attribute name="PaymentsLimit" type="xs:decimal"/> 
+		<xs:attribute name="PledgeInsuranceCurrency" type="tStr3"/>
+		<xs:attribute name="HasFranchise" type="tBinaryFlag" use="required"/>
+		<xs:attribute name="PledgeInsuranceStartDate" type="tDate"/>
+		<xs:attribute name="PledgeInsuranceExpirationDate" type="tDate"/>
+		<xs:attribute name="PledgeInsuranceTerminationDate" type="tDate"/>
+		<xs:attribute name="PledgeInsuranceTerminationReason" type="xs:integer"/>
+		<xs:attribute name="PledgeSubjectId" type="xs:string"/>							<!--New-->
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+	
+	<!--Блок 36 ФЛ = блок 27 ЮЛ-->
+	<xs:complexType name="tObligationRepayment">
+		<xs:attribute name="PledgeCode" type="xs:integer" use="required"/>
+		<xs:attribute name="Date" type="tDate"/>
+		<xs:attribute name="Sum" type="xs:decimal"/>
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+	
+	<!--Блок 37 ФЛ = блок 28 ЮЛ-->
+	<xs:complexType name="tPaidSumReimbursement">
+		<xs:attribute name="ReimbursementSum" type="xs:decimal"/>
+		<xs:attribute name="SumPaidByPrincipal" type="xs:decimal"/>
+		<xs:attribute name="ObedienceOfReimbursementProcedure" type="tBinaryFlag" use="required"/>
+		<xs:attribute name="СalculationDate" type="tDate"/>					<!--New-->
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+  
+	<!--Блок 39 ФЛ = блок 30 ЮЛ-->
+	<xs:complexType name="tLitigation">
+		<xs:attribute name="Judgement" type="tBinaryFlag" use="required"/>
+		<xs:attribute name="JudgementDate" type="tDate"/>
+		<xs:attribute name="JudgementNumber" type="xs:string"/>
+		<xs:attribute name="JudgementOperativePart" type="xs:string"/>
+		<xs:attribute name="JudgementIntoForce" type="tBinaryFlag" use="required"/>
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+	
+	<!--Блок 41 ФЛ = блок 31 ЮЛ  и Блок 42 ФЛ = блок 32 ЮЛ -->
+	<xs:complexType name="tSourceLiquidation">
+		<xs:attribute name="DebtSumAtStartDate" type="xs:decimal"/>
+		<xs:attribute name="StartDate" type="tDate"/>
+		<xs:attribute name="DebtSumAtTerminationDate" type="xs:decimal"/>
+		<xs:attribute name="TerminationDate" type="tDate"/>
+		<xs:attribute name="DebtSumAtLastPaymentDate" type="xs:decimal"/>
+		<xs:attribute name="LastPaymentDate" type="tDate"/>
+		<xs:attribute name="CreditorRightsTransfered" type="tBinaryFlag" use="required"/>
+		<xs:attribute name="ObligationTerminated" type="tBinaryFlag" use="required"/>
+		<xs:attribute name="ObligationTerminationReasonCode" type="xs:integer" use="required"/>
+		<xs:attribute name="DebtCurrency" type="tStr3"/>									<!--New-->
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+	
+	<xs:complexType name="tObligationAccountingInfo">									<!--Блок 54 = Блок 44 ЮЛ-->
+		<xs:attribute name="ObligationAccounting" type="tBinaryFlag"/>
+		<xs:attribute name="InterestRate" type="xs:decimal"/>										<!--New-->
+		<xs:attribute name="ObligationSumOffBalance" type="xs:decimal"/>							<!--New-->
+		<xs:attribute name="StateSupport" type="tBinaryFlag"/>                                     	<!--New-->
+		<xs:attribute name="StateSupportProgram" type="xs:string"/>									<!--New-->
+		<xs:attribute name="ActualityDate" type="tDate"/>
+	</xs:complexType>
+  
+<!--  <xs:complexType name="tCreditContractRecordOld">
+    <xs:sequence>
+      <xs:element name="ContractSummary" type="tContractSummary" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="ContractData" type="tCreditContractData" maxOccurs="unbounded"/>
+      <xs:element name="PledgeContract" type="tPledgeOld" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="DisputeCourtInfo" type="tCourtInfoExt" minOccurs="0" maxOccurs="unbounded"/>
+	  <xs:element name="GracePeriodInfo" type="tGracePeriodInfo" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="StatementHistory" type="tStatementHistory" minOccurs="0"/>
+      <xs:element name="PaymentHistory" type="tPaymentHistory" minOccurs="0"/>
+      <xs:element name="ProcessingTermination" type="tProcessingTermination" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>-->
+<!--  <xs:complexType name="tContractSummary">
+    <xs:attributeGroup ref="agDebtSummary"/>
+    <xs:attribute name="ProlongationCount" type="xs:integer"/>
+    <xs:attribute name="CurrentCreditLimitUnused" type="xs:decimal"/>
+    <xs:attribute name="CurrentDebt" type="xs:decimal"/>
+    <xs:attribute name="CurrentOverdueDebt" type="xs:decimal"/>
+    <xs:attribute name="DayCountOfCurrentOverdueDebt" type="xs:integer"/>
+    <xs:attribute name="MaxOverdueDebt" type="xs:decimal"/>
+  </xs:complexType>-->
+<!--  <xs:complexType name="tCreditContractData">
+    <xs:attribute name="CreditContractID" type="xs:integer"/>
+    <xs:attribute name="CreditContractUID" type="xs:string"/>
+    <xs:attribute name="RelationID" type="xs:integer"/>
+    <xs:attribute name="RelationCaption" type="tStr255"/>
+    <xs:attribute name="ContractTotal" type="xs:decimal" use="required"/>
+    <xs:attribute name="ContractTotalAmount" type="xs:decimal"/>
+    <xs:attribute name="OpenDate" type="tDate" use="required"/>
+    <xs:attribute name="EstimatedCloseDate" type="tDate"/>
+    <xs:attribute name="CurrencyID" type="xs:integer" use="required"/>
+    <xs:attribute name="CurrencyCaption" type="tStr5" use="required"/>
+    <xs:attribute name="TypeID" type="xs:integer"/>
+    <xs:attribute name="TypeCaption" type="tStr255"/>
+    <xs:attribute name="PaymentFrequencyType" type="xs:integer"/>
+    <xs:attribute name="StateID" type="xs:integer"/>
+    <xs:attribute name="StateCaption" type="tStr50"/>
+    <!{1}**<xs:attribute name="DayCountOfCurrentOverdueDebt" type="xs:integer"/>закомментировано, чтобы не мучаться с рассчетом**{1}>
+    <!{1}**<xs:attribute name="DayCountOfMaxOverdueDebt" type="xs:integer"/>закомментировано, чтобы не мучаться с рассчетом**{1}>
+    <xs:attribute name="RealCloseDate" type="tDate"/>
+    <xs:attribute name="PercentDuration" type="tStr50"/>
+    <xs:attribute name="MoneyBack" type="tStr1000"/>
+    <xs:attribute name="Changes" type="tStr300"/>
+    <xs:attribute name="ChangesDate" type="tDate"/>
+    <xs:attribute name="ChangesId" type="xs:integer"/>
+    <xs:attribute name="LastUpdatedDate" type="tDate"/>
+    <xs:attribute name="ActualityDate" type="tDate"/>
+    <xs:attribute name="CreationDate" type="tDate"/>
+    <xs:attribute name="OwnerID" type="xs:integer"/>
+  </xs:complexType>-->
+<!--  <xs:complexType name="tPledgeOld">
+    <xs:choice>
+      <xs:element name="PledgeInfo" type="tNEStr1000"/>
+      <xs:element name="PledgeData">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="PledgeSubject">
+              <xs:complexType>
+                <xs:simpleContent>
+                  <xs:extension base="tStr300">
+                    <xs:attribute name="id" type="xs:integer" use="required"/>
+                  </xs:extension>
+                </xs:simpleContent>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="PledgeExpirationDate" type="tDate"/>
+            <xs:element name="PledgeEstimateAmount" type="tAmount"/>
+            <xs:element name="PledgeEstimateDate" type="tDate"/>
+            <xs:element name="PledgeComment" type="tNEStr1000" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
+    <xs:attribute name="ActualityDate" type="tDate"/>
+  </xs:complexType>-->
+  <xs:complexType name="tExpediencyHistory">
+    <xs:sequence>
+      <xs:element name="State" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="date" type="tDate" use="required"/>
+          <xs:attribute name="money" type="xs:decimal" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+<!--  <xs:complexType name="tStatementHistory">
+    <xs:sequence>
+      <xs:element name="Statement" minOccurs="1" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="Date" type="tDate" use="required"/>
+          <xs:attribute name="Type" type="xs:integer"/>
+          <xs:attribute name="UtilizationSum" type="xs:decimal"/>
+          <xs:attribute name="Balance" type="xs:decimal"/>
+          <xs:attribute name="OutstandingPrincipleAmount" type="xs:decimal"/>
+          <xs:attribute name="NextPayment" type="xs:decimal"/>
+          <xs:attribute name="Amount" type="xs:decimal"/>
+          <xs:attribute name="OverdueAmount" type="xs:decimal" use="required"/>
+          <xs:attribute name="OverdueAmountDurationType" type="xs:integer" use="required"/>
+          <xs:attribute name="OverdueAmountDurationID" type="tStr1" use="required"/>
+          <xs:attribute name="Usage" type="xs:integer"/>
+          <xs:attribute name="CurrentLimit" type="xs:decimal"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>-->
+<!--  <xs:complexType name="tPaymentHistory">
+    <xs:sequence>
+      <xs:element name="Payment" type="tPayment" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>-->
+  <xs:complexType name="tProcessingTermination">
+    <xs:attribute name="Type" type="xs:integer" use="required"/>
+    <xs:attribute name="Date" type="tDate"/>
+  </xs:complexType>
+ <!-- <xs:complexType name="tDebtObligationStatementHistory">
+    <xs:sequence>
+      <xs:element name="Statement" minOccurs="1" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="Date" type="tDate" use="required"/>
+          <xs:attribute name="Type" type="xs:integer"/>
+          <xs:attribute name="Amount" type="xs:decimal" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>-->
+<!--  <xs:complexType name="tDebtObligationPaymentHistory">
+    <xs:sequence>
+      <xs:element name="Payment" type="tDebtObligationPayment" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>-->
+  <xs:complexType name="tSum">
+    <xs:attribute name="Currency" type="tStr5" use="required"/>
+  </xs:complexType>
+ <!-- <xs:complexType name="tPayment">
+    <xs:attribute name="Type" type="xs:integer" use="required"/>
+    <xs:attribute name="PaySum" type="xs:decimal" use="required"/>
+    <xs:attribute name="PayDate" type="tDate" use="required"/>
+  </xs:complexType>-->
+<!--  <xs:complexType name="tDebtObligationPayment">
+    <xs:attribute name="Type" type="xs:integer" use="required"/>
+    <xs:attribute name="PaySum" type="xs:decimal" use="required"/>
+    <xs:attribute name="PayDate" type="tDate" use="required"/>
+  </xs:complexType>-->
+  <xs:complexType name="tMainSummary">
+    <xs:sequence>
+      <xs:element name="CurrencyState" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="Currency" type="tStr5"/>
+          <xs:attribute name="CurrentTotalLiabilities" type="xs:decimal"/>
+          <xs:attribute name="CurrentTotalDebt" type="xs:decimal"/>
+          <xs:attribute name="MonthlyPayment" type="xs:decimal"/>
+          <xs:attribute name="TotalCurrentOverdueDebts" type="xs:decimal"/>
+          <xs:attribute name="MaxAmountOverdueDebts" type="xs:decimal"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="DayCountOfMaxCurrentOverdueDebt" type="xs:integer"/>
+    <xs:attributeGroup ref="agDebtSummary"/>
+    <xs:attribute name="ProlongationCount" type="xs:integer"/>
+  </xs:complexType>
+  <xs:complexType name="tSourceTypes">
+    <xs:sequence>
+      <xs:element name="Source" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="OwnerID" type="xs:integer"/>
+          <xs:attribute name="Ownership" type="xs:boolean"/>
+          <xs:attribute name="SourceTypeID" type="xs:integer"/>
+          <xs:attribute name="SourceTypeCaption" type="tStr255"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="tDisputingInfo">
+    <xs:sequence>
+      <xs:element name="CreditContract" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="Date" type="tDate" use="required"/>
+          <xs:attribute name="ID" type="xs:integer" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="SuretyContract" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="Date" type="tDate" use="required"/>
+          <xs:attribute name="ID" type="xs:integer" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="BankGuarantee" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="Date" type="tDate" use="required"/>
+          <xs:attribute name="ID" type="xs:integer" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DebtObligation" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="Date" type="tDate" use="required"/>
+          <xs:attribute name="ID" type="xs:integer" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DisputingText"  minOccurs="0" maxOccurs="1"> <!-- type="xs:string" -->
+        <xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="Date" type="tDate" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:attributeGroup name="agDebtSummary">
+    <xs:attribute name="DebtCountFrom1To29" type="xs:integer"/>
+    <xs:attribute name="DebtCountFrom30To59" type="xs:integer"/>
+    <xs:attribute name="DebtCountFrom60To89" type="xs:integer"/>
+    <xs:attribute name="DebtCountFrom90To119" type="xs:integer"/>
+    <xs:attribute name="DebtCountMore120" type="xs:integer"/>
+  </xs:attributeGroup>
+  <xs:complexType name="tAdditionalPartRequest">
+    <xs:attribute name="RequestDateTime" type="tDateTime" use="required"/>
+    <xs:attribute name="OwnerID" type="xs:integer" use="required"/>
+    <xs:attribute name="UseCreditHistory" type="xs:boolean"/>
+  </xs:complexType>
+  
+  <!-- Блок 46 ФЛ = блок 36 ЮЛ -->
+  <xs:complexType name="tSrcLegalEntity">
+	<xs:sequence>
+		<xs:element name="Name" type="tLegalName" minOccurs="0"/>	
+	</xs:sequence>
+	<xs:attribute name="ID" type="xs:integer"/>
+	<xs:attribute name="SourceCode" type="xs:integer" use="required"/>
+	<xs:attribute name="RegisteredInRF" type="tBinaryFlag" use="required"/>
+	<xs:attribute name="SourceCreationDate" type="tDate"/>
+	<xs:attribute name="PSRN" type="tPSRN"/>
+	<xs:attribute name="ForeignRegNumber" type="tStr1000"/>
+	<xs:attribute name="IndividualTaxpayerNumber" type="tITN"/>
+	<xs:attribute name="ForeignTaxpayerNumber" type="tStr50"/>
+	<xs:attribute name="LEI" type="tStr50"/>
+	<xs:attribute name="BankruptcyDate" type="tDate"/>
+	<xs:attribute name="BankruptcyProceedingsTerminationDate" type="tDate"/>
+	<xs:attribute name="LiquidationStartDate" type="tDate"/>
+	<xs:attribute name="LiquidationTerminationDate" type="tDate"/>
+	<xs:attribute name="CreditInfoDate" type="tDate"/>  
+  </xs:complexType>
+  
+  <!-- Блок 47 ФЛ = блок 37 ЮЛ -->
+  <xs:complexType name="tSrcNaturalPersonEntity">
+	<xs:sequence>
+		<xs:element name="Name" type="tNaturalPersonName" minOccurs="0"/>
+		<xs:element name="BirthDatePlace" type="tNaturalPersonBirthDatePlace" minOccurs="0"/>
+		<xs:element name="IdentificationDocument" type="tIdentityDocForAdditionalPart" minOccurs="0"/>
+	</xs:sequence>
+	<xs:attribute name="ID" type="xs:integer"/>
+	<xs:attribute name="PSRN" type="tPSRN"/> 
+	<xs:attribute name="ForeignRegNumber" type="tStr1000"/>
+	<xs:attribute name="CreditInfoDate" type="tDate"/>
+  </xs:complexType>
+  
+  <!-- Блок 48 ФЛ = блок 38 ЮЛ -->
+  <xs:complexType name="tSrcArbitrationManagerEntity">
+	<xs:sequence>
+		<xs:element name="Name" type="tNaturalPersonName" minOccurs="0"/>
+		<xs:element name="BirthDatePlace" type="tNaturalPersonBirthDatePlace" minOccurs="0"/>
+	</xs:sequence>
+	<xs:attribute name="ID" type="xs:integer"/>
+	<xs:attribute name="ArbitrationManagerOrganizationName" type="tStr1000"/>
+	<xs:attribute name="ArbitrationManagerOrganizationAddress" type="tStr1000"/>
+	<xs:attribute name="ApprovalDate" type="tDate" use="required"/>
+    <xs:attribute name="ExpirationDate" type="tDate" use="required"/>
+	<xs:attribute name="IndividualTaxpayerNumber" type="tITN"/>
+	<xs:attribute name="ForeignTaxpayerNumber" type="tStr50"/>
+	<xs:attribute name="PensionNumber" type="tStr15"/>
+	<xs:attribute name="CreditInfoDate" type="tDate"/>
+  </xs:complexType>
+  
+  <!-- Блок 49 ФЛ = блок 39 ЮЛ -->
+  <xs:complexType name="tUserLegalEntity">
+	<xs:sequence>
+		<xs:element name="Name" type="tLegalName" minOccurs="0"/>	
+	</xs:sequence>
+	<xs:attribute name="ID" type="xs:integer"/>
+	<xs:attribute name="UserCode" type="xs:integer" use="required"/>
+	<xs:attribute name="RegisteredInRF" type="tBinaryFlag" use="required"/>
+	<xs:attribute name="PSRN" type="tPSRN"/>
+	<xs:attribute name="ForeignRegNumber" type="tStr1000"/>
+	<xs:attribute name="LEI" type="tStr50"/>
+	<xs:attribute name="IndividualTaxpayerNumber" type="tITN"/>
+	<xs:attribute name="ForeignTaxpayerNumber" type="tStr50"/>
+	<xs:attribute name="ChangeMonitoring" type="tBinaryFlag" use="required"/>
+	<xs:attribute name="ChangeMonitoringStartDate" type="tDate"/>
+  </xs:complexType>
+  
+  <!-- Блок 50 ФЛ = блок 40 ЮЛ -->
+  <xs:complexType name="tUserIndividualEntrepreneur">
+	<xs:sequence>
+		<xs:element name="Name" type="tNaturalPersonName" minOccurs="0"/>
+		<xs:element name="BirthDatePlace" type="tNaturalPersonBirthDatePlace" minOccurs="0"/>
+		<xs:element name="IdentificationDocument" type="tIdentityDocForAdditionalPart" minOccurs="0"/>
+	</xs:sequence>
+	<xs:attribute name="ID" type="xs:integer"/>
+	<xs:attribute name="IndividualTaxpayerNumber" type="tITN"/>
+	<xs:attribute name="ForeignTaxpayerNumber" type="tStr50"/>
+	<xs:attribute name="PSRN" type="tPSRN"/> 
+	<xs:attribute name="ForeignRegNumber" type="tStr1000"/>
+	<xs:attribute name="PensionNumber" type="tStr15"/>
+	<xs:attribute name="ChangeMonitoring" type="tBinaryFlag" use="required"/>
+	<xs:attribute name="ChangeMonitoringStartDate" type="tDate"/>
+  </xs:complexType>
+  
+  <!-- Блок 51 ФЛ = блок 41 ЮЛ -->
+  <xs:complexType name="tAcquirerLegalEntity">
+	<xs:sequence>
+		<xs:element name="Name" type="tLegalName" minOccurs="0"/>	
+	</xs:sequence>
+	<xs:attribute name="ID" type="xs:integer"/>
+	<xs:attribute name="AcquirerCode" type="xs:integer" use="required"/>
+	<xs:attribute name="RegisteredInRF" type="tBinaryFlag" use="required"/>
+	<xs:attribute name="PSRN" type="tPSRN"/>
+	<xs:attribute name="ForeignRegNumber" type="tStr1000"/>
+	<xs:attribute name="LEI" type="tStr50"/>
+	<xs:attribute name="IndividualTaxpayerNumber" type="tITN"/>
+	<xs:attribute name="ForeignTaxpayerNumber" type="tStr50"/>
+	<xs:attribute name="AcquireDate" type="tDate"/>
+  </xs:complexType>
+  
+  <!-- Блок 52 ФЛ = блок 42 ЮЛ -->
+  <xs:complexType name="tAcquirerNaturalPersonEntity">
+	<xs:sequence>
+		<xs:element name="Name" type="tNaturalPersonName" minOccurs="0"/>
+		<xs:element name="BirthDatePlace" type="tNaturalPersonBirthDatePlace" minOccurs="0"/>
+		<xs:element name="IdentificationDocument" type="tIdentityDocForAdditionalPart" minOccurs="0"/>
+	</xs:sequence>
+	<xs:attribute name="ID" type="xs:integer"/>
+	<xs:attribute name="IndividualTaxpayerNumber" type="tITN"/>
+	<xs:attribute name="ForeignTaxpayerNumber" type="tStr50"/>
+	<xs:attribute name="PensionNumber" type="tStr15"/>
+	<xs:attribute name="AcquireDate" type="tDate"/>
+  </xs:complexType>
+  
+  <!-- Блок 53 ФЛ = блок 43 ЮЛ -->
+  <xs:complexType name="tServiceOrganization">
+	<xs:sequence>
+		<xs:element name="Name" type="tLegalName" minOccurs="0"/>	
+	</xs:sequence>
+	<xs:attribute name="ID" type="xs:integer"/>
+	<xs:attribute name="RegisteredInRF" type="tBinaryFlag" use="required"/>
+	<xs:attribute name="PSRN" type="tPSRN"/>
+	<xs:attribute name="ForeignRegNumber" type="tStr1000"/>
+	<xs:attribute name="IndividualTaxpayerNumber" type="tITN"/>
+	<xs:attribute name="ForeignTaxpayerNumber" type="tStr50"/>
+	<xs:attribute name="ContractStartDate" type="tDate"/>
+	<xs:attribute name="ContractExpirationDate" type="tDate"/>
+	<xs:attribute name="IssuerName" type="tStr1000"/>
+	<xs:attribute name="IssuerPsrn" type="tPSRN"/>
+	<xs:attribute name="IssuerForeignRegNumber" type="tStr1000"/>
+  </xs:complexType>
+  
+  <xs:complexType name="tLegalAddressInfo">
+	<xs:sequence>
+		<xs:element name="Address" type="tAddress" minOccurs="0" maxOccurs="1"/>
+	</xs:sequence>
+	<xs:attribute name="ActualityDate" type="tDate"/>
+	<xs:attribute name="CreationDate" type="tDate"/>
+	<xs:attribute name="OwnerID" type="xs:integer"/>
+  </xs:complexType>
+  <xs:complexType name="tAddressInfo">
+	<xs:sequence>
+		<xs:element name="Address" type="tAddress" minOccurs="0" maxOccurs="1"/>	
+	</xs:sequence>
+	<xs:attribute name="RegAddressCode" type="xs:integer"/>
+	<xs:attribute name="RegDate" type="tDate"/>
+	<xs:attribute name="RegAuthorityName" type="xs:string"/>
+	<xs:attribute name="RegAuthorityCode" type="tStr50"/>
+	<xs:attribute name="IsActualAddress" type="tBinaryFlag" use="required"/>
+	<xs:attribute name="ActualityDate" type="tDate"/>
+	<xs:attribute name="CreationDate" type="tDate"/>
+	<xs:attribute name="OwnerID" type="xs:integer"/>
+  </xs:complexType>
+  <xs:complexType name="tAddress">
+	<xs:attribute name="PostCode" type="tStr6"/>
+	<xs:attribute name="CountryCode" type="tNumStr3"/>
+	<xs:attribute name="CountryName" type="xs:string"/>
+	<xs:attribute name="AnotherCountryName" type="xs:string"/>
+	<xs:attribute name="FiasNum" type="tFIASNum"/>
+	<xs:attribute name="LocalityCode" type="tNumStr11"/>
+	<xs:attribute name="LocalityName" type="xs:string"/>
+	<xs:attribute name="OtherLocalityName" type="xs:string"/>
+	<xs:attribute name="Street" type="tStr60"/>
+	<xs:attribute name="HouseNum" type="tStr20"/>
+	<xs:attribute name="Ownership" type="tStr20"/>
+	<xs:attribute name="Housing" type="tStr20"/>
+	<xs:attribute name="Building" type="tStr20"/>
+	<xs:attribute name="FlatNum" type="tStr20"/>
+  </xs:complexType>
+  
+  <xs:complexType name="tAddressInfoOld">
+    <xs:sequence>
+      <xs:element name="Caption" type="tCaption" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="AddressString" type="tStr500" minOccurs="0"/>
+      <xs:element name="Region" type="tCaption" minOccurs="0"/>
+      <xs:element name="District" type="tAddressIdentity" minOccurs="0"/>
+      <xs:element name="City" type="tAddressIdentity" minOccurs="0"/>
+      <xs:element name="Village" type="tAddressIdentity" minOccurs="0"/>
+      <xs:element name="StreetAddress" type="tStreetAddress" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="ActualityDate" type="tDate"/>
+    <xs:attribute name="CreationDate" type="tDate"/>
+    <xs:attribute name="OwnerID" type="xs:integer"/>
+  </xs:complexType>
+  <xs:complexType name="tNaturalPersonIdentificationDocumentInfo">
+    <xs:complexContent>
+      <xs:extension base="tNaturalPersonIdentificationDocument">
+	    <xs:attribute name="DocEndDate" type="tDate"/>
+		<xs:attribute name="DocCountryCode" type="tNumStr3"/>
+		<xs:attribute name="DocCountryName" type="xs:string"/>
+		<xs:attribute name="DocOtherCountryName" type="tStr100"/>
+        <xs:attribute name="ActualityDate" type="tDate"/>
+        <xs:attribute name="CreationDate" type="tDate"/>
+        <xs:attribute name="OwnerID" type="xs:integer"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="tIndividualEntrepreneurInfo">
+    <xs:complexContent>
+      <xs:extension base="tIndividualEntrepreneur">
+		<xs:attribute name="ForeignRegNumber" type="tStr1000"/>
+        <xs:attribute name="ActualityDate" type="tDate"/>
+        <xs:attribute name="CreationDate" type="tDate"/>
+        <xs:attribute name="OwnerID" type="xs:integer"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="tPhoneInfo">
+    <xs:complexContent>
+      <xs:extension base="tPhone">
+        <xs:attribute name="ActualityDate" type="tDate"/>
+        <xs:attribute name="CreationDate" type="tDate"/>
+        <xs:attribute name="OwnerID" type="xs:integer"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="tCourtInfo">
+    <xs:choice>
+      <xs:element name="CourtInfo" type="xs:string" minOccurs="0"/>
+      <xs:element name="CourtData" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="CourtDate" minOccurs="0" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:complexContent>
+                  <xs:extension base="tCourtDate"/>
+                </xs:complexContent>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:attribute name="Name" type="xs:string"/>
+          <xs:attribute name="Locality" type="xs:string"/>
+          <xs:attribute name="CaseId" type="xs:string"/>
+          <xs:attribute name="Decision" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+ <!-- <xs:complexType name="tCourtInfoExt">
+    <xs:choice>
+      <xs:element name="CourtInfo" type="xs:string"/>
+      <xs:element name="CourtData">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="CourtDate" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:complexContent>
+                  <xs:extension base="tCourtDate"/>
+                </xs:complexContent>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:attribute name="Name" type="xs:string"/>
+          <xs:attribute name="Locality" type="xs:string"/>
+          <xs:attribute name="CaseId" type="xs:string"/>
+          <xs:attribute name="Decision" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
+    <xs:attribute name="ActualityDate" type="tDate"/>
+  </xs:complexType>-->
+  <xs:complexType name="tCourtDate">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="ID" type="xs:integer"/>
+        <xs:attribute name="Date" type="tDate" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+<!--  <xs:complexType name="tEFRSBData">
+    <xs:attribute name="ID" type="xs:integer"/>
+    <xs:attribute name="Date" type="tDate" use="required"/>
+  </xs:complexType>-->
+<!--  <xs:complexType name="tGracePeriodInfo">
+    <xs:attribute name="ActualityDate" type="tDate" use="required"/>
+	<xs:attribute name="StartDate" type="tDate" use="required"/>
+	<xs:attribute name="EndDate" type="tDate" use="required"/>
+	<xs:attribute name="Status" type="xs:integer" use="required"/>
+	<xs:attribute name="Reason" type="xs:integer" use="required"/>
+	<xs:attribute name="OverdueAmountPrincipal" type="xs:decimal"/>
+	<xs:attribute name="OverdueAmountPercent" type="xs:decimal"/>
+	<xs:attribute name="PercentAmount" type="xs:decimal"/>
+  </xs:complexType>-->
+  <!--<xs:complexType name="tSuretyContractRecord">
+    <xs:sequence>
+      <xs:element name="ContractData" type="tSuretyContractData" maxOccurs="unbounded"/>
+      <xs:element name="ProcessingTermination" type="tProcessingTermination" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>-->
+<!--  <xs:complexType name="tSuretyContractData">
+    <xs:attribute name="SuretyContractID" type="xs:integer"/>
+    <xs:attribute name="SuretyContractUID" type="xs:string"/>
+    <xs:attribute name="Date" type="tDate" use="required"/>
+    <xs:attribute name="TypeID" type="xs:integer" use="required"/>
+    <xs:attribute name="TypeCaption" type="tStr255"/>
+    <xs:attribute name="Amount" type="xs:decimal" use="required"/>
+    <xs:attribute name="CurrencyID" type="xs:integer"/>
+    <xs:attribute name="CurrencyCaption" type="tStr5" use="required"/>
+    <xs:attribute name="ExpirationDate" type="tDate" use="required"/>
+    <xs:attribute name="ActualityDate" type="tDate"/>
+    <xs:attribute name="CreationDate" type="tDate"/>
+    <xs:attribute name="OwnerID" type="xs:integer"/>
+  </xs:complexType>-->
+  <!--<xs:complexType name="tBankGuaranteeRecord">
+    <xs:sequence>
+      <xs:element name="ContractData" type="tBankGuaranteeData" maxOccurs="unbounded"/>
+      <xs:element name="ProcessingTermination" type="tProcessingTermination" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>-->
+  <!--<xs:complexType name="tBankGuaranteeData">
+    <xs:attribute name="BankGuaranteeID" type="xs:integer"/>
+    <xs:attribute name="BankGuaranteeUID" type="xs:string"/>
+    <xs:attribute name="Date" type="tDate" use="required"/>
+    <xs:attribute name="TypeID" type="xs:integer" use="required"/>
+    <xs:attribute name="TypeCaption" type="tStr255"/>
+    <xs:attribute name="Amount" type="xs:decimal" use="required"/>
+    <xs:attribute name="CurrencyID" type="xs:integer"/>
+    <xs:attribute name="CurrencyCaption" type="tStr5" use="required"/>
+    <xs:attribute name="Description" type="tStr1000"/>
+    <xs:attribute name="Termination" type="tStr1000"/>
+    <xs:attribute name="TerminationDate" type="tDate"/>
+    <xs:attribute name="ExpirationDate" type="tDate" use="required"/>
+    <xs:attribute name="ActualityDate" type="tDate"/>
+    <xs:attribute name="CreationDate" type="tDate"/>
+    <xs:attribute name="OwnerID" type="xs:integer"/>
+  </xs:complexType>-->
+ <!-- <xs:complexType name="tDebtObligationRecord">
+    <xs:sequence>
+      <xs:element name="ContractData" type="tDebtObligationData" maxOccurs="unbounded"/>
+      <xs:element name="DebtObligationCourtInfo" type="tCourtInfoExt" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="StatementHistory" type="tDebtObligationStatementHistory" minOccurs="0"/>
+      <xs:element name="PaymentHistory" type="tDebtObligationPaymentHistory" minOccurs="0"/>
+      <xs:element name="ProcessingTermination" type="tProcessingTermination" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>-->
+ <!-- <xs:complexType name="tDebtObligationData">
+    <xs:attribute name="DebtObligationID" type="xs:integer"/>
+    <xs:attribute name="DebtObligationUID" type="xs:string"/>
+    <xs:attribute name="Date" type="tDate"/>
+    <xs:attribute name="TypeID" type="xs:integer" use="required"/>
+    <xs:attribute name="TypeCaption" type="tStr255"/>
+    <xs:attribute name="Amount" type="xs:decimal" use="required"/>
+    <xs:attribute name="CurrencyID" type="xs:integer"/>
+    <xs:attribute name="CurrencyCaption" type="tStr5" use="required"/>
+    <xs:attribute name="OvrdDrtn" type="tStr5"/>
+    <xs:attribute name="OvrdDrtnType" type="xs:integer"/>
+    <xs:attribute name="Description" type="tStr1000" use="optional"/>
+    <xs:attribute name="ActualityDate" type="tDate"/>
+    <xs:attribute name="CreationDate" type="tDate"/>
+    <xs:attribute name="OwnerID" type="xs:integer"/>
+  </xs:complexType>-->
+  
+  <xs:complexType name="tReportPdf">
+	<xs:sequence>
+		<xs:element name="Pdf" type="xs:base64Binary" minOccurs="0"/>
+	</xs:sequence>
+	<xs:attribute name="Type" type="xs:int" use="required"/>
+	<xs:attribute name="HasCreditHistory" type="xs:boolean" use="required"/>
+  </xs:complexType>
+  
+</xs:schema>

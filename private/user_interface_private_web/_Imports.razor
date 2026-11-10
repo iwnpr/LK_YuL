@@ -1,0 +1,61 @@
+﻿@using System.Net.Http
+@using System.Text.Json
+@using static System.Enum
+@using System.Text.RegularExpressions;
+@using System.Xml.Linq
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using System.Security.Cryptography.X509Certificates;
+@using Microsoft.JSInterop
+@using System.Security.Cryptography.Pkcs;
+@using application_services_lib.Services
+@using user_interface_private_web
+@using user_interface_private_web.Services
+@using user_interface_private_web.Shared
+@using application_lib.Entities
+@using application_lib.Entities.Diagnostic
+@using application_lib.Entities.XML
+@using application_lib.Entities.XML.CreditReport.Request
+@using application_lib.Entities.XML.QBCH
+@using application_lib.Services
+@using application_lib.Entities.Records
+@using application_lib.Entities.Enums
+@using legal_persons_lib.Entities
+@using legal_persons_lib.Services
+@using legal_persons_lib.Entities.Requests
+@using legal_persons_lib.Enums
+@using user_interface_private_web.Components
+@using user_interface_private_web.Entities
+@using user_interface_private_web.Entities.XML
+@using user_interface_private_web.Entities.Enums
+@using user_interface_private_web.Components.Modal
+@using user_interface_private_web.Components.Input
+@using user_interface_private_web.Components.Response.Views
+@using user_interface_private_web.Components.Table
+@using user_interface_private_web.Components.Response
+@using user_interface_private_web.Components.Scheme
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage _session
+@inject IConfiguration _configuration
+@inject ISender _sender
+@inject IStringManager _stringMngr
+@inject IUserManager _userMngr
+@inject IRequestManager _requestMngr
+@inject IOrganizationManager _orgMngr
+@inject ICertificateManager _crtMngr
+@inject IServiceManager _svcMngr
+@inject IUploadManager _uploadMngr
+@inject IClassValidator _validator
+@inject NavigationManager _navMngr
+@inject IJSRuntime _jsr
+@inject IFetcher _fetcher
+@inject AuthenticationStateProvider _asp
+@inject IRepository<DBRegistrationCode> _registration
+@inject IRepository<DBTemporaryCode> _temporaries
+@inject References _dictionary
+@inject HttpClient _http
+@inject Loader _loader

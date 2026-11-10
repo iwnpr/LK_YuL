@@ -1,0 +1,607 @@
+﻿<h2 class="document__title document__title--h2 document__title--black">Титульная часть кредитной истории</h2>
+
+
+@if (_titlePart?.Element("NaturalPersonSubject") is not null)
+        {
+<div class="document__caption"><span class="document__table-icon"><img src="img/user.svg" alt="">  Данные субъекта </span></div>
+<div class="document__table-content document__table--general">
+    <table class="document__table">
+        <thead>
+            <tr>
+                <td>Фамилия Имя Отчество</td>
+                <td>Дата рождения</td>
+                <td>Дата актуальности</td>
+                @if (hasPrivate)
+                {
+                    <td>Источник КИ</td>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tp in _titlePart?.Descendants("Title") ?? Enumerable.Empty<XElement>())
+            {
+                <tr>
+                    <td>@tp?.Attribute("LastName")?.Value @tp?.Attribute("FirstName")?.Value @tp?.Attribute("MiddleName")?.Value</td>
+                    <td>@DateOnly.Parse(tp?.Attribute("BirthDate")?.Value ?? DateTime.Now.ToString("dd.MM.yyyy"))</td>
+                    <td>@tp?.Attribute("ActualityDate")?.Value</td>
+                    @if (hasPrivate)
+                    {
+                        <td>GetOwnerById(tp?.Attribute("OwnerID")?.Value ?? "0").Caption</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@*Место рождения*@
+@if (_titlePart?.Descendants("PersonalInformation").Where(x => x?.Attribute("BirthPlace")?.Value != null)?.Count() > 0)
+{
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Место рождения</td>
+                    <td>Дата актуальности</td>
+                    @if (hasPrivate)
+                    {
+                        <td>Источник КИ</td>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tp in _titlePart?.Descendants("PersonalInformation")
+               .Where(x => x?.Attribute("BirthPlace")?.Value != null)?
+               .Select(p => new
+               {
+                   BirthPlace = p.Attribute("BirthPlace")?.Value ?? "-",
+                   CreationDate = p.Attribute("ActualityDate")?.Value ?? "-",
+                   OwnerID = p.Attribute("OwnerID")?.Value ?? "0"
+               }).Distinct().ToList() ?? new())
+                {
+                    <tr>
+                        <td>@tp.BirthPlace</td>
+                        <td>@tp.CreationDate</td>
+                        @if (hasPrivate)
+                        {
+                            <td>GetOwnerById(tp.OwnerID).Caption</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@*Документы*@
+<div class="document__caption"><span class="document__table-icon"><img src="img/doc-grey.svg" alt="">  Документы субъекта </span></div>
+<div class="document__table-content document__table--general">
+    <table class="document__table">
+        <thead>
+            <tr>
+                <td>Документ, удостоверяющий личность</td>
+                <td>Серия и номер документа</td>
+                <td>Дата выдачи документа</td>
+                <td>Место выдачи и код подразделения</td>
+                <td>Дата актуальности</td>
+                @if (hasPrivate)
+                {
+                    <td>Источник КИ</td>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tp in _titlePart?.Descendants("IdentificationDocument") ?? Enumerable.Empty<XElement>())
+            {
+                <tr>
+                    <td>@_dictionary.DocumentTypes[tp.Attribute("DocTypeID")!.Value!]</td>
+                    <td>@(tp?.Attribute("DocSer")?.Value ?? "") @(tp?.Attribute("DocNum")?.Value ?? "-")</td>
+                    <td>@(tp?.Attribute("DocDate")?.Value ?? "-")</td>
+                    <td>@(tp?.Attribute("DocDelivInstName")?.Value ?? "-"), @(tp?.Attribute("DocDelivInstCode")?.Value ?? "-")</td>
+                    <td>@(tp?.Attribute("ActualityDate")?.Value ?? "-")</td>
+                    @if (hasPrivate)
+                    {
+                        <td>GetOwnerById(tp?.Attribute("OwnerID")?.Value ?? "0").Caption</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@*ИНН*@
+@if (_titlePart?.Descendants("PersonalInformation")?.Where(x => x?.Attribute("IndividualTaxpayerNumber")?.Value != null)?.Count() > 0)
+{
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    @*<td> <span class="document__table-icon"><img src="img/inn-grey.svg" alt=""></span><span class="document__table-text"><br />ИНН</span></td>*@
+                    <td>ИНН</td>
+                    <td>Дата актуальности</td>
+                    @if (hasPrivate)
+                    {
+                        <td>Источник КИ</td>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tp in _titlePart?.Descendants("PersonalInformation")
+               .Where(x => x?.Attribute("IndividualTaxpayerNumber")?.Value != null)?
+               .Select(p => new
+               {
+                   IndividualTaxpayerNumber = p.Attribute("IndividualTaxpayerNumber")?.Value ?? "-",
+                   CreationDate = p.Attribute("ActualityDate")?.Value ?? "-",
+                   OwnerID = p.Attribute("OwnerID")?.Value ?? "0"
+               }).Distinct().ToList() ?? new())
+                {
+                    <tr>
+                        <td>@tp.IndividualTaxpayerNumber</td>
+                        <td>@tp.CreationDate</td>
+                        @if (hasPrivate)
+                        {
+                            <td>GetOwnerById(tp.OwnerID).Caption</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@*Признак специального налогового режима*@
+@if (_titlePart?.Descendants("PersonalInformation")?.Where(x => x?.Attribute("SpecialTaxMode")?.Value != null)?.Count() > 0)
+{
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    @*<td> <span class="document__table-icon"><img src="img/inn-grey.svg" alt=""></span><span class="document__table-text"><br />ИНН</span></td>*@
+                    <td>Признак специального налогового режима</td>
+                    <td>Дата актуальности</td>
+                    @if (hasPrivate)
+                    {
+                        <td>Источник КИ</td>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tp in _titlePart?.Descendants("PersonalInformation")
+               .Where(x => x?.Attribute("SpecialTaxMode")?.Value != null)?
+               .Select(p => new
+               {
+                   SpecialTaxMode = p.Attribute("SpecialTaxMode")?.Value ?? "0",
+                   CreationDate = p.Attribute("ActualityDate")?.Value ?? "-",
+                   OwnerID = p.Attribute("OwnerID")?.Value ?? "0"
+               }).Distinct().ToList() ?? new())
+                {
+                    <tr>
+                        <td>@(tp.SpecialTaxMode.Equals("0") ? "Нет" : "Да") </td>
+                        <td>@tp.CreationDate</td>
+                        @if (hasPrivate)
+                        {
+                            <td>GetOwnerById(tp.OwnerID).Caption</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@*СНИЛС*@
+@if (_titlePart?.Descendants("PersonalInformation")?.Where(x => x?.Attribute("PensionNumber")?.Value != null)?.Count() > 0)
+{
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    @*<td> <span class="document__table-icon"><img src="img/snils-grey.svg" alt=""></span><span class="document__table-text">СНИЛС</span></td>*@
+                    <td>СНИЛС</td>
+                    <td>Дата актуальности</td>
+                    @if (hasPrivate)
+                    {
+                        <td>Источник КИ</td>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tp in _titlePart?.Descendants("PersonalInformation")?.Where(x => x?.Attribute("PensionNumber")?.Value != null)
+               .Select(p => new
+               {
+                   PensionNumber = p.Attribute("PensionNumber")?.Value ?? "-",
+                   CreationDate = p.Attribute("ActualityDate")?.Value ?? "-",
+                   OwnerID = p.Attribute("OwnerID")?.Value ?? "0"
+               }).Distinct().ToList() ?? new())
+                {
+                    <tr>
+                        <td>@tp.PensionNumber</td>
+                        <td>@tp.CreationDate</td>
+                        @if (hasPrivate)
+                        {
+                            <td>GetOwnerById(tp.OwnerID).Caption</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+        }
+
+@if (_titlePart?.Element("LegalPersonSubject") is not null)
+        {
+<div class="document__caption"><span class="document__table-icon"><img src="img/location.svg" alt=""> Сведения о заемщике - юридическом лице </span></div>
+<div class="document__list">
+
+    <div class="document__list-item">
+        <div class="document__item-title">Реквизиты юридического лица</div>
+        <table class="document__list-content">
+            @foreach (var _tp in _titlePart?.Element("LegalPersonSubject")!.Elements("Title") ?? Enumerable.Empty<XElement>())
+            {
+                <tr>
+                    <td class="document__list-icon"><img src="img/LP.svg" alt=""></td>
+                    <td class="document__columns">
+                        <table>
+                            <tr>
+                                <td class="document__column" colspan="2">
+                                    <div class="document__column-title">Полное наименование:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_tp.Element("Name")?.Attribute("FullName")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Краткое наименование:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_tp.Element("Name")?.Attribute("ShortName")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Иное наименование:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(_tp.Element("Name")?.Attribute("FirmName")?.Value
+                                                ?? _tp.Element("Name")?.Attribute("NationalName")?.Value
+                                                ?? _tp.Element("Name")?.Attribute("EngName")?.Value
+                                                ?? _tp.Element("Name")?.Attribute("OtherName")?.Value
+                                                ?? "-")
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="document__column">
+                                    <div class="document__column-title">ИНН:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(_tp.Element("IndividualTaxpayerNumber")?.Value
+                                                ?? _tp.Element("ForeignID")?.Value
+                                                ?? "-")
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column">
+                                    <div class="document__column-title">Регистрационный номер:</div>
+                                    <ul class="document__column-text">
+                                        <li>
+                                            @(_tp.Element("PrimaryStateRegistrationNumber")?.Value
+                                                ?? _tp.Element("ForeignRegNumber")?.Value
+                                                ?? "-")
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="document__column" colspan="@(hasPrivate ? "1" : "2")">
+                                    <div class="document__column-title">Идентификатор LEI:</div>
+                                    <ul class="document__column-text">
+                                        <li>@(_tp.Element("LEI")?.Value ?? "-")</li>
+                                    </ul>
+                                </td>
+                                @if (hasPrivate)
+                                {
+                                    <td class="document__column">
+                                        <div class="document__column-title">Источник КИ:</div>
+                                        <ul class="document__column-text">
+                                            <li>GetOwnerById(_tp.Attribute("OwnerID")!.Value).Caption</li>
+                                        </ul>
+                                    </td>
+                                }
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+@if (_titlePart?.Descendants("RestructuredTitle")?.Any() ?? false)
+{
+    <div class="document__list">
+        <div class="document__list-item">
+            <div class="document__item-title">Сведения о реструктуризации (реорганизации) юридического лица</div>
+            <table class="document__list-content">
+                @foreach (var _tp in _titlePart?.Descendants("RestructuredTitle") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td class="document__list-icon"><img src="img/LP.svg" alt=""></td>
+                        <td class="document__columns">
+                            <table>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Полное наименование юридического лица:</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.Element("Name")?.Attribute("FullName")?.Value ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Краткое наименование юридического лица:</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.Element("Name")?.Attribute("ShortName")?.Value ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Фирменное наименование юридического лица:</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.Element("Name")?.Attribute("FirmName")?.Value ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Наименование юридического лица на национальном языке:</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.Element("Name")?.Attribute("NationalName")?.Value ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Наименование юридического лица на иностранном языке:</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.Element("Name")?.Attribute("EngName")?.Value ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Иное наименование юридического лица:</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.Element("Name")?.Attribute("OtherName")?.Value ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Cмена наименования юридического лица:</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @((_tp.Attribute("IsNameChangedFlag")?.Value ?? "-").Equals("true") ? "Да" : "Нет")
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Идентификационный номер налогоплательщика (ИНН):</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.Element("IndividualTaxpayerNumber")?.Value ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Регистрационный номер, присвоенный уполномоченным органом в РФ (ОГРН):</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.Element("PrimaryStateRegistrationNumber")?.Value ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Регистрационный номер, присвоенный иностранным налоговым органом:</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.Element("ForeignID")?.Value ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Регистрационный номер, присвоенный иностранным уполномоченным органом:</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.Element("ForeignRegNumber")?.Value ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Идентификатор LEI юридического лица:</div>
+                                        <ul class="document__column-text">
+                                            <li>
+                                                @(
+                                                    _tp.Element("LEI")?.Value ?? "-"
+                                                    )
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td class="document__column">
+                                        <div class="document__column-title">Дата реструктуризации (реорганизации) юридического лица:</div>
+                                        <ul class="document__column-text">
+                                            <li>@(_tp.Element("ReorganizationDate")?.Value ?? "-")</li>
+                                        </ul>
+                                    </td>
+                                    @if (hasPrivate)
+                                    {
+                                        <td class="document__column">
+                                            <div class="document__column-title">Источник КИ:</div>
+                                            <ul class="document__column-text">
+                                                <li>GetOwnerById(_tp.Attribute("OwnerID")!.Value).Caption</li>
+                                            </ul>
+                                        </td>
+                                    }
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+}
+
+@if ((_titlePart?.Descendants("AddressOld").Any() ?? false) || (_titlePart?.Descendants("AddressInfo").Any() ?? false))
+{
+    <div class="document__table-content document__table--general">
+        <table class="document__table">
+            <thead>
+                <tr>
+                    <td>Адрес юридического лица</td>
+                    <td>Дата актуальности</td>
+                    @if (hasPrivate)
+                    {
+                        <td>Источник КИ</td>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ad in _titlePart?.Descendants("AddressOld") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td>@ad?.Element("AddressString")?.Value д. @ad?.Element("StreetAddress")?.Attribute("HouseNum")?.Value кв. @ad?.Element("StreetAddress")?.Attribute("FlatNum")?.Value</td>
+                        <td>@ad?.Attribute("ActualityDate")?.Value</td>
+                        @if (hasPrivate)
+                        {
+                            <td>GetOwnerById(ad.Attribute("OwnerID")!.Value).Caption</td>
+                        }
+                    </tr>
+                }
+                @foreach (var _address in _titlePart?.Descendants("AddressInfo") ?? Enumerable.Empty<XElement>())
+                {
+                    <tr>
+                        <td>
+                            @*индекс @(_address.Element("Address")?.Attribute("PostCode")?.Value ?? "-"), *@
+                            @*страна*@ @(_address.Element("Address")?.Attribute("CountryName")?.Value ?? _address.Element("Address")?.Attribute("AnotherCountryName")?.Value ?? "-"),
+                            @*фиас @(_address.Element("Address")?.Attribute("FiasNum")?.Value ?? "-"), *@
+                            @*нас. пункт*@ @(_address.Element("Address")?.Attribute("LocalityName")?.Value ?? _address.Element("Address")?.Attribute("OtherLocalityName")?.Value ?? "-"),
+                            ул. @(_address.Element("Address")?.Attribute("Street")?.Value ?? "-"),
+                            д. @(_address.Element("Address")?.Attribute("HouseNum")?.Value ?? "-"),
+                            владение @(_address.Element("Address")?.Attribute("Ownership")?.Value ?? "-"),
+                            к. @(_address.Element("Address")?.Attribute("Housing")?.Value ?? "-"),
+                            стр. @(_address.Element("Address")?.Attribute("Building")?.Value ?? "-"),
+                            кв. @(_address.Element("Address")?.Attribute("FlatNum")?.Value ?? "-")
+                        </td>
+                        <td>@_address?.Attribute("ActualityDate")?.Value</td>
+                        @if (hasPrivate)
+                        {
+                            <td>GetOwnerById(_address!.Attribute("OwnerID")!.Value).Caption</td>
+                        }
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+        }
+
+@if (_titlePart?.Descendants("Phone")?.Any() ?? false)
+        {
+<div class="document__caption"><span class="document__table-icon"><img src="img/phone-grey.svg" alt="">  Номера телефонов </span></div>
+<div class="document__table-content document__table--general">
+    <table class="document__table">
+        <thead>
+            <tr>
+                <td>Тип</td>
+                <td>Номер телефона</td>
+                <td>Дата актуальности</td>
+                @if (hasPrivate)
+                {
+                    <td>Источник КИ</td>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var _phone in _titlePart?.Descendants("Phone") ?? Enumerable.Empty<XElement>())
+            {
+                <tr>
+                    <td>@_dictionary.PhoneType[_phone.Attribute("ID")?.Value ?? "-"]</td>
+                    <td>@(_phone.Attribute("Number")?.Value ?? "-")</td>
+                    <td>@(_phone.Attribute("ActualityDate")?.Value ?? "-")</td>
+                    @if (hasPrivate)
+                    {
+                        <td>GetOwnerById(_phone.Attribute("OwnerID")?.Value ?? "-").Caption</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+        }
+
+@if (_titlePart?.Descendants("Email")?.Any() ?? false)
+        {
+<div class="document__caption"><span class="document__table-icon"><img src="img/email-grey.svg" alt="">  Адреса электронной почты </span></div>
+<div class="document__table-content document__table--general">
+    <table class="document__table">
+        <thead>
+            <tr>
+                <td>Электронная почта</td>
+                @if (hasPrivate)
+                {
+                    <td>Источник КИ</td>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var _email in _titlePart?.Descendants("Email") ?? Enumerable.Empty<XElement>())
+            {
+                <tr>
+                    <td>@(_email.Attribute("address")?.Value ?? "-")</td>
+                    @if (hasPrivate)
+                    {
+                        <td>GetOwnerById(_email.Attribute("OwnerID")?.Value ?? "-").Caption</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+        }
+
+
+@code {
+    [Parameter] public XDocument Response { get; set; } = new(new XElement("RESPONSE"));
+    
+    private XElement _titlePart = new("TitlePart");
+
+    private bool hasPrivate = false;
+
+    protected override void OnInitialized()
+    {
+        _titlePart = Response.Descendants("TitlePart").FirstOrDefault() ?? new("TitlePart");
+    }
+}
