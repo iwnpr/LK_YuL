@@ -162,9 +162,44 @@ dotnet run --project .\private\user_interface_private_web --no-launch-profile --
 
 Дождитесь `Now listening on: http://localhost:5258` и откройте [http://localhost:5258](http://localhost:5258).
 
-Подключения задаются отдельно в каждом окне: новое окно их не наследует. Уже открытая Visual Studio также их не получит. Для первого запуска используйте команды выше. Для остановки сайта нажмите `Ctrl+C` в соответствующем окне.
+Подключения задаются отдельно в каждом окне: новое окно их не наследует. Уже открытая Visual Studio также их не получит. Для запуска через Visual Studio используйте следующий раздел. Для остановки сайта в терминале нажмите `Ctrl+C`.
 
 Эти команды настраивают подключения к БД и адрес сайта. Для работы бизнес-сценариев дополнительно нужны данные, сертификаты, доступ к пакетам NuGet и внешним HTTP/SMTP-сервисам. Если приложение не собирается или не запускается, это отдельный этап после успешной проверки баз на шаге 5.
+
+### Альтернатива шагу 6: запуск через Visual Studio
+
+После шага 5 базы готовы, но обычный F5 ещё не переключает приложение на них. Файл `.env` читает Docker Compose; Visual Studio и приложения автоматически его не читают. Существующие профили проекта используют окружение `Production`, а профиль public также содержит адрес другого компьютера.
+
+Чтобы запускать приложение кнопкой F5:
+
+1. Откройте нужное решение: `public/user_interface_public_web/user_interface_public_web.sln` либо `private/user_interface_private_web/user_interface_private_web.sln`.
+2. В веб-проекте откройте `Properties/launchSettings.json`.
+3. Внутри объекта `profiles` добавьте профиль `LocalDocker` из примера ниже. Существующие профили сохраните. Между соседними профилями JSON нужна запятая.
+4. Подставьте реальные пароли из `.env` вместо `PG_PASSWORD` и `SQL_PASSWORD`. Если меняли порты, поправьте их в строках подключения.
+5. Для private замените `applicationUrl` на `http://localhost:5258`. Для public оставьте `http://localhost:5264`.
+6. Сохраните файл, выберите `LocalDocker` в списке рядом с зелёной кнопкой запуска Visual Studio и нажмите F5. Используйте именно этот профиль с `commandName: Project`.
+
+```json
+"LocalDocker": {
+  "commandName": "Project",
+  "launchBrowser": true,
+  "applicationUrl": "http://localhost:5264",
+  "environmentVariables": {
+    "ASPNETCORE_ENVIRONMENT": "Development",
+    "ConnectionStrings__LegalPersons": "Host=127.0.0.1;Port=5432;Database=legal_persons;Username=lk_dev;Password=PG_PASSWORD",
+    "ConnectionStrings__BureauQBCH": "Host=127.0.0.1;Port=5432;Database=bureau_qbch;Username=lk_dev;Password=PG_PASSWORD",
+    "ConnectionStrings__BureauData": "Host=127.0.0.1;Port=5432;Database=bureau_data;Username=lk_dev;Password=PG_PASSWORD",
+    "ConnectionStrings__BureauUsers": "Server=127.0.0.1,1433;Database=bureau_users;User Id=sa;Password=SQL_PASSWORD;Encrypt=True;TrustServerCertificate=True",
+    "ConnectionStrings__BureauWebUI": "Server=127.0.0.1,1433;Database=bureau_web_ui;User Id=sa;Password=SQL_PASSWORD;Encrypt=True;TrustServerCertificate=True"
+  }
+}
+```
+
+Это фрагмент для объекта `profiles`, а не полное содержимое файла. Все пять подключений можно добавить в оба веб-проекта: каждый использует нужные ему. Для паролей с разделителями строки подключения или кавычками потребуется соответствующее экранирование; автоматически созданные шестнадцатеричные пароли подходят к этому примеру без изменений.
+
+Переменные `ConnectionStrings__...` имеют приоритет над строками из `appsettings*.json`. После сохранения профиля запуск `Use-LocalDatabases.ps1` перед каждым F5 не требуется. Docker Desktop и контейнеры баз при этом должны работать. Локальные изменения `launchSettings.json` с настоящими паролями не включайте в коммит.
+
+Готовность БД не гарантирует работу всего приложения: нужны справочники и пользователи, для private — сертификаты, а для отдельных операций — внешние сервисы и отсутствующие SQL-функции. Ошибки получения закрытых NuGet-пакетов также не исправляются развёртыванием баз.
 
 ## Повторный запуск на следующий день
 
@@ -238,6 +273,22 @@ docker compose down --volumes
 ```
 
 ## Подключение через клиент БД
+
+### DBeaver: посмотреть базы и таблицы
+
+Для наиболее простого варианта создайте пять подключений — по одному на каждую базу. Так не нужно настраивать отображение нескольких баз одного сервера.
+
+1. В DBeaver выберите создание нового подключения и драйвер **PostgreSQL**.
+2. Задайте Host `127.0.0.1`, Port `5432`, Database `legal_persons`, Username `lk_dev`.
+3. В поле Password вставьте значение `POSTGRES_PASSWORD` из `.env` без внешних одинарных кавычек.
+4. Нажмите проверку соединения (**Test Connection**). При первом подключении разрешите скачивание драйвера, если DBeaver его запросит. После успешной проверки сохраните подключение.
+5. Раскройте подключение → схемы (**Schemas**) → `personal_account` → таблицы (**Tables**). Откройте таблицу, затем вкладку данных (**Data**). Пустые таблицы после развёртывания ожидаемы.
+6. Создайте ещё два PostgreSQL-подключения с теми же адресом и учётными данными, заменив Database на `bureau_qbch` и `bureau_data`. В первой базе таблицы находятся в схеме `qbchv3`; в `bureau_data` изначально есть только служебная таблица в `public`.
+7. Создайте подключение с драйвером **SQL Server**: Host `127.0.0.1`, Port `1433`, Database `bureau_users`, аутентификация по логину/паролю SQL Server, Username `sa`, Password — значение `MSSQL_SA_PASSWORD` без внешних кавычек.
+8. В свойствах драйвера (**Driver properties**) задайте `encrypt=true` и `trustServerCertificate=true`. Проверьте соединение и сохраните его.
+9. Создайте второе SQL Server-подключение с теми же настройками, но Database `bureau_web_ui`. Таблицы обеих баз находятся в схеме `dbo`.
+
+Если меняли порты в `.env`, подставьте новые значения. В DBeaver адрес и порт вводятся в отдельные поля: в поле Host не нужно писать `http://` или добавлять порт после запятой. Значение `127.0.0.1,1433` ниже — формат строки подключения .NET, а не поле Host DBeaver.
 
 Используйте эти параметры, если хотите посмотреть таблицы через установленный клиент PostgreSQL или SQL Server:
 
