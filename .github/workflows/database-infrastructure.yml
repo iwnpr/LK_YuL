@@ -8,6 +8,7 @@ on:
       - .github/workflows/database-infrastructure.yml
       - infrastructure/database/**
       - public/legal_persons_lib/**
+      - public/application_lib/**
       - public/private_lib/**
       - public/qbch_lib/**
       - private/legal_persons_lib/**
@@ -38,6 +39,14 @@ jobs:
           Copy-Item .env.example .env
           ./infrastructure/database/Start-Databases.ps1
           ./infrastructure/database/Test-Databases.ps1
+      - name: Seed public twice and verify authentication
+        shell: pwsh
+        run: |
+          ./infrastructure/database/Seed-Public.ps1
+          ./infrastructure/database/Seed-Public.ps1
+          ./infrastructure/database/Use-LocalDatabases.ps1
+          dotnet run --project infrastructure/database/tests/PublicSeedSmoke/PublicSeedSmoke.csproj
+          if ($LASTEXITCODE -ne 0) { throw 'Public seed authentication check failed.' }
       - name: Container logs
         if: failure()
         run: docker compose logs --no-color
