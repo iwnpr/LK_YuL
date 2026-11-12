@@ -432,4 +432,8 @@ public/ca_db_lib/obj/
 private/user_interface_private_web/.idea/
 public/user_interface_public_web/.idea/
 
+# Local database infrastructure credentials and tooling caches
+/.env
+/.local/
+
 

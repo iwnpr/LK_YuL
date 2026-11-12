@@ -30,7 +30,9 @@ namespace bureau_web_ui_lib
                 entity.ToTable("te_requestsOfUploadPostgresNew");
             });
 
-            modelBuilder.Entity<UploadResult>().HasNoKey();
+            // Projection of a SQL function result, not a physical table.
+            modelBuilder.Entity<UploadResult>().HasNoKey()
+                .ToTable("UploadResults", table => table.ExcludeFromMigrations());
 
         }
         public virtual DbSet<DBUpload> TeRequestsOfUpload { get; set; } = null!;

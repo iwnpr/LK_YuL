@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RollForward>Major</RollForward>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="PublicModels/**/*.cs" />
+    <ProjectReference Include="PublicModels/PublicModels.csproj" Aliases="publicmodels" />
+    <ProjectReference Include="../../../private/legal_persons_lib/legal_persons_lib.csproj" />
+    <ProjectReference Include="../../../private/bureau_data_lib/bureau_data_lib.csproj" />
+    <ProjectReference Include="../../../private/bureau_web_ui_lib/bureau_web_ui_lib.csproj" />
+    <ProjectReference Include="../../../public/private_lib/private_lib.csproj" />
+    <ProjectReference Include="../../../public/qbch_lib/qbch_lib.csproj" />
+  </ItemGroup>
+</Project>

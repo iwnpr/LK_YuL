@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <!-- Separate assembly: both application libraries have the same assembly/namespace name. -->
+  <ItemGroup>
+    <Compile Include="../../../../public/legal_persons_lib/LegalPersonsContext.cs" Link="LegalPersonsContext.cs" />
+    <Compile Include="../../../../public/legal_persons_lib/Entities/**/*.cs" LinkBase="Entities" />
+    <Compile Include="../../../../public/legal_persons_lib/Enums/**/*.cs" LinkBase="Enums" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.31" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+  </ItemGroup>
+</Project>

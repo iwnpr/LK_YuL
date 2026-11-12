@@ -11,7 +11,9 @@ namespace bureau_data_lib
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CreditRecord>().HasNoKey();
+            // Projection of a SQL function result, not a physical table.
+            modelBuilder.Entity<CreditRecord>().HasNoKey()
+                .ToTable("Results", table => table.ExcludeFromMigrations());
         }
 
         public virtual DbSet<CreditRecord> Results { get; set; } = null!;

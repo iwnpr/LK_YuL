@@ -1,5 +1,9 @@
 # personal_account_of_legal_person_web
 
+Подробное описание проекта на русском: [путеводитель по приложениям, библиотекам и компонентам](docs/PROJECT_GUIDE_RU.md).
+
+Локальные базы в Docker: [запуск пяти БД, генерация SQL из EF и подключение приложений](infrastructure/database/README.md).
+
 
 
 ## Getting started

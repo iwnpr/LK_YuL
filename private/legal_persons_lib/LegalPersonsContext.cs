@@ -23,6 +23,9 @@ namespace legal_persons_lib
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("personal_account");
+            modelBuilder.HasPostgresEnum<DBCertificateStatus>("personal_account", "cert_status");
+            modelBuilder.HasPostgresEnum<DBGovernment>("personal_account", "governments");
+            modelBuilder.HasPostgresEnum<DBExampleType>("personal_account", "examples_type");
 
             modelBuilder.Entity<DBCertificate>(entity =>
             {

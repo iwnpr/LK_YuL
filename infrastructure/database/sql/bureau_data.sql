@@ -1,0 +1,1 @@
+-- Generated from EF Core models. Run infrastructure/database/Generate-Schema.ps1 to refresh.

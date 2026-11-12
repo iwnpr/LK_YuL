@@ -11,7 +11,7 @@ namespace legal_persons_lib.Entities
         /// <summary>
         /// Идентификатор организации
         /// </summary>
-        [Column("legal_person_id")] public int LegalPersonId { get; set; }
+        [Column("legal_person_id")] public long LegalPersonId { get; set; }
 
         /// <summary>
         /// Время вставки

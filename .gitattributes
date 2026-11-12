@@ -1,0 +1,2 @@
+infrastructure/database/**/*.sh text eol=lf
+infrastructure/database/**/*.sql text eol=lf
