@@ -68,7 +68,7 @@
             </div>
             <div class="form__btns">
                 <div class="form__btns-text">* Поля обязательные для заполнения  </div>
-                <button type="button" class="form__btn btn btn--green" disabled="@(_disabled || _registered)" @onclick=RegistrationUserAsync>@(_registered ? "Заявка отправлена" : _disabled ? "Регистрация…" : "Регистрация")</button>
+                <button type="button" class="form__btn btn btn--green" disabled="@_disabled" @onclick=RegistrationUserAsync>Регистрация</button>
             </div>
         </form>
     </section>
@@ -99,7 +99,6 @@
     /// Доступность кнопки
     /// </summary>
     private bool _disabled = false;
-    private bool _registered;
 
     /// <summary>
     /// Ответ сервисов
@@ -118,12 +117,13 @@
     /// <returns></returns>
     private async Task RegistrationUserAsync()
     {
-        if (_disabled || _registered)
+        if (_disabled)
             return;
 
         _disabled = true;
         try
         {
+            await Task.Delay(10);
             _error = _validator.Check(_user);
             if (_error.Code != 200)
             {
@@ -142,46 +142,39 @@
             if (_error.Code != 200)
                 return;
 
-            // The user is already saved. A notification failure must not prompt a second registration.
-            _registered = true;
             try
             {
                 var recipients = _configuration.GetSection("Support").Get<List<NotificationTo>>() ?? new();
                 if (recipients.Count == 0)
                 {
-                    NotificationFailed();
                     return;
                 }
 
                 // RegistrationAsync does not load the Organization navigation property.
                 var organization = await _orgMngr.GetAsync(_user.OrganizationId);
+                if (organization is null)
+                    return;
                 var message = new EmailMessage
                 {
-                    Body = $"В личном кабинете ООО \"БКИ КредитИнфо\" зарегистрирован новый пользователь {_user.Login} ({organization?.ShortName ?? "организация не указана"}) и ожидает подтверждение учетной записи",
+                    Body = $"В личном кабинете ООО \"БКИ КредитИнфо\" зарегистрирован новый пользователь {_user.Login} ({organization.ShortName}) и ожидает подтверждение учетной записи",
                     Subject = "Регистрация пользователя",
                     BodySubject = "Регистрация пользователя",
                     Sender = "noreply@bki-ci.ru",
                     Correspondents = recipients.Select(r => new EmailCorrespondent { CorrespondentName = r.UserName, Email = r.Email, SendingType = "to" }).ToList(),
                     TemplateName = "MailSimpleTpl"
                 };
-                var notification = await _sender.SendEmailAsync(message);
-                if (notification.Code < 200 || notification.Code >= 300)
-                {
-                    Log.Warning("Уведомление о регистрации не отправлено: код {Code}", notification.Code);
-                    NotificationFailed();
-                }
+                _error = await _sender.SendEmailAsync(message);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Ошибка отправки уведомления о регистрации");
-                NotificationFailed();
+                Log.Error(ex, "При отправке сообщения произошла ошибка");
             }
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Ошибка регистрации пользователя");
+            Log.Error(ex, "При регистрации пользователя произошла ошибка");
             _comment = new(true, "error", "Регистрация пользователя",
-                "Не удалось завершить регистрацию. Перед повторной попыткой попросите администратора проверить, появилась ли учётная запись в списке подтверждения регистрации.");
+                "При регистрации пользователя произошла ошибка");
         }
         finally
         {
@@ -189,9 +182,4 @@
         }
     }
 
-    private void NotificationFailed()
-    {
-        _comment = new(true, "ok", "Пользователь зарегистрирован",
-            "Учётная запись создана, но уведомление администратору не отправлено. Попросите администратора подтвердить регистрацию в разделе «Подтверждение регистрации». Повторная регистрация не требуется.");
-    }
 }
