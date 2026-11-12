@@ -4,6 +4,8 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 Push-Location $root
 try {
+    docker compose build postgres-init sqlserver-init
+    if ($LASTEXITCODE -ne 0) { throw 'Database initializer image build failed.' }
     # Re-run bootstrap to verify restart safety and check the stored SQL fingerprints.
     docker compose run --rm --no-deps postgres-init
     if ($LASTEXITCODE -ne 0) { throw 'PostgreSQL repeat initialization failed.' }

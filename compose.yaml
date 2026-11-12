@@ -20,7 +20,11 @@ services:
       start_period: 10s
 
   postgres-init:
-    image: ${POSTGRES_IMAGE:-postgres:16-bookworm}
+    build:
+      context: ./infrastructure/database
+      dockerfile: Dockerfile.init
+      args:
+        BASE_IMAGE: ${POSTGRES_IMAGE:-postgres:16-bookworm}
     restart: "no"
     depends_on:
       postgres:
@@ -29,8 +33,6 @@ services:
       PGHOST: postgres
       PGUSER: lk_dev
       PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
-    volumes:
-      - ./infrastructure/database:/bootstrap:ro
     entrypoint: ["bash", "/bootstrap/postgres/init.sh"]
 
   sqlserver:
@@ -52,15 +54,17 @@ services:
       start_period: 20s
 
   sqlserver-init:
-    image: ${SQLSERVER_IMAGE:-mcr.microsoft.com/mssql/server:2022-latest}
+    build:
+      context: ./infrastructure/database
+      dockerfile: Dockerfile.init
+      args:
+        BASE_IMAGE: ${SQLSERVER_IMAGE:-mcr.microsoft.com/mssql/server:2022-latest}
     restart: "no"
     depends_on:
       sqlserver:
         condition: service_healthy
     environment:
       SQLCMDPASSWORD: ${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD}
-    volumes:
-      - ./infrastructure/database:/bootstrap:ro
     entrypoint: ["bash", "/bootstrap/sqlserver/init.sh"]
 
 volumes:

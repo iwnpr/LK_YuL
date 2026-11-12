@@ -1,0 +1,9 @@
+**
+!Dockerfile.init
+!.dockerignore
+!postgres/
+!postgres/**
+!sqlserver/
+!sqlserver/**
+!sql/
+!sql/**
