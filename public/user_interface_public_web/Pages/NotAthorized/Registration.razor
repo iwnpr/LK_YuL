@@ -1,4 +1,4 @@
-﻿@layout NonAuthorizeLayout
+@layout NonAuthorizeLayout
 @page "/registration"
 @using System.ComponentModel.DataAnnotations
 
@@ -68,7 +68,7 @@
             </div>
             <div class="form__btns">
                 <div class="form__btns-text">* Поля обязательные для заполнения  </div>
-                <button type="button" class="form__btn btn btn--green" disabled="@_disabled" @onclick=RegistrationUserAsync>Регистрация</button>
+                <button type="button" class="form__btn btn btn--green" disabled="@(_disabled || _registered)" @onclick=RegistrationUserAsync>@(_registered ? "Заявка отправлена" : _disabled ? "Регистрация…" : "Регистрация")</button>
             </div>
         </form>
     </section>
@@ -99,6 +99,7 @@
     /// Доступность кнопки
     /// </summary>
     private bool _disabled = false;
+    private bool _registered;
 
     /// <summary>
     /// Ответ сервисов
@@ -117,51 +118,80 @@
     /// <returns></returns>
     private async Task RegistrationUserAsync()
     {
+        if (_disabled || _registered)
+            return;
+
         _disabled = true;
-
-        await Task.Delay(10);
-
-        _error = _validator.Check(_user);
-
-        if (!_error.Code.Equals(200))
+        try
         {
-            _comment = new(true, "error", "Регистрация пользователя", _error.Message);
-            _disabled = false;
-            return;
-        }
+            _error = _validator.Check(_user);
+            if (_error.Code != 200)
+            {
+                _comment = new(true, "error", "Регистрация пользователя", _error.Message);
+                return;
+            }
 
-        if (!_user.Password.Equals(_confirmation))
-        {
-            _comment = new(true, "error", "Регистрация пользователя", "Пароли не совпадают");
-            _disabled = false;
-            return;
-        }
+            if (_user.Password != _confirmation)
+            {
+                _comment = new(true, "error", "Регистрация пользователя", "Пароли не совпадают");
+                return;
+            }
 
-        _error = await _userMngr.RegistrationAsync(_user, _accept);
+            _error = await _userMngr.RegistrationAsync(_user, _accept);
+            _comment = new(true, _error.Code == 200 ? "ok" : "error", "Регистрация пользователя", _error.Message);
+            if (_error.Code != 200)
+                return;
 
-        _comment = new(true, _error.Code.Equals(200) ? "ok" : "error", "Регистрация пользователя", _error.Message);
-
-        if (_error.Code.Equals(200))
-        {
-            List<NotificationTo> _recipients = new();
-
-            _recipients.AddRange(_configuration.GetSection("Support").Get<List<NotificationTo>>()!);
-
-            EmailMessage _message = new()
+            // The user is already saved. A notification failure must not prompt a second registration.
+            _registered = true;
+            try
+            {
+                var recipients = _configuration.GetSection("Support").Get<List<NotificationTo>>() ?? new();
+                if (recipients.Count == 0)
                 {
-                    Body = $"В личном кабинете ООО \"БКИ КредитИнфо\" зарегистрирован новый пользователь {_user.Login} ({_user.Organization.ShortName}) и ожидает подтверждение учетной записи",
+                    NotificationFailed();
+                    return;
+                }
+
+                // RegistrationAsync does not load the Organization navigation property.
+                var organization = await _orgMngr.GetAsync(_user.OrganizationId);
+                var message = new EmailMessage
+                {
+                    Body = $"В личном кабинете ООО \"БКИ КредитИнфо\" зарегистрирован новый пользователь {_user.Login} ({organization?.ShortName ?? "организация не указана"}) и ожидает подтверждение учетной записи",
                     Subject = "Регистрация пользователя",
                     BodySubject = "Регистрация пользователя",
                     Sender = "noreply@bki-ci.ru",
-                    Correspondents = _recipients.Select(r => new EmailCorrespondent() { CorrespondentName = r.UserName, Email = r.Email, SendingType = "to" }).ToList(),
+                    Correspondents = recipients.Select(r => new EmailCorrespondent { CorrespondentName = r.UserName, Email = r.Email, SendingType = "to" }).ToList(),
                     TemplateName = "MailSimpleTpl"
                 };
-
-            _error = await _sender.SendEmailAsync(_message);
+                var notification = await _sender.SendEmailAsync(message);
+                if (notification.Code < 200 || notification.Code >= 300)
+                {
+                    Log.Warning("Уведомление о регистрации не отправлено: код {Code}", notification.Code);
+                    NotificationFailed();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Ошибка отправки уведомления о регистрации");
+                NotificationFailed();
+            }
         }
-
-        _disabled = false;
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Ошибка регистрации пользователя");
+            _comment = new(true, "error", "Регистрация пользователя",
+                "Не удалось завершить регистрацию. Перед повторной попыткой попросите администратора проверить, появилась ли учётная запись в списке подтверждения регистрации.");
+        }
+        finally
+        {
+            _disabled = false;
+        }
     }
 
-
+    private void NotificationFailed()
+    {
+        _comment = new(true, "ok", "Пользователь зарегистрирован",
+            "Учётная запись создана, но уведомление администратору не отправлено. Попросите администратора подтвердить регистрацию в разделе «Подтверждение регистрации». Повторная регистрация не требуется.");
+    }
 }
