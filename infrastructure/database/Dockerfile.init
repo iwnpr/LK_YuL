@@ -4,4 +4,6 @@ FROM ${BASE_IMAGE}
 # No runtime bind mount of the Windows project directory is required.
 COPY --chmod=755 postgres/ /bootstrap/postgres/
 COPY --chmod=755 sqlserver/ /bootstrap/sqlserver/
-COPY --chmod=644 sql/ /bootstrap/sql/
+# COPY applies the mode to directories too: SQL Server's non-root user
+# needs execute permission to traverse /bootstrap/sql.
+COPY --chmod=755 sql/ /bootstrap/sql/
