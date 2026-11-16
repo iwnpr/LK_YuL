@@ -144,6 +144,9 @@
             if (_error.Code != 200)
                 return;
 
+            _logger.LogInformation("Зарегистрирован новый пользователь {Login} (ID: {UserId}, организация: {OrganizationId})",
+                _user.Login, _user.Id, _user.OrganizationId);
+
             try
             {
                 var recipients = _configuration.GetSection("Support").Get<List<NotificationTo>>() ?? new();
