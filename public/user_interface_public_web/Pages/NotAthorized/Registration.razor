@@ -1,6 +1,8 @@
 @layout NonAuthorizeLayout
 @page "/registration"
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.Extensions.Logging
+@inject ILogger<Registration> _logger
 
 <PageTitle>Регистрация</PageTitle>
 
@@ -167,12 +169,12 @@
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "При отправке сообщения произошла ошибка");
+                _logger.LogError(ex, "При отправке сообщения произошла ошибка");
             }
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "При регистрации пользователя произошла ошибка");
+            _logger.LogError(ex, "При регистрации пользователя произошла ошибка");
             _comment = new(true, "error", "Регистрация пользователя",
                 "При регистрации пользователя произошла ошибка");
         }
