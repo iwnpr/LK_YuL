@@ -9,6 +9,8 @@ on:
       - infrastructure/database/**
       - public/legal_persons_lib/**
       - public/application_lib/**
+      - public/user_interface_public_web/Pages/NotAthorized/Registration.razor
+      - tests/PublicRegistrationRegression/**
       - public/private_lib/**
       - public/qbch_lib/**
       - private/legal_persons_lib/**
@@ -33,6 +35,8 @@ jobs:
           ./infrastructure/database/Generate-Schema.ps1
           git diff --exit-code -- infrastructure/database/sql
           if ($LASTEXITCODE -ne 0) { throw 'Regenerate and commit SQL after changing EF models.' }
+      - name: Check registration error handling
+        run: dotnet run --project tests/PublicRegistrationRegression/PublicRegistrationRegression.csproj
       - name: Create all databases and test repeat initialization
         shell: pwsh
         run: |
