@@ -16,7 +16,7 @@
         <table class="table" style="margin-top: 10px;">
             <thead>
                 <tr>
-                    <td>ID</td>
+                    <td>ID пользователя</td>
                     <td>Логин</td>
                     <td>Пользователь</td>
                     <td>email</td>
@@ -35,7 +35,7 @@
                             <td>@_user.LastName @_user.FirstName</td>
                             <td>@_user.Email</td>
                             <td>
-                                @_user.OrganizationId
+                                @_user.Organization.LegalPersonId
                             </td>
                             <td>
                                 <div class="table__icons">

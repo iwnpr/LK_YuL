@@ -38,8 +38,9 @@ namespace legal_persons_lib.Services
         /// Поиск коллекции сущностей по условию (предикату)
         /// </summary>
         /// <param name="predicate">Условие поиска (предикат)</param>
+        /// <param name="_property">Связанная сущность для загрузки</param>
         /// <returns>Коллекция данных, удовлетворяющих условию поиска</returns>
-        Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate);
+        Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, string? _property = null);
 
         /// <summary>
         /// Обновление сущности
@@ -111,11 +112,15 @@ namespace legal_persons_lib.Services
         }
 
         /// <inheritdoc/>>
-        public async Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate)
+        public async Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, string? _property = null)
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
 
-            return await context.Set<T>().Where(predicate).OrderByDescending(t => t.Id).ToListAsync();
+            var query = context.Set<T>().Where(predicate);
+            if (_property is not null)
+                query = query.Include(_property);
+
+            return await query.OrderByDescending(t => t.Id).ToListAsync();
         }
 
         /// <inheritdoc/>>
