@@ -21,6 +21,7 @@
                     <td>Пользователь</td>
                     <td>email</td>
                     <td>ID организации</td>
+                    <td>Организация</td>
                     <td>Действие</td>
                 </tr>
             </thead>
@@ -37,6 +38,7 @@
                             <td>
                                 @_user.Organization.LegalPersonId
                             </td>
+                            <td>@_user.Organization.ShortName</td>
                             <td>
                                 <div class="table__icons">
                                     <div class="table__icon" @onclick="@(async () => {if(!_disabled) {await AproveAccountAsync(_user);}})">
@@ -54,7 +56,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="6">Заявки на подтверждение аккаунта не найдены</td>
+                        <td colspan="7">Заявки на подтверждение аккаунта не найдены</td>
                     </tr>
                 }
             </tbody>
