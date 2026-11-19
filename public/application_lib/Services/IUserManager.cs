@@ -564,7 +564,8 @@ namespace application_lib.Services
             return _person;
         }
 
-        public async Task<List<DBUser>> GetUnaprovedListAsync() => await _users.GetListAsync(u => !u.IsAproved, nameof(DBUser.Organization));
+        public async Task<List<DBUser>> GetUnaprovedListAsync() =>
+            await _users.GetListAsync(u => !u.IsAproved, u => u.Organization);
 
     }
 }
