@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography.X509Certificates;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace application_lib.Entities.XML.QBCH
@@ -128,10 +129,20 @@ namespace application_lib.Entities.XML.QBCH
     [XmlType(TypeName = "Договор")]
     public class Obligation
     {
-        /// <summary>
-        /// Валюта
-        /// </summary>
-        [XmlAttribute("Дата")] public string Date { get; set; } = string.Empty;
+        private const string XmlDateFormat = "yyyy-MM-dd";
+        private static readonly string[] DateFormats = { "dd.MM.yyyy", "dd-MM-yyyy", XmlDateFormat };
+
+        [XmlIgnore] public string Date { get; set; } = string.Empty;
+
+        [XmlAttribute("Дата")]
+        public string XmlDate
+        {
+            get => TryGetDate(out var date) ? date.ToString(XmlDateFormat, CultureInfo.InvariantCulture) : Date;
+            set => Date = value;
+        }
+
+        internal bool TryGetDate(out DateOnly date) =>
+            DateOnly.TryParseExact(Date, DateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
     }
 
     /// <summary>

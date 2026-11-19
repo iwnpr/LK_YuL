@@ -289,7 +289,8 @@ namespace application_lib.Entities
 
                 if (_qbch.Request.Consent.ConsentExpiration.Equals("3"))
                 {
-                    if (!DateTime.TryParse(_qbch.Request.Consent.Obligation.Date, out _date) || _date < DateTime.Parse("01.01.1900") || _date > DateTime.Now)
+                    if (!_qbch.Request.Consent.Obligation.TryGetDate(out var contractDate) ||
+                        contractDate < new DateOnly(1900, 1, 1) || contractDate > DateOnly.FromDateTime(DateTime.Today))
                     {
                         ErrorMessage = "Введена некорректная дата договора";
                         return false;
