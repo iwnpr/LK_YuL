@@ -86,17 +86,21 @@ else
 
 @foreach (XElement _qbch in (_response?.Root?.Elements("КБКИ").Any() ?? false) ? _response.Root.Elements("КБКИ") : (_response?.Root?.Element("Сведения")?.Elements("КБКИ") ?? Enumerable.Empty<XElement>()))
 {
-   
+    var ogrn = (string?)_qbch.Attribute("ОГРН");
+    var bureauName = ogrn is not null && _dictionary.QBCH.TryGetValue(ogrn, out var name) ? name : null;
+    var bureauTitle = bureauName ?? (string.IsNullOrWhiteSpace(ogrn) ? "КБКИ" : $"ОГРН {ogrn}");
+    var isExpanded = _expandedBureaus.Contains(_qbch);
+
     @*Сведения о КБКИ*@
-    <div class="status-popup__item-top" @onclick="@(() => _show[_qbch.Attribute("ОГРН")?.Value ?? "-"] = !_show[_qbch.Attribute("ОГРН")?.Value ?? "-"])">
+    <div class="status-popup__item-top" @onclick="@(() => ToggleBureau(_qbch))">
         <div class="status-popup__item-arrow dropdown-arrow">
-            <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(_show[_qbch.Attribute("ОГРН")?.Value ?? "-"] ? "180" : "360")deg);">
+            <svg class="ico ico-mono-arrow-dropdown" style="transform:rotate(@(isExpanded ? "180" : "360")deg);">
                 <use xlink:href="img/sprite-mono.svg#ico-mono-arrow-dropdown"></use>
             </svg>
         </div>
-        <div class="status-popup__item-title">@(_dictionary.QBCH[_qbch.Attribute("ОГРН")?.Value ?? "-"])</div>
+        <div class="status-popup__item-title">@bureauTitle</div>
     </div>
-    @if (_show[_qbch.Attribute("ОГРН")?.Value ?? "-"])
+    @if (isExpanded)
     {
         <div class="document__list-item">
             <div class="document__caption"><span class="document__table-icon">Сведения о квалифицированном БКИ </span></div>
@@ -110,13 +114,13 @@ else
                                 <td class="document__column">
                                     <div class="document__column-title">ОГРН</div>
                                     <ul class="document__column-text">
-                                        <li>@(_qbch.Attribute("ОГРН")?.Value ?? "-")</li>
+                                        <li>@(ogrn ?? "-")</li>
                                     </ul>
                                 </td>
                                 <td class="document__column" colspan="2">
                                     <div class="document__column-title">Наименование</div>
                                     <ul class="document__column-text">
-                                        <li>@(_dictionary.QBCH[_qbch.Attribute("ОГРН")?.Value ?? "-"])</li>
+                                        <li>@(bureauName ?? "-")</li>
                                     </ul>
                                 </td>
                                 @* </tr>
@@ -538,20 +542,21 @@ else
 @code {
     [Parameter] public string Response { get; set; } = "<Результат />";
 
-    private Dictionary<string, bool> _show =
-    new Dictionary<string, bool>()
-    {
-        {"1047796788819", false },
-        {"1247700058319", false },
-        {"1057747734934", false },
-        {"1057746710713", false }
-    };
+    private readonly HashSet<XElement> _expandedBureaus = new();
 
     private XDocument _response = new(new XElement("Результат"));
 
     protected override void OnInitialized()
     {
     _response = XDocument.Parse(Response ?? "<Результат />");
+    }
+
+    private void ToggleBureau(XElement bureau)
+    {
+        if (!_expandedBureaus.Add(bureau))
+        {
+            _expandedBureaus.Remove(bureau);
+        }
     }
 
     private static string GetReferenceValue(Dictionary<string, string> reference, string? value)
